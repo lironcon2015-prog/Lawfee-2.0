@@ -91,10 +91,8 @@ const Dashboard = (() => {
     }
 
     const maxVal = Math.max(...months.map(x => Math.max(x.amount, x.commission))) || 1;
-    // Round max up to "nice" number
     const niceMax = niceCeil(maxVal);
 
-    // SVG layout
     const W = 720, H = 260;
     const padL = 48, padR = 12, padT = 16, padB = 30;
     const plotW = W - padL - padR;
@@ -102,7 +100,6 @@ const Dashboard = (() => {
     const groupW = plotW / 12;
     const barW = Math.min(14, groupW / 3);
 
-    // Gridlines (4)
     const gridLines = [];
     const gridLabels = [];
     for (let i = 0; i <= 4; i++) {
@@ -112,21 +109,17 @@ const Dashboard = (() => {
       gridLabels.push(`<text class="axis-label" x="${padL - 8}" y="${y + 3}" text-anchor="end">${formatAxis(v)}</text>`);
     }
 
-    // Bars + x-labels (RTL: month 1 on the RIGHT)
     const bars = [];
     const xLabels = [];
     months.forEach((mo, idx) => {
-      // RTL: flip x coordinate
       const groupRight = W - padR - (idx * groupW);
       const groupLeft  = groupRight - groupW;
       const cx = (groupLeft + groupRight) / 2;
 
-      // two bars centered in group, side by side
       const revH  = (mo.amount     / niceMax) * plotH;
       const commH = (mo.commission / niceMax) * plotH;
       const revY  = padT + plotH - revH;
       const commY = padT + plotH - commH;
-      // revenue bar (right side in RTL = lower idx)
       const revX  = cx - barW - 1;
       const commX = cx + 1;
 
@@ -148,10 +141,9 @@ const Dashboard = (() => {
       </svg>
       <div class="bar-tip" id="bar-tip"></div>`;
 
-    // tooltip wiring
     const tip = host.querySelector('#bar-tip');
     host.querySelectorAll('.bar-grp').forEach(g => {
-      g.addEventListener('mouseenter', (e) => {
+      g.addEventListener('mouseenter', () => {
         tip.textContent = g.dataset.tip;
         tip.classList.add('on');
       });
@@ -204,7 +196,6 @@ const Dashboard = (() => {
     const caseMap = {};
     allCases.forEach(c => { caseMap[c.id] = c; });
 
-    // Aggregate revenue by client
     const byClient = {};
     allInvoices.forEach(inv => {
       const c = caseMap[inv.caseId];
@@ -218,7 +209,6 @@ const Dashboard = (() => {
 
     const total = rows.reduce((s,r) => s + r.val, 0);
 
-    // Top 5 + "others"
     if (rows.length > 5) {
       const top = rows.slice(0, 5);
       const rest = rows.slice(5);
@@ -226,18 +216,16 @@ const Dashboard = (() => {
       rows = [...top, { name: `${rest.length} אחרים`, val: othersVal, isOthers: true }];
     }
 
-    // Color palette
     const palette = [
       'var(--accent)',
-      'oklch(0.58 0.14 155)',   // green
-      'oklch(0.66 0.14 75)',    // amber
-      'oklch(0.56 0.18 25)',    // red
-      'oklch(0.55 0.14 210)',   // sky
-      'var(--n-300)',           // others gray
+      'oklch(0.58 0.14 155)',
+      'oklch(0.66 0.14 75)',
+      'oklch(0.56 0.18 25)',
+      'oklch(0.55 0.14 210)',
+      'var(--n-300)',
     ];
     rows.forEach((r,i) => r.color = palette[i] || 'var(--n-300)');
 
-    // SVG donut
     const size = 170, strokeW = 22;
     const cx = size/2, cy = size/2;
     const r = (size - strokeW) / 2;
@@ -319,6 +307,17 @@ const Dashboard = (() => {
     tbody.innerHTML = rows;
   }
 
+  // ── Status Badge Helper ────────────────────────────────
+  function _statusBadge(caseType) {
+    const map = {
+      'שוטף':     { cls: 'bg-emerald-100 text-emerald-700', label: 'פעיל' },
+      'ליטיגציה': { cls: 'bg-red-100 text-red-700',         label: 'ליטיגציה' },
+      'עסקה':     { cls: 'bg-neutral-100 text-neutral-600', label: 'סגור' },
+    };
+    const s = map[caseType] || { cls: 'bg-neutral-100 text-neutral-500', label: caseType || '—' };
+    return `<span class="px-3 py-1 rounded-full text-xs font-bold ${s.cls}">${s.label}</span>`;
+  }
+
   // ── Per-Client Breakdown ────────────────────────────────
   async function renderClientBreakdown() {
     const tbody = document.getElementById('client-breakdown-tbody');
@@ -331,7 +330,7 @@ const Dashboard = (() => {
     ]);
 
     if (!allInvoices.length) {
-      tbody.innerHTML = UI.emptyRow(5, 'אין נתוני חשבוניות לשנה זו');
+      tbody.innerHTML = UI.emptyRow(6, 'אין נתוני חשבוניות לשנה זו');
       return;
     }
 
@@ -358,15 +357,16 @@ const Dashboard = (() => {
       const c = r.caseRec;
       totalAmt  += r.amount;
       totalComm += r.commission;
-      rows += `<tr>
-        <td>${clientMap[c.clientId] || '—'}</td>
-        <td>
+      rows += `<tr class="hover:bg-neutral-50/50 transition-colors">
+        <td class="px-7 py-5 font-semibold text-neutral-800">${clientMap[c.clientId] || '—'}</td>
+        <td class="px-7 py-5">
           <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--text-muted)">${c.caseNumber}</span>
-          ${c.description && c.description !== c.caseNumber ? ` <span style="color:var(--text-secondary)">${c.description}</span>` : ''}
+          ${c.description && c.description !== c.caseNumber ? ` <span class="text-neutral-500">${c.description}</span>` : ''}
         </td>
-        <td class="num">${UI.formatPct(c.commissionRate)}</td>
-        <td class="num">${UI.formatNumber(r.amount)}</td>
-        <td class="num text-gold">${UI.formatNumber(r.commission)}</td>
+        <td class="px-7 py-5 num">${UI.formatPct(c.commissionRate)}</td>
+        <td class="px-7 py-5 num">${UI.formatNumber(r.amount)}</td>
+        <td class="px-7 py-5 num font-bold text-neutral-900">${UI.formatNumber(r.commission)}</td>
+        <td class="px-7 py-5 text-center">${_statusBadge(c.caseType)}</td>
       </tr>`;
     });
 
@@ -374,6 +374,7 @@ const Dashboard = (() => {
       <td colspan="3">סה"כ</td>
       <td class="num">${UI.formatNumber(totalAmt)}</td>
       <td class="num">${UI.formatNumber(totalComm)}</td>
+      <td></td>
     </tr>`;
 
     tbody.innerHTML = rows;
@@ -434,17 +435,18 @@ const Dashboard = (() => {
     const sortedKeys = Object.keys(matrix).sort((a, b) => rowMeta[a].sortKey.localeCompare(rowMeta[b].sortKey, 'he'));
 
     const monthHeaders = Array.from({length:12}, (_,i) =>
-      `<th class="num" style="font-size:0.78rem;padding:8px 6px">${UI.monthName(i+1, true)}</th>`
+      `<th class="num py-4 px-4 font-bold" style="font-size:0.78rem">${UI.monthName(i+1, true)}</th>`
     ).join('');
     thead.innerHTML = `<tr>
-      <th>${byCase ? 'לקוח / תיק' : 'לקוח'}</th>
+      <th class="py-4 px-4 text-right font-bold">${byCase ? 'לקוח / תיק' : 'לקוח'}</th>
       ${monthHeaders}
-      <th class="num">סה"כ</th>
+      <th class="num py-4 px-4 font-bold text-left">סה"כ</th>
     </tr>`;
 
     const monthTotals = {};
     let grandTotal = 0;
     let rows = '';
+
     sortedKeys.forEach(rowKey => {
       const meta = rowMeta[rowKey];
       const months = matrix[rowKey] || {};
@@ -454,22 +456,27 @@ const Dashboard = (() => {
         const val = (months[m] || {})[metric] || 0;
         rowTotal += val;
         monthTotals[m] = (monthTotals[m] || 0) + val;
-        cells += `<td class="num" style="font-size:0.8rem;padding:7px 6px">${val > 0 ? UI.formatNumber(val) : '<span style="color:var(--text-muted)">—</span>'}</td>`;
+        cells += `<td class="num py-4 px-4" style="font-size:0.8rem">${val > 0 ? UI.formatNumber(val) : '<span style="color:var(--text-muted)">—</span>'}</td>`;
       }
       grandTotal += rowTotal;
 
       const labelCell = byCase
-        ? `<td style="font-size:0.85rem"><div style="font-weight:500">${meta.label}</div><div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);margin-top:2px">${meta.subLabel}</div></td>`
-        : `<td style="font-size:0.88rem;white-space:nowrap">${meta.label}</td>`;
+        ? `<td class="py-4 px-4" style="font-size:0.85rem"><div style="font-weight:500">${meta.label}</div><div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);margin-top:2px">${meta.subLabel}</div></td>`
+        : `<td class="py-4 px-4 font-semibold text-neutral-800" style="font-size:0.88rem;white-space:nowrap">${meta.label}</td>`;
 
-      rows += `<tr>${labelCell}${cells}<td class="num ${metric === 'commission' ? 'text-gold' : ''}" style="font-size:0.88rem;font-weight:600">${UI.formatNumber(rowTotal)}</td></tr>`;
+      rows += `<tr class="hover:bg-neutral-50/50 transition-colors">${labelCell}${cells}<td class="num py-4 px-4 font-bold ${metric === 'commission' ? 'text-midnight-600' : ''}" style="font-size:0.88rem">${UI.formatNumber(rowTotal)}</td></tr>`;
     });
 
+    // Styled total row — indigo tint, matching the design
     const totalCells = Array.from({length:12}, (_,i) => {
       const v = monthTotals[i+1] || 0;
-      return `<td class="num">${v > 0 ? UI.formatNumber(v) : '—'}</td>`;
+      return `<td class="num py-5 px-4 font-bold text-neutral-900">${v > 0 ? UI.formatNumber(v) : '—'}</td>`;
     }).join('');
-    rows += `<tr class="summary-row"><td>סה"כ</td>${totalCells}<td class="num">${UI.formatNumber(grandTotal)}</td></tr>`;
+    rows += `<tr style="background:rgba(79,70,229,0.04);border-top:2px solid rgba(79,70,229,0.15)">
+      <td class="py-5 px-4 font-bold text-midnight-600" style="font-size:0.88rem">סה"כ חודשי</td>
+      ${totalCells}
+      <td class="num py-5 px-4 font-black text-midnight-600" style="font-size:0.88rem">${UI.formatNumber(grandTotal)}</td>
+    </tr>`;
 
     tbody.innerHTML = rows;
   }

@@ -343,8 +343,16 @@
 </div>
 <!-- Per-Client Table -->
 <div class="bg-white rounded-3xl border border-neutral-100 shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300">
-<div class="px-7 py-6 border-b border-neutral-100 bg-white">
+<div class="px-7 py-6 border-b border-neutral-100 bg-white flex items-center justify-between">
 <h2 class="text-xl font-bold font-heading text-neutral-900">פירוט לפי לקוח</h2>
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-semibold text-neutral-700 flex items-center gap-2 hover:bg-neutral-100 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>סינון
+</button>
+<button class="px-4 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-semibold text-neutral-700 flex items-center gap-2 hover:bg-neutral-100 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">download</span>ייצוא PDF
+</button>
+</div>
 </div>
 <div class="overflow-x-auto">
 <table class="w-full text-sm text-right data-table" id="client-breakdown-table">
@@ -355,10 +363,11 @@
 <th class="px-7 py-5 num">% עמלה</th>
 <th class="px-7 py-5 num">סך הכנסות</th>
 <th class="px-7 py-5 num">סך עמלות</th>
+<th class="px-7 py-5 text-center">סטטוס</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-neutral-100" id="client-breakdown-tbody">
-<tr><td class="empty-state" colspan="5">טוען נתונים…</td></tr>
+<tr><td class="empty-state" colspan="6">טוען נתונים…</td></tr>
 </tbody>
 </table>
 </div>
