@@ -10,6 +10,16 @@ const Clients = (() => {
   function init() {
     document.getElementById('btn-add-client').addEventListener('click', () => openClientModal());
     document.getElementById('btn-merge-clients').addEventListener('click', () => openMergeModal());
+
+    // Live search
+    document.getElementById('clients-search')?.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      document.querySelectorAll('#clients-list [data-client-id]').forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = !q || text.includes(q) ? '' : 'none';
+      });
+    });
+
     render();
   }
 
@@ -56,62 +66,126 @@ const Clients = (() => {
     });
   }
 
+  // ── Case type badge ────────────────────────────────────
+  const CASE_TYPE_BADGE = {
+    'ליטיגציה': 'bg-red-100 text-red-800',
+    'עסקה':     'bg-purple-100 text-purple-800',
+    'שוטף':     'bg-blue-100 text-blue-800',
+  };
+
+  function caseTypeBadge(type) {
+    const cls = CASE_TYPE_BADGE[type] || 'bg-neutral-100 text-neutral-700';
+    return `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold ${cls}">${escHtml(type || '—')}</span>`;
+  }
+
+  // ── Avatar initials + color ────────────────────────────
+  const AVATAR_COLORS = [
+    'bg-blue-50 text-blue-600 border-blue-100',
+    'bg-emerald-50 text-emerald-600 border-emerald-100',
+    'bg-orange-50 text-orange-600 border-orange-100',
+    'bg-purple-50 text-purple-600 border-purple-100',
+    'bg-pink-50 text-pink-600 border-pink-100',
+    'bg-teal-50 text-teal-600 border-teal-100',
+  ];
+
+  function avatarCls(name) {
+    const idx = (name.charCodeAt(0) || 0) % AVATAR_COLORS.length;
+    return AVATAR_COLORS[idx];
+  }
+
   // ── Build Client Card HTML ─────────────────────────────
   function buildClientCard(client, cases) {
+    const initial = (client.name || '?')[0].toUpperCase();
+    const activeCases = cases.length;
+
     const casesHTML = cases.length
-      ? `<div class="table-wrap cases-table-wrap">
-          <table class="data-table">
-            <thead>
+      ? `<div class="overflow-x-auto rounded-xl border border-neutral-200 bg-white">
+          <table class="w-full text-right text-sm text-neutral-600">
+            <thead class="bg-neutral-50 text-xs uppercase text-neutral-500 border-b border-neutral-200 font-bold tracking-wider">
               <tr>
-                <th>מספר תיק</th>
-                <th>תיאור</th>
-                <th>סוג</th>
-                <th class="num">% עמלה</th>
-                <th>סוג הסדר</th>
-                <th>תאריך פתיחה</th>
-                <th></th>
+                <th class="px-6 py-4" scope="col">מספר תיק</th>
+                <th class="px-6 py-4" scope="col">תיאור</th>
+                <th class="px-6 py-4" scope="col">סוג</th>
+                <th class="px-6 py-4" scope="col">% עמלה</th>
+                <th class="px-6 py-4" scope="col">הסדר</th>
+                <th class="px-6 py-4" scope="col">תאריך פתיחה</th>
+                <th class="px-6 py-4 text-left" scope="col">פעולות</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-neutral-100 font-medium">
               ${cases.map(c => buildCaseRow(c)).join('')}
             </tbody>
           </table>
+        </div>
+        <div class="mt-4 flex justify-between items-center">
+          <button onclick="Clients.openClientModal(${client.id})"
+            class="text-sm font-medium text-neutral-500 hover:text-neutral-700 flex items-center gap-1 transition-colors">
+            <span class="material-symbols-outlined text-[18px]">edit</span> ערוך לקוח
+          </button>
+          <div class="flex items-center gap-3">
+            <button onclick="Clients.deleteClient(${client.id}, '${escHtml(client.name)}')"
+              class="text-sm font-medium text-red-400 hover:text-red-600 flex items-center gap-1 transition-colors">
+              <span class="material-symbols-outlined text-[18px]">delete</span> מחק
+            </button>
+            <button onclick="Clients.openCaseModal(${client.id})"
+              class="text-sm font-semibold text-midnight-600 hover:text-midnight-800 flex items-center gap-1 transition-colors">
+              <span class="material-symbols-outlined text-[18px]">add</span> הוסף תיק
+            </button>
+          </div>
         </div>`
-      : `<p style="padding:16px 20px;color:var(--text-muted);font-size:0.85rem">אין תיקים ללקוח זה.</p>`;
+      : `<p class="text-sm text-neutral-400 py-4">אין תיקים ללקוח זה.</p>
+         <div class="mt-3 flex justify-between items-center">
+          <button onclick="Clients.openClientModal(${client.id})"
+            class="text-sm font-medium text-neutral-500 hover:text-neutral-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[18px]">edit</span> ערוך לקוח
+          </button>
+          <button onclick="Clients.openCaseModal(${client.id})"
+            class="text-sm font-semibold text-midnight-600 hover:text-midnight-800 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[18px]">add</span> הוסף תיק
+          </button>
+        </div>`;
 
     return `
-      <div class="client-card" data-client-id="${client.id}">
-        <div class="client-card-header">
-          <div class="client-name">
-            ${client.name}
-            <span class="client-case-count">${cases.length} תיקים</span>
+      <details class="group bg-white rounded-3xl shadow-sm border border-neutral-200 overflow-hidden" data-client-id="${client.id}">
+        <summary class="flex items-center justify-between cursor-pointer p-6 hover:bg-neutral-50 transition-colors select-none list-none [&::-webkit-details-marker]:hidden">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg border ${avatarCls(client.name)}">
+              ${initial}
+            </div>
+            <div>
+              <h3 class="text-lg font-bold font-heading text-neutral-900">${escHtml(client.name)}</h3>
+              <p class="text-sm text-neutral-500 font-medium">${activeCases} תיקים</p>
+            </div>
           </div>
-          <div class="client-actions">
-            <button class="btn-ghost btn-sm" onclick="Clients.openCaseModal(${client.id})" title="הוסף תיק">+ תיק</button>
-            <button class="btn-ghost btn-sm" onclick="Clients.openClientModal(${client.id})" title="ערוך לקוח">✎</button>
-            <button class="btn-danger btn-sm" onclick="Clients.deleteClient(${client.id}, '${escHtml(client.name)}')" title="מחק לקוח">✕</button>
+          <div class="flex items-center gap-4">
+            <span class="material-symbols-outlined text-neutral-400 group-open:rotate-180 transition-transform duration-200">expand_more</span>
           </div>
-        </div>
-        <div class="client-cases">
+        </summary>
+        <div class="border-t border-neutral-100 bg-neutral-50/50 p-6">
           ${casesHTML}
-          <div style="padding:8px 20px 16px;text-align:left">
-            <button class="btn-ghost btn-sm" onclick="Clients.openCaseModal(${client.id})">+ הוסף תיק</button>
-          </div>
         </div>
-      </div>`;
+      </details>`;
   }
 
   function buildCaseRow(c) {
-    return `<tr data-case-id="${c.id}">
-      <td style="font-family:var(--font-mono);font-size:0.85rem">${escHtml(c.caseNumber)}</td>
-      <td>${escHtml(c.description)}</td>
-      <td>${UI.caseTypeBadge(c.caseType)}</td>
-      <td class="num">${UI.formatPct(c.commissionRate)}</td>
-      <td style="color:var(--text-secondary);font-size:0.82rem">${escHtml(c.arrangementType)}</td>
-      <td style="color:var(--text-muted);font-size:0.82rem">${c.openDate || '—'}</td>
-      <td>
-        <button class="btn-icon" onclick="Clients.openCaseModal(${c.clientId}, ${c.id})" title="ערוך תיק">✎</button>
-        <button class="btn-icon" style="color:var(--color-negative)" onclick="Clients.deleteCase(${c.id}, '${escHtml(c.caseNumber)}')" title="מחק תיק">✕</button>
+    return `<tr class="hover:bg-neutral-50 transition-colors" data-case-id="${c.id}">
+      <td class="px-6 py-4 font-mono text-sm text-neutral-900">${escHtml(c.caseNumber)}</td>
+      <td class="px-6 py-4">${escHtml(c.description)}</td>
+      <td class="px-6 py-4">${caseTypeBadge(c.caseType)}</td>
+      <td class="px-6 py-4">${UI.formatPct(c.commissionRate)}</td>
+      <td class="px-6 py-4">${escHtml(c.arrangementType)}</td>
+      <td class="px-6 py-4">${c.openDate || '—'}</td>
+      <td class="px-6 py-4 text-left">
+        <div class="flex items-center gap-2 justify-end">
+          <button onclick="Clients.openCaseModal(${c.clientId}, ${c.id})"
+            class="text-neutral-400 hover:text-midnight-600 transition-colors" title="ערוך תיק">
+            <span class="material-symbols-outlined text-[20px]">edit</span>
+          </button>
+          <button onclick="Clients.deleteCase(${c.id}, '${escHtml(c.caseNumber)}')"
+            class="text-neutral-400 hover:text-red-500 transition-colors" title="מחק תיק">
+            <span class="material-symbols-outlined text-[20px]">delete</span>
+          </button>
+        </div>
       </td>
     </tr>`;
   }
