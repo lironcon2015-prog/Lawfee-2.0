@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LexLedger — ניהול שכר טרחה</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&amp;family=Rubik:wght@400;500;600;700;800;900&amp;family=IBM+Plex+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@300..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- App styles (used by JS-generated content: tables, cards, charts, buttons) -->
+<link rel="stylesheet" href="style.css" />
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Assistant', 'sans-serif'],
+            heading: ['Rubik', 'sans-serif'],
+            mono: ['IBM Plex Mono', 'monospace'],
+          },
+          colors: {
+            midnight: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#1e1b4b',
+              950: '#0f0d23',
+            },
+            neutral: {
+              50: '#f8fafc',
+              100: '#f1f5f9',
+              200: '#e2e8f0',
+              300: '#cbd5e1',
+              400: '#94a3b8',
+              500: '#64748b',
+              600: '#475569',
+              700: '#334155',
+              800: '#1e293b',
+              900: '#0f172a',
+              950: '#020617',
+            },
+            accent: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+              950: '#172554',
+            },
+            gold: {
+              50: '#fffbf0',
+              100: '#fff5d6',
+              200: '#ffe8ab',
+              300: '#ffd67a',
+              400: '#ffbf42',
+              500: '#f59e0b',
+              600: '#d97706',
+              700: '#b45309',
+              800: '#92400e',
+              900: '#78350f',
+              950: '#451a03',
+            }
+          },
+          boxShadow: {
+            'card': '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 0 3px rgba(15, 23, 42, 0.02)',
+            'card-hover': '0 12px 24px -4px rgba(15, 23, 42, 0.1), 0 4px 8px -2px rgba(15, 23, 42, 0.05)',
+            'btn': '0 2px 4px 0 rgba(15, 23, 42, 0.05)',
+          }
+        }
+      }
+    }
+  </script>
+<!-- External Libraries (CDN) -->
+<!-- SheetJS (xlsx) -->
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+<!-- PDF.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+    if (typeof pdfjsLib !== 'undefined') {
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+  </script>
+<style>
+    /* Custom non-Tailwind styles mapped to new variables where possible, 
+       but primarily leveraging Tailwind classes in HTML now */
+    :root {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --border-color: #e2e8f0;
+      --accent: #4f46e5;
+      --color-positive: #10b981;
+      --color-gold: #b45309;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Keep some essential structure/transitions */
+    .hidden { display: none !important; }
+    
+    .view {
+      animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Modal */
+    .modal-overlay {
+      background-color: rgba(15, 13, 35, 0.6);
+      backdrop-filter: blur(8px);
+      z-index: 50;
+    }
+    
+    /* Table specific styles for empty states/structure */
+    .data-table th.num, .data-table td.num {
+      text-align: left;
+      font-family: var(--font-mono);
+    }
+    .empty-state {
+      text-align: center;
+      padding: 4rem !important;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Dropzones */
+    .dropzone-inner, .import-dropzone {
+      border: 2px dashed var(--border-color);
+      border-radius: 1rem;
+      background-color: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(4px);
+      transition: all 0.3s ease;
+    }
+    .dropzone-inner:hover, .import-dropzone:hover {
+      border-color: var(--accent);
+      background-color: rgba(238, 242, 255, 0.8);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.1);
+    }
+    
+    /* Chart stubs */
+    .chart-body { min-height: 300px; display: flex; align-items: flex-end; gap: 8px; padding-top: 1rem; }
+    .donut-body { min-height: 250px; display: flex; align-items: center; justify-content: center; }
+
+    .gold-gradient-text {
+      background: linear-gradient(to right, #d97706, #f59e0b, #d97706);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased text-neutral-900 bg-neutral-50 selection:bg-midnight-200 selection:text-midnight-900">
+<!-- ===== APP SHELL ===== -->
+<div class="flex h-screen overflow-hidden" id="app">
+<!-- SIDEBAR -->
+<aside class="w-72 bg-midnight-950 border-l border-midnight-900 flex flex-col shadow-2xl z-20 text-neutral-100" id="sidebar">
+<div class="h-24 flex items-center px-8 border-b border-midnight-900/50 bg-midnight-950/80 backdrop-blur-md">
+<span class="text-3xl text-gold-500 mr-3 material-symbols-outlined">balance</span>
+<div class="flex flex-col">
+<span class="font-extrabold font-heading text-2xl tracking-tight text-white">LexLedger</span>
+<span class="text-xs font-semibold text-gold-500/80 uppercase tracking-widest mt-0.5">ניהול שכר טרחה</span>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-8 px-4 space-y-2" id="sidebar-nav">
+<a class="flex items-center px-4 py-3.5 text-sm font-semibold rounded-xl text-white bg-midnight-600/30 border border-midnight-500/20 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)] transition-all duration-300" data-view="dashboard" href="#dashboard">
+<span class="material-symbols-outlined ml-3 text-[22px] text-midnight-300">dashboard</span>
+<span class="nav-label">לוח בקרה</span>
+</a>
+<a class="flex items-center px-4 py-3.5 text-sm font-medium rounded-xl text-midnight-300 hover:text-white hover:bg-midnight-800/50 transition-all duration-300" data-view="clients" href="#clients">
+<span class="material-symbols-outlined ml-3 text-[22px]">group</span>
+<span class="nav-label">לקוחות ותיקים</span>
+</a>
+<a class="flex items-center px-4 py-3.5 text-sm font-medium rounded-xl text-midnight-300 hover:text-white hover:bg-midnight-800/50 transition-all duration-300" data-view="invoices" href="#invoices">
+<span class="material-symbols-outlined ml-3 text-[22px]">receipt_long</span>
+<span class="nav-label">חשבוניות</span>
+</a>
+<a class="flex items-center px-4 py-3.5 text-sm font-medium rounded-xl text-midnight-300 hover:text-white hover:bg-midnight-800/50 transition-all duration-300" data-view="payments" href="#payments">
+<span class="material-symbols-outlined ml-3 text-[22px]">payments</span>
+<span class="nav-label">תשלומים שהתקבלו</span>
+</a>
+<a class="flex items-center px-4 py-3.5 text-sm font-medium rounded-xl text-midnight-300 hover:text-white hover:bg-midnight-800/50 transition-all duration-300" data-view="import" href="#import">
+<span class="material-symbols-outlined ml-3 text-[22px]">upload_file</span>
+<span class="nav-label">ייבוא נתונים</span>
+</a>
+<a class="flex items-center px-4 py-3.5 text-sm font-medium rounded-xl text-midnight-300 hover:text-white hover:bg-midnight-800/50 transition-all duration-300" data-view="settings" href="#settings">
+<span class="material-symbols-outlined ml-3 text-[22px]">settings</span>
+<span class="nav-label">הגדרות</span>
+</a>
+</nav>
+<div class="p-6 border-t border-midnight-900 bg-midnight-950/50 flex flex-col gap-3">
+<button class="flex items-center justify-center w-full px-4 py-2.5 text-sm font-medium text-midnight-100 bg-midnight-800/80 border border-midnight-700/50 rounded-xl hover:bg-midnight-700 hover:text-white transition-all duration-300 shadow-lg" id="btn-export-backup" title="גיבוי JSON מלא">
+<span class="material-symbols-outlined ml-2 text-[18px]">download</span> גיבוי נתונים
+        </button>
+<button class="flex items-center justify-center w-full px-4 py-2.5 text-sm font-medium text-midnight-100 bg-midnight-800/80 border border-midnight-700/50 rounded-xl hover:bg-midnight-700 hover:text-white transition-all duration-300 shadow-lg" id="btn-import-backup" title="שחזור מגיבוי JSON">
+<span class="material-symbols-outlined ml-2 text-[18px]">upload</span> שחזור נתונים
+        </button>
+<input accept=".json" class="hidden" id="input-restore-file" type="file"/>
+</div>
+</aside>
+<!-- MAIN CONTENT -->
+<main class="flex-1 overflow-y-auto bg-[#f4f6fa] p-8 md:p-12 relative" id="main-content">
+<!-- Subtle background decoration -->
+<div class="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-white to-transparent pointer-events-none z-0"></div>
+<!-- ── VIEW: DASHBOARD ── -->
+<section class="view max-w-7xl mx-auto space-y-8 relative z-10" id="view-dashboard">
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4">
+<div>
+<h1 class="text-4xl font-extrabold font-heading text-neutral-900 tracking-tight">לוח בקרה</h1>
+<p class="text-neutral-500 mt-2 font-medium text-lg">סיכום שנתי וחודשי מקיף</p>
+</div>
+<div class="flex items-center gap-3 bg-white p-1.5 rounded-xl shadow-sm border border-neutral-200/60">
+<label class="text-sm font-semibold text-neutral-600 px-2">שנה</label>
+<select class="block w-32 rounded-lg border-transparent bg-neutral-50 py-2 pl-3 pr-10 text-base font-semibold text-midnight-900 focus:border-midnight-500 focus:outline-none focus:ring-1 focus:ring-midnight-500 sm:text-sm hover:bg-neutral-100 transition-colors" id="dashboard-year"></select>
+</div>
+</header>
+<!-- Hero KPI + supporting KPIs -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-1 bg-gradient-to-br from-midnight-900 via-midnight-800 to-[#2e266f] rounded-3xl p-8 text-white shadow-[0_20px_40px_-15px_rgba(30,27,75,0.4)] relative overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 border border-midnight-700/50">
+<div class="absolute top-0 left-0 w-full h-full opacity-20 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
+<div class="absolute -bottom-24 -right-24 w-64 h-64 bg-midnight-600 rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
+<div class="absolute -top-24 -left-24 w-64 h-64 bg-[#4f46e5] rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+<div class="relative z-10 flex flex-col h-full justify-between">
+<div class="flex justify-between items-center">
+<span class="text-midnight-200 font-bold text-sm tracking-widest uppercase">יתרה לתשלום</span>
+<span class="material-symbols-outlined text-midnight-300 bg-midnight-800/50 p-2 rounded-xl backdrop-blur-sm">account_balance_wallet</span>
+</div>
+<div class="mt-8">
+<div class="flex items-baseline gap-2">
+<span class="text-6xl font-black font-heading tracking-tighter drop-shadow-md" id="kpi-balance">—</span>
+<span class="text-3xl text-midnight-300 font-heading font-bold">₪</span>
+</div>
+<div class="text-sm text-midnight-300 mt-3 font-mono font-medium bg-midnight-950/30 inline-block px-3 py-1 rounded-lg backdrop-blur-md border border-white/5" id="hero-meta">—</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-2 grid grid-cols-2 gap-6">
+<div class="bg-white/80 backdrop-blur-xl rounded-3xl p-7 border border-white shadow-card flex flex-col justify-center hover:-translate-y-1 hover:shadow-card-hover transition-all duration-300">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+<span class="material-symbols-outlined text-[20px]">account_balance</span>
+</div>
+<span class="text-neutral-500 text-sm font-semibold uppercase tracking-wider">יתרת פתיחה</span>
+</div>
+<span class="text-3xl font-black text-neutral-900 font-heading tracking-tight" id="kpi-opening">—</span>
+</div>
+<div class="bg-white/80 backdrop-blur-xl rounded-3xl p-7 border border-white shadow-card flex flex-col justify-center hover:-translate-y-1 hover:shadow-card-hover transition-all duration-300">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+<span class="material-symbols-outlined text-[20px]">trending_up</span>
+</div>
+<span class="text-neutral-500 text-sm font-semibold uppercase tracking-wider">הכנסה כוללת</span>
+</div>
+<span class="text-3xl font-black text-neutral-900 font-heading tracking-tight" id="kpi-revenue">—</span>
+</div>
+<div class="bg-white/80 backdrop-blur-xl rounded-3xl p-7 border border-white shadow-card flex flex-col justify-center hover:-translate-y-1 hover:shadow-card-hover transition-all duration-300">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
+<span class="material-symbols-outlined text-[20px]">pie_chart</span>
+</div>
+<span class="text-neutral-500 text-sm font-semibold uppercase tracking-wider">עמלות שנצברו</span>
+</div>
+<span class="text-3xl font-black text-neutral-900 font-heading tracking-tight" id="kpi-commissions">—</span>
+</div>
+<div class="bg-white/80 backdrop-blur-xl rounded-3xl p-7 border border-white shadow-card flex flex-col justify-center hover:-translate-y-1 hover:shadow-card-hover transition-all duration-300">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
+<span class="material-symbols-outlined text-[20px]">task_alt</span>
+</div>
+<span class="text-neutral-500 text-sm font-semibold uppercase tracking-wider">תשלומים שהתקבלו</span>
+</div>
+<span class="text-3xl font-black text-neutral-900 font-heading tracking-tight" id="kpi-payments">—</span>
+</div>
+</div>
+</div>
+<!-- Charts row -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 bg-white rounded-3xl border border-neutral-100 shadow-card p-7 hover:shadow-card-hover transition-all duration-300">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-xl font-bold font-heading text-neutral-900">תזרים חודשי</h2>
+<div class="flex gap-4 text-sm font-medium bg-neutral-50 px-4 py-2 rounded-xl border border-neutral-100">
+<span class="flex items-center text-neutral-700"><span class="w-3 h-3 rounded-full bg-midnight-500 ml-2 shadow-sm"></span>הכנסות</span>
+<span class="flex items-center text-neutral-700"><span class="w-3 h-3 rounded-full bg-emerald-500 ml-2 shadow-sm"></span>עמלות</span>
+</div>
+</div>
+<div class="chart-body" id="monthly-chart"></div>
+</div>
+<div class="bg-white rounded-3xl border border-neutral-100 shadow-card p-7 hover:shadow-card-hover transition-all duration-300">
+<div class="mb-6">
+<h2 class="text-xl font-bold font-heading text-neutral-900">פילוח הכנסות לפי לקוח</h2>
+</div>
+<div class="chart-body donut-body" id="client-donut"></div>
+</div>
+</div>
+<!-- Monthly Breakdown Table -->
+<div class="bg-white rounded-3xl border border-neutral-100 shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300">
+<div class="px-7 py-6 border-b border-neutral-100 bg-white">
+<h2 class="text-xl font-bold font-heading text-neutral-900">פירוט חודשי</h2>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-sm text-right data-table" id="monthly-table">
+<thead class="text-xs text-neutral-500 uppercase bg-neutral-50/80 font-bold tracking-wider">
+<tr>
+<th class="px-7 py-5">חודש</th>
+<th class="px-7 py-5 num">הכנסות</th>
+<th class="px-7 py-5 num">עמלה</th>
+<th class="px-7 py-5 num">תשלומים</th>
+<th class="px-7 py-5 num">יתרה מצטברת</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-neutral-100" id="monthly-tbody">
+<tr><td class="empty-state" colspan="5">טוען נתונים…</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Per-Client Table -->
+<div class="bg-white rounded-3xl border border-neutral-100 shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300">
+<div class="px-7 py-6 border-b border-neutral-100 bg-white">
+<h2 class="text-xl font-bold font-heading text-neutral-900">פירוט לפי לקוח</h2>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-sm text-right data-table" id="client-breakdown-table">
+<thead class="text-xs text-neutral-500 uppercase bg-neutral-50/80 font-bold tracking-wider">
+<tr>
+<th class="px-7 py-5">לקוח</th>
+<th class="px-7 py-5">תיק</th>
+<th class="px-7 py-5 num">% עמלה</th>
+<th class="px-7 py-5 num">סך הכנסות</th>
+<th class="px-7 py-5 num">סך עמלות</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-neutral-100" id="client-breakdown-tbody">
+<tr><td class="empty-state" colspan="5">טוען נתונים…</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Per-Client Monthly Table -->
+<div class="bg-white rounded-3xl border border-neutral-100 shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300">
+<div class="px-7 py-6 border-b border-neutral-100 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<h2 class="text-xl font-bold font-heading text-neutral-900">עמלות לפי לקוח וחודש</h2>
+<div class="flex gap-2 bg-neutral-50 p-1 rounded-xl border border-neutral-200/60">
+<button class="px-4 py-2 text-sm font-semibold text-neutral-700 bg-white rounded-lg shadow-sm border border-neutral-200 transition-all" id="toggle-client-monthly-group">פירוט לפי תיק</button>
+<button class="px-4 py-2 text-sm font-medium text-neutral-600 hover:text-neutral-900 hover:bg-white rounded-lg transition-all" id="toggle-client-monthly-metric">הצג הכנסות</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-sm text-right data-table min-w-[900px]" id="client-monthly-table">
+<thead class="text-xs text-neutral-500 uppercase bg-neutral-50/80 font-bold tracking-wider" id="client-monthly-thead"></thead>
+<tbody class="divide-y divide-neutral-100" id="client-monthly-tbody">
+<tr><td class="empty-state" colspan="14">טוען נתונים…</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- ── VIEW: CLIENTS ── -->
+<section class="view hidden max-w-5xl mx-auto space-y-8 relative z-10" id="view-clients">
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="text-4xl font-extrabold font-heading text-neutral-900 tracking-tight">לקוחות ותיקים</h1>
+<p class="text-neutral-500 mt-2 font-medium text-lg">ניהול לקוחות ותיקים משויכים</p>
+</div>
+<div class="flex gap-3">
+<button class="px-5 py-2.5 text-sm font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 hover:border-neutral-300 transition-all shadow-sm hover:shadow-md flex items-center gap-2" id="btn-merge-clients" onclick="Clients.openMergeModal()">
+<span class="material-symbols-outlined text-[20px]">merge</span> מזג לקוחות
+            </button>
+<button class="px-5 py-2.5 text-sm font-semibold text-white bg-midnight-600 border border-transparent rounded-xl hover:bg-midnight-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2 transform hover:-translate-y-0.5" id="btn-add-client">
+<span class="material-symbols-outlined text-[20px]">add</span> לקוח חדש
+            </button>
+</div>
+</header>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="clients-list">
+<!-- populated by clients.js -->
+</div>
+</section>
+<!-- ── VIEW: INVOICES ── -->
+<section class="view hidden max-w-6xl mx-auto space-y-8 relative z-10" id="view-invoices">
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="text-4xl font-extrabold font-heading text-neutral-900 tracking-tight">חשבוניות</h1>
+<p class="text-neutral-500 mt-2 font-medium text-lg">הזנה ידנית, קריאת PDF וצפייה בהיסטוריה</p>
+</div>
+<div class="flex flex-wrap items-center gap-3 bg-white p-2 rounded-2xl shadow-sm border border-neutral-200/60">
+<select class="block w-28 rounded-xl border-neutral-200 bg-neutral-50 py-2.5 pl-3 pr-10 text-base font-medium focus:border-midnight-500 focus:outline-none focus:ring-1 focus:ring-midnight-500 sm:text-sm hover:bg-neutral-100 transition-colors" id="invoice-filter-year"></select>
+<select class="block w-48 rounded-xl border-neutral-200 bg-neutral-50 py-2.5 pl-3 pr-10 text-base font-medium focus:border-midnight-500 focus:outline-none focus:ring-1 focus:ring-midnight-500 sm:text-sm hover:bg-neutral-100 transition-colors" id="invoice-filter-client">
+<option value="">כל הלקוחות</option>
+</select>
+<button class="px-5 py-2.5 text-sm font-semibold text-white bg-midnight-600 border border-transparent rounded-xl hover:bg-midnight-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2 transform hover:-translate-y-0.5 ml-2" id="btn-add-invoice">
+<span class="material-symbols-outlined text-[20px]">add</span> חשבונית ידנית
+            </button>
+</div>
+</header>
+<!-- PDF Drop Zone -->
+<div class="pdf-dropzone w-full max-w-3xl mx-auto cursor-pointer group" id="pdf-dropzone">
+<div class="dropzone-inner p-14 text-center flex flex-col items-center justify-center border-2 border-dashed border-midnight-200/60 rounded-3xl bg-white/60 hover:border-midnight-500 hover:bg-white transition-all duration-300">
+<div class="w-20 h-20 rounded-full bg-midnight-50 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 group-hover:bg-midnight-100">
+<span class="material-symbols-outlined text-4xl text-midnight-400 group-hover:text-midnight-600 transition-colors">picture_as_pdf</span>
+</div>
+<p class="text-xl font-bold font-heading text-neutral-900 mb-2">גרור קובץ PDF לכאן לחילוץ אוטומטי</p>
+<p class="text-neutral-500 font-medium">או <label class="text-midnight-600 hover:text-midnight-700 font-bold cursor-pointer underline underline-offset-4" for="input-pdf-file">לחץ לבחור קובץ</label></p>
+<input accept=".pdf" class="hidden" id="input-pdf-file" type="file"/>
+</div>
+</div>
+<div class="bg-white rounded-3xl border border-neutral-100 shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300">
+<div class="px-7 py-6 border-b border-neutral-100 bg-white">
+<h2 class="text-xl font-bold font-heading text-neutral-900">היסטוריית חשבוניות</h2>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-sm text-right data-table" id="invoices-table">
+<thead class="text-xs text-neutral-500 uppercase bg-neutral-50/80 font-bold tracking-wider">
+<tr>
+<th class="px-7 py-5">לקוח</th>
+<th class="px-7 py-5">תיק</th>
+<th class="px-7 py-5">חודש</th>
+<th class="px-7 py-5">שנה</th>
+<th class="px-7 py-5 num">סכום</th>
+<th class="px-7 py-5 num">% עמלה</th>
+<th class="px-7 py-5 num">עמלה</th>
+<th class="px-7 py-5">מקור</th>
+<th class="px-7 py-5"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-neutral-100" id="invoices-tbody">
+<tr><td class="empty-state" colspan="9">אין חשבוניות להצגה</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- ── VIEW: PAYMENTS ── -->
+<section class="view hidden max-w-5xl mx-auto space-y-8 relative z-10" id="view-payments">
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="text-4xl font-extrabold font-heading text-neutral-900 tracking-tight">תשלומים שהתקבלו</h1>
+<p class="text-neutral-500 mt-2 font-medium text-lg">רישום תשלומים בפועל</p>
+</div>
+<div class="flex items-center gap-3 bg-white p-2 rounded-2xl shadow-sm border border-neutral-200/60">
+<select class="block w-32 rounded-xl border-neutral-200 bg-neutral-50 py-2.5 pl-3 pr-10 text-base font-medium focus:border-midnight-500 focus:outline-none focus:ring-1 focus:ring-midnight-500 sm:text-sm hover:bg-neutral-100 transition-colors" id="payments-filter-year"></select>
+<button class="px-5 py-2.5 text-sm font-semibold text-white bg-midnight-600 border border-transparent rounded-xl hover:bg-midnight-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2 transform hover:-translate-y-0.5 ml-2" id="btn-add-payment">
+<span class="material-symbols-outlined text-[20px]">add</span> תשלום חדש
+            </button>
+</div>
+</header>
+<div class="bg-white rounded-3xl border border-neutral-100 shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300">
+<div class="overflow-x-auto">
+<table class="w-full text-sm text-right data-table" id="payments-table">
+<thead class="text-xs text-neutral-500 uppercase bg-neutral-50/80 font-bold tracking-wider">
+<tr>
+<th class="px-7 py-5">חודש</th>
+<th class="px-7 py-5">שנה</th>
+<th class="px-7 py-5 num">סכום</th>
+<th class="px-7 py-5">הערות</th>
+<th class="px-7 py-5"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-neutral-100" id="payments-tbody">
+<tr><td class="empty-state" colspan="5">אין תשלומים רשומים</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- ── VIEW: IMPORT ── -->
+<section class="view hidden max-w-4xl mx-auto space-y-8 relative z-10" id="view-import">
+<header>
+<h1 class="text-4xl font-extrabold font-heading text-neutral-900 tracking-tight">ייבוא נתונים</h1>
+<p class="text-neutral-500 mt-2 font-medium text-lg">טעינת קובץ Excel ראשוני והגדרות מערכת</p>
+</header>
+<div class="space-y-8">
+<div class="bg-white rounded-3xl border border-neutral-100 shadow-card p-10 hover:shadow-card-hover transition-all duration-300">
+<div class="flex items-center gap-4 mb-6">
+<span class="flex items-center justify-center w-10 h-10 rounded-full bg-midnight-100 text-midnight-700 font-bold text-lg border border-midnight-200">1</span>
+<h2 class="text-2xl font-bold font-heading text-neutral-900">בחר קובץ Excel להייבוא</h2>
+</div>
+<p class="text-neutral-600 mb-8 leading-relaxed text-lg">בחר את קובץ ה-Excel עם הנתונים ההיסטוריים. המערכת תנתח ותייבא לקוחות, תיקים, הכנסות ועמלות בהתאם למבנה הנתונים.</p>
+<div class="import-dropzone p-12 text-center flex flex-col items-center justify-center cursor-pointer group rounded-3xl border-2 border-dashed border-neutral-300 bg-neutral-50/50" id="excel-dropzone">
+<div class="w-20 h-20 rounded-full bg-emerald-50 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 group-hover:bg-emerald-100">
+<span class="material-symbols-outlined text-4xl text-neutral-400 group-hover:text-emerald-600 transition-colors">table</span>
+</div>
+<p class="text-xl font-bold font-heading text-neutral-900 mb-2">גרור קובץ Excel לכאן</p>
+<p class="text-neutral-500 font-medium">או <label class="text-midnight-600 hover:text-midnight-700 font-bold cursor-pointer underline underline-offset-4" for="input-excel-file">לחץ לבחור קובץ</label></p>
+<input accept=".xlsx,.xls,.csv" class="hidden" id="input-excel-file" type="file"/>
+</div>
+<div class="hidden mt-8 border rounded-2xl overflow-hidden border-neutral-200 shadow-inner" id="excel-preview">
+<!-- Preview rendered here before confirm -->
+</div>
+<div class="hidden mt-8 flex justify-end gap-4" id="excel-confirm-actions">
+<button class="px-6 py-3 text-sm font-semibold text-neutral-600 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-all shadow-sm hover:shadow-md" id="btn-import-cancel">ביטול</button>
+<button class="px-6 py-3 text-sm font-semibold text-white bg-midnight-600 border border-transparent rounded-xl hover:bg-midnight-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2" id="btn-import-confirm">
+<span class="material-symbols-outlined text-[18px]">check_circle</span> אשר ייבוא
+            </button>
+</div>
+</div>
+<div class="bg-white rounded-3xl border border-neutral-100 shadow-card p-10 hover:shadow-card-hover transition-all duration-300">
+<div class="flex items-center gap-4 mb-6">
+<span class="flex items-center justify-center w-10 h-10 rounded-full bg-midnight-100 text-midnight-700 font-bold text-lg border border-midnight-200">2</span>
+<h2 class="text-2xl font-bold font-heading text-neutral-900">הגדר יתרת פתיחה</h2>
+</div>
+<p class="text-neutral-600 mb-8 leading-relaxed text-lg">הגדר את יתרת הפתיחה עבור כל שנה. זהו הבסיס לחישוב היתרה המצטברת בלוח הבקרה.</p>
+<div class="flex flex-col sm:flex-row items-end gap-5 bg-neutral-50 p-6 rounded-2xl border border-neutral-100" id="balance-inputs">
+<div class="w-full sm:w-1/3">
+<label class="block text-sm font-semibold text-neutral-700 mb-2">שנה</label>
+<input class="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-midnight-500 focus:ring-1 focus:ring-midnight-500 sm:text-base py-2.5 font-mono font-medium" id="balance-year" max="2100" min="2000" type="number" value="2025"/>
+</div>
+<div class="w-full sm:w-1/3">
+<label class="block text-sm font-semibold text-neutral-700 mb-2">יתרת פתיחה (₪)</label>
+<input class="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-midnight-500 focus:ring-1 focus:ring-midnight-500 sm:text-base py-2.5 font-mono font-medium" id="balance-amount" placeholder="0.00" step="0.01" type="number"/>
+</div>
+<button class="px-6 py-3 text-sm font-semibold text-white bg-neutral-900 border border-transparent rounded-xl hover:bg-neutral-800 transition-all shadow-md hover:shadow-lg w-full sm:w-auto transform hover:-translate-y-0.5" id="btn-save-balance">שמור יתרה</button>
+</div>
+</div>
+</div>
+</section>
+<!-- ── VIEW: SETTINGS ── -->
+<section class="view hidden max-w-3xl mx-auto space-y-8 relative z-10" id="view-settings">
+<header>
+<h1 class="text-4xl font-extrabold font-heading text-neutral-900 tracking-tight">הגדרות</h1>
+<p class="text-neutral-500 mt-2 font-medium text-lg">מידע על המערכת ועדכונים</p>
+</header>
+<div class="bg-white rounded-3xl border border-neutral-100 shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300">
+<div class="px-8 py-6 border-b border-neutral-100 bg-white">
+<h2 class="text-xl font-bold font-heading text-neutral-900">גרסת המערכת</h2>
+</div>
+<div class="p-8 flex flex-col gap-8">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-gradient-to-br from-neutral-50 to-neutral-100 rounded-2xl border border-neutral-200/60 shadow-inner gap-4">
+<div>
+<div class="text-xs font-bold text-neutral-500 mb-2 uppercase tracking-widest">גרסה נוכחית</div>
+<div class="font-mono text-3xl font-black gold-gradient-text" id="settings-current-version">—</div>
+</div>
+<div class="text-right sm:text-left">
+<div class="text-xs font-bold text-neutral-500 mb-2 uppercase tracking-widest">תאריך עדכון אחרון</div>
+<div class="font-mono text-base font-semibold text-neutral-700 bg-white px-3 py-1.5 rounded-lg border border-neutral-200 shadow-sm inline-block" id="settings-update-date">—</div>
+</div>
+</div>
+<div class="hidden p-5 rounded-xl text-sm bg-blue-50 text-blue-800 border border-blue-100 font-medium" id="settings-update-status"></div>
+<div>
+<button class="px-6 py-3 text-sm font-semibold text-white bg-midnight-900 border border-transparent rounded-xl hover:bg-midnight-800 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 w-full sm:w-auto transform hover:-translate-y-0.5" id="btn-check-update">
+<span class="material-symbols-outlined text-[20px]">sync</span> בדוק עדכונים
+              </button>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-3xl border border-neutral-100 shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300">
+<div class="px-8 py-6 border-b border-neutral-100 bg-white">
+<h2 class="text-xl font-bold font-heading text-neutral-900">אודות</h2>
+</div>
+<div class="p-8 text-base text-neutral-600 space-y-4 leading-relaxed font-medium">
+<p><strong class="text-neutral-900 font-bold font-heading text-lg">LexLedger</strong> — מערכת פרימיום לניהול שכר טרחה לעורכי דין.</p>
+<p class="bg-neutral-50 p-4 rounded-xl border border-neutral-100 text-sm">כל הנתונים שמורים מקומית בדפדפן בלבד (IndexedDB). אין שרת חיצוני. פרטיות המידע נשמרת במלואה על המכשיר שלך תוך אבטחה מירבית.</p>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- ===== MODALS ===== -->
+<!-- Generic Modal Container -->
+<div aria-modal="true" class="modal-overlay hidden fixed inset-0 flex items-center justify-center p-4" id="modal-overlay" role="dialog">
+<div class="modal bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-95 opacity-0 duration-300" id="modal">
+<div class="relative px-8 py-6 border-b border-neutral-100 bg-white/80 backdrop-blur-sm">
+<h2 class="text-2xl font-bold font-heading text-neutral-900" id="modal-title"></h2>
+<button aria-label="סגור" class="absolute top-6 left-6 text-neutral-400 hover:text-neutral-700 bg-neutral-50 hover:bg-neutral-100 p-1.5 rounded-full transition-all" id="modal-close">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="px-8 py-6" id="modal-body">
+<!-- dynamic content -->
+</div>
+<div class="px-8 py-5 bg-neutral-50/80 backdrop-blur-sm border-t border-neutral-100 flex justify-end gap-3">
+<button class="px-5 py-2.5 text-sm font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-all shadow-sm hover:shadow-md" id="modal-cancel">ביטול</button>
+<button class="px-5 py-2.5 text-sm font-semibold text-white bg-midnight-600 border border-transparent rounded-xl hover:bg-midnight-700 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5" id="modal-confirm">שמור</button>
+</div>
+</div>
+</div>
+<!-- PDF Confirm Modal -->
+<div aria-modal="true" class="modal-overlay hidden fixed inset-0 flex items-center justify-center p-4" id="pdf-modal-overlay" role="dialog">
+<div class="modal bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all flex flex-col max-h-[90vh] scale-95 opacity-0 duration-300" id="pdf-modal">
+<div class="relative px-8 py-6 border-b border-neutral-100 bg-white/80 backdrop-blur-sm">
+<h2 class="text-2xl font-bold font-heading text-neutral-900">אישור נתוני PDF</h2>
+<p class="text-base text-neutral-500 mt-1 font-medium">בדוק את הנתונים שחולצו ואשר שמירה</p>
+<button aria-label="סגור" class="absolute top-6 left-6 text-neutral-400 hover:text-neutral-700 bg-neutral-50 hover:bg-neutral-100 p-1.5 rounded-full transition-all" id="pdf-modal-close">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="px-8 py-6 overflow-y-auto flex-1 bg-neutral-50/30" id="pdf-modal-body">
+<!-- PDF extracted data form -->
+</div>
+<div class="px-8 py-5 bg-neutral-50/80 backdrop-blur-sm border-t border-neutral-100 flex justify-end gap-3">
+<button class="px-5 py-2.5 text-sm font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-all shadow-sm hover:shadow-md" id="pdf-modal-cancel">ביטול</button>
+<button class="px-5 py-2.5 text-sm font-semibold text-white bg-midnight-600 border border-transparent rounded-xl hover:bg-midnight-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2 transform hover:-translate-y-0.5" id="pdf-modal-save">
+<span class="material-symbols-outlined text-[18px]">check_circle</span> אשר ושמור חשבונית
+        </button>
+</div>
+</div>
+</div>
+<!-- Toast Container -->
+<div aria-live="polite" class="fixed bottom-8 left-8 z-50 flex flex-col gap-4" id="toast-container"></div>
+<!-- App Scripts (order matters) -->
+<script src="db.js"></script>
+<script src="ui.js"></script>
+<script src="import.js"></script>
+<script src="dashboard.js"></script>
+<script src="clients.js"></script>
+<script src="invoices.js"></script>
+<script src="payments.js"></script>
+<script src="settings.js"></script>
+<script src="app.js"></script>
+<script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').then(reg => {
+        // כשיש SW חדש שמחכה — הודע למשתמש
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              UI.toast('גרסה חדשה זמינה — עבור להגדרות לעדכון', 'info', 6000);
+            }
+          });
+        });
+      });
+    }
+
+    // Modal show animation patch
+    document.addEventListener('DOMContentLoaded', () => {
+      const originalShowModal = window.UI ? window.UI.showModal : null;
+      if (originalShowModal) {
+         window.UI.showModal = function(id) {
+            const overlay = document.getElementById(id);
+            if(overlay) {
+               overlay.classList.remove('hidden');
+               const modal = overlay.querySelector('.modal');
+               if(modal) {
+                 setTimeout(() => {
+                   modal.classList.remove('scale-95', 'opacity-0');
+                   modal.classList.add('scale-100', 'opacity-100');
+                 }, 10);
+               }
+            }
+         }
+      }
+    });
+  </script>
+</body></html>
