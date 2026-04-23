@@ -2,10 +2,13 @@
  * sw.js — LexLedger Service Worker
  * כל פעם שמספר הגרסה ב-version.json משתנה,
  * ה-SW מוחק את הcache הישן ומוריד מחדש את כל הקבצים.
+ *
+ * חשוב: כל deploy חייב לשנות את CACHE_VERSION כאן ואת version.json.
  */
 
-const CACHE_PREFIX = 'lexledger-v';
-let CACHE_NAME = CACHE_PREFIX + '1.5.0';
+const CACHE_PREFIX  = 'lexledger-v';
+const CACHE_VERSION = '1.5.1';          // ← עדכן בכל deploy
+const CACHE_NAME    = CACHE_PREFIX + CACHE_VERSION;
 
 const ASSETS = [
   './',
@@ -25,14 +28,11 @@ const ASSETS = [
 
 // ── Install ────────────────────────────────────────────
 self.addEventListener('install', (event) => {
+  // CACHE_NAME הוא קבוע בזמן compile — אין fetch async שיכול להיכשל
   event.waitUntil(
-    fetch('./version.json?_=' + Date.now())
-      .then(r => r.json())
-      .then(data => {
-        CACHE_NAME = CACHE_PREFIX + data.version;
-        return caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS));
-      })
-      .then(() => self.skipWaiting())
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(ASSETS))
+      .then(() => self.skipWaiting())  // ← דחוף את עצמך לפעולה מיד
   );
 });
 
@@ -45,7 +45,7 @@ self.addEventListener('activate', (event) => {
           .filter(k => k.startsWith(CACHE_PREFIX) && k !== CACHE_NAME)
           .map(k => caches.delete(k))
       )
-    ).then(() => self.clients.claim())
+    ).then(() => self.clients.claim())  // ← קח שליטה על כל הטאבים הפתוחים מיד
   );
 });
 
