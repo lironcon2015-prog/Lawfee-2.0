@@ -95,6 +95,7 @@ const Settings = (() => {
       warning: { bg: 'rgba(251,191,36,0.08)',   border: 'rgba(251,191,36,0.25)', color: '#fbbf24' },
     };
     const s = colors[type] || colors.info;
+    el.classList.remove('hidden');
     el.style.display    = 'block';
     el.style.background = s.bg;
     el.style.border     = `1px solid ${s.border}`;
@@ -104,7 +105,10 @@ const Settings = (() => {
 
   function _hideStatus() {
     const el = document.getElementById('settings-update-status');
-    if (el) el.style.display = 'none';
+    if (el) {
+      el.classList.add('hidden');
+      el.style.display = '';
+    }
   }
 
   function _versionGt(vA, vB) {

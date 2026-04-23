@@ -181,6 +181,12 @@ const Invoices = (() => {
           await DB.invoices.update({ ...inv, caseId, month, year, amount, commissionRate: rate, commission, notes });
           UI.toast('חשבונית עודכנה', 'success');
         } else {
+          // Duplicate check
+          const existing = await DB.invoices.getByCase(caseId);
+          const dup = existing.find(i => i.month === month && i.year === year && Math.abs(i.amount - amount) < 0.01);
+          if (dup) {
+            throw new Error(`חשבונית זהה כבר קיימת לחודש זה (${UI.formatCurrency(dup.amount)}). לשמירה בכל זאת, שנה את הסכום או בטל.`);
+          }
           await DB.invoices.add({ caseId, month, year, amount, commissionRate: rate, notes, source: 'manual' });
           UI.toast('חשבונית נשמרה', 'success');
         }

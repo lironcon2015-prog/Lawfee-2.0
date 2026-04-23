@@ -21,14 +21,27 @@ const App = (() => {
   async function navigate(viewName) {
     if (!VIEWS[viewName]) return;
 
+    // Close any open modal (prevents sticky blur overlay)
+    UI.closeModal?.();
+    const pdfOverlay = document.getElementById('pdf-modal-overlay');
+    if (pdfOverlay) pdfOverlay.classList.add('hidden');
+
     // Hide all views
     Object.values(VIEWS).forEach(v => {
       document.getElementById(v.el)?.classList.add('hidden');
     });
 
-    // Update nav
+    // Update nav — toggle Tailwind classes directly (no CSS .active rule exists)
     document.querySelectorAll('.nav-item').forEach(el => {
-      el.classList.toggle('active', el.dataset.view === viewName);
+      const isActive = el.dataset.view === viewName;
+      el.classList.toggle('active',                isActive);
+      el.classList.toggle('bg-midnight-600/30',    isActive);
+      el.classList.toggle('border',                isActive);
+      el.classList.toggle('border-midnight-500/20',isActive);
+      el.classList.toggle('font-semibold',         isActive);
+      el.classList.toggle('text-white',            isActive);
+      el.classList.toggle('font-medium',           !isActive);
+      el.classList.toggle('text-midnight-300',     !isActive);
     });
 
     // Show target view

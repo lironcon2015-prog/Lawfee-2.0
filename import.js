@@ -530,11 +530,15 @@ const Importer = (() => {
     if (caseMatches.length) result.caseNumber = caseMatches[0][1].replace(/\//g, '\\');
 
     // Date: look for month/year combos
-    // Hebrew months
-    const heMonthNames = Object.keys(HE_MONTH).join('|');
-    const dateRe1 = new RegExp(`(${heMonthNames})\\s+(20\\d{2})`, 'i');
-    const dateRe2 = /(\d{1,2})[\/\.\-](\d{2,4})/;
-    const dateRe3 = /(20\d{2})/;
+    // 1. Hebrew month name + 4-digit year (e.g. "נובמבר 2025")
+    const heMonthLong = Object.keys(HE_MONTH).filter(k => k.length > 3).join('|');
+    const dateRe1 = new RegExp(`(${heMonthLong})\\s+(20\\d{2})`, 'i');
+    // 2. DD/MM/YYYY (Israeli standard)
+    const dateRe2 = /(\d{1,2})[\/\.\-](\d{1,2})[\/\.\-](\d{4})/;
+    // 3. MM/YYYY
+    const dateRe3 = /(\d{1,2})[\/\.\-](20\d{2})/;
+    // 4. bare year
+    const dateRe4 = /(20\d{2})/;
 
     const m1 = text.match(dateRe1);
     if (m1) {
@@ -543,32 +547,60 @@ const Importer = (() => {
     } else {
       const m2 = text.match(dateRe2);
       if (m2) {
-        result.month = parseInt(m2[1], 10);
-        result.year  = m2[3] ? parseInt(m2[3], 10) : (parseInt(m2[2], 10) < 100 ? 2000 + parseInt(m2[2], 10) : parseInt(m2[2], 10));
+        // Israeli format: DD/MM/YYYY — day is [1], month is [2], year is [3]
+        const day = parseInt(m2[1], 10);
+        const mon = parseInt(m2[2], 10);
+        const yr  = parseInt(m2[3], 10);
+        if (mon >= 1 && mon <= 12) {
+          result.month = mon;
+          result.year  = yr;
+        } else if (day >= 1 && day <= 12) {
+          result.month = day;
+          result.year  = yr;
+        }
       } else {
         const m3 = text.match(dateRe3);
-        if (m3) result.year = parseInt(m3[1], 10);
+        if (m3) {
+          const mon = parseInt(m3[1], 10);
+          if (mon >= 1 && mon <= 12) {
+            result.month = mon;
+            result.year  = parseInt(m3[2], 10);
+          }
+        } else {
+          const m4 = text.match(dateRe4);
+          if (m4) result.year = parseInt(m4[1], 10);
+        }
       }
     }
 
-    // Amount: largest number in the text that looks like an invoice total
-    // Patterns: "סה"כ 23,137" or "לתשלום 8,225.00" or just the biggest ₪ number
-    const amountRe = /(?:סה"כ|לתשלום|סכום|total)[:\s]*([0-9,]+(?:\.\d{1,2})?)/gi;
+    // Amount: look for invoice total
+    // 1. Keyword + number: סה"כ / לתשלום / סכום (with both quote styles)
+    const amountRe = /(?:סה[""כ]כ|לתשלום|סכום לתשלום|סכום|total)[:\s]*[₪]?\s*([0-9,]+(?:\.\d{1,2})?)/gi;
     const amountMatches = [...text.matchAll(amountRe)];
     if (amountMatches.length) {
       const best = amountMatches
         .map(m => parseCleanNumber(m[1]))
-        .filter(n => n > 0)
+        .filter(n => n > 100)
         .sort((a, b) => b - a)[0];
       if (best) result.amount = best;
     }
 
-    // Fallback: find all numbers > 100, take the largest-looking "total"
+    // 2. ₪ prefix: e.g. "₪ 8,225.00" or "₪8225"
     if (!result.amount) {
-      const numRe = /\b([0-9]{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d{4,7}(?:\.\d{1,2})?)\b/g;
+      const shekelRe = /₪\s*([0-9,]+(?:\.\d{1,2})?)/g;
+      const shekelMatches = [...text.matchAll(shekelRe)]
+        .map(m => parseCleanNumber(m[1]))
+        .filter(n => n > 100)
+        .sort((a, b) => b - a);
+      if (shekelMatches.length) result.amount = shekelMatches[0];
+    }
+
+    // 3. Fallback: largest formatted number (e.g. "8,225.00")
+    if (!result.amount) {
+      const numRe = /\b([0-9]{1,3}(?:,\d{3})+(?:\.\d{1,2})?)\b/g;
       const nums = [...text.matchAll(numRe)]
         .map(m => parseCleanNumber(m[1]))
-        .filter(n => n >= 100)
+        .filter(n => n >= 500 && n < 10000000)
         .sort((a, b) => b - a);
       if (nums.length) result.amount = nums[0];
     }
@@ -612,13 +644,19 @@ const Importer = (() => {
       `<option value="${y}" ${y === extracted.year ? 'selected' : ''}>${y}</option>`
     ).join('');
 
+    const matchedClientName = matchedCase ? (clientMap[matchedCase.clientId] || '?') : '—';
+
     const bodyHTML = `
       <div class="pdf-confirm-grid">
-        <div class="extracted-field" style="grid-column:1/-1">
+        <div class="extracted-field">
           <div class="extracted-label">מספר תיק מזוהה</div>
           <div class="extracted-value">${extracted.caseNumber || '—'}</div>
         </div>
-        <div class="form-group">
+        <div class="extracted-field">
+          <div class="extracted-label">לקוח מזוהה</div>
+          <div class="extracted-value" id="pdf-client-label">${matchedClientName}</div>
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
           <label class="form-label">תיק</label>
           <select id="pdf-case-id" class="form-input" onchange="Importer._updateCommissionPreview()">
             <option value="">בחר תיק…</option>${caseOptions}
@@ -632,12 +670,12 @@ const Importer = (() => {
           <label class="form-label">שנה</label>
           <select id="pdf-year" class="form-input">${yearOptions}</select>
         </div>
-        <div class="form-group">
+        <div class="form-group" style="grid-column:1/-1">
           <label class="form-label">סכום חשבונית (₪)</label>
           <input type="number" id="pdf-amount" class="form-input" value="${extracted.amount || ''}"
             step="0.01" min="0" oninput="Importer._updateCommissionPreview()" />
         </div>
-        <div class="commission-preview">
+        <div class="commission-preview" style="grid-column:1/-1">
           <span class="commission-label">עמלה מחושבת (<span id="pdf-rate-label">${matchedCase ? matchedCase.commissionRate : 0}%</span>)</span>
           <span class="commission-value" id="pdf-commission-preview">
             ${matchedCase && extracted.amount
@@ -668,16 +706,25 @@ const Importer = (() => {
   function _updateCommissionPreview() {
     const caseEl  = document.getElementById('pdf-case-id');
     const amtEl   = document.getElementById('pdf-amount');
-    const rateLabel = document.getElementById('pdf-rate-label');
-    const preview = document.getElementById('pdf-commission-preview');
+    const rateLabel   = document.getElementById('pdf-rate-label');
+    const preview     = document.getElementById('pdf-commission-preview');
+    const clientLabel = document.getElementById('pdf-client-label');
     if (!caseEl || !amtEl || !preview) return;
 
-    const rate   = parseFloat(caseEl.selectedOptions[0]?.dataset?.rate) || 0;
+    const selectedOpt = caseEl.selectedOptions[0];
+    const rate   = parseFloat(selectedOpt?.dataset?.rate) || 0;
     const amount = parseFloat(amtEl.value) || 0;
     const comm   = +(amount * rate / 100).toFixed(2);
 
     if (rateLabel) rateLabel.textContent = rate + '%';
     preview.textContent = amount > 0 ? UI.formatCurrency(comm) : '—';
+
+    // Update client label from selected option text (format: "caseNum — clientName")
+    if (clientLabel) {
+      const optText = selectedOpt?.textContent?.trim() || '';
+      const parts   = optText.split('—');
+      clientLabel.textContent = parts.length > 1 ? parts.slice(1).join('—').trim() : (optText || '—');
+    }
   }
 
   async function savePdfInvoice() {
@@ -693,6 +740,27 @@ const Importer = (() => {
 
     const caseRec = await DB.cases.get(caseId);
     if (!caseRec) { UI.toast('תיק לא נמצא', 'error'); return; }
+
+    // Duplicate check: same case + month + year + amount already in DB?
+    const existing = await DB.invoices.getByCase(caseId);
+    const duplicate = existing.find(inv =>
+      inv.month === month && inv.year === year && Math.abs(inv.amount - amount) < 0.01
+    );
+    if (duplicate) {
+      const proceed = await new Promise(resolve => {
+        UI.confirm(
+          `חשבונית עם אותו תיק, חודש ושנה כבר קיימת (${UI.formatCurrency(duplicate.amount)}).<br>האם לשמור בכל זאת?`,
+          () => resolve(true)
+        );
+        // If user cancels the confirm modal, resolve false
+        const cancelBtn = document.getElementById('modal-cancel');
+        const closeBtn  = document.getElementById('modal-close');
+        const onCancel  = () => resolve(false);
+        cancelBtn?.addEventListener('click', onCancel, { once: true });
+        closeBtn?.addEventListener('click',  onCancel, { once: true });
+      });
+      if (!proceed) return;
+    }
 
     await DB.invoices.add({
       caseId, month, year, amount,

@@ -6,6 +6,32 @@
 
 const Clients = (() => {
 
+  // ── buildForm helper (UI.formField wrapper for arrays) ──
+  function buildForm(fields) {
+    return fields.map(f => {
+      const esc = s => (s || '').toString().replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      if (f.type === 'select') {
+        const opts = (f.options || []).map(o =>
+          `<option value="${esc(o.value)}" ${String(f.value) === String(o.value) ? 'selected' : ''}>${esc(o.label)}</option>`
+        ).join('');
+        return `<div class="form-group">
+          <label class="form-label" for="${f.id}">${f.label}${f.required ? ' *' : ''}</label>
+          <select id="${f.id}" class="form-input">${opts}</select>
+        </div>`;
+      }
+      return `<div class="form-group">
+        <label class="form-label" for="${f.id}">${f.label}${f.required ? ' *' : ''}</label>
+        <input type="${f.type || 'text'}" id="${f.id}" class="form-input"
+          value="${esc(f.value?.toString() ?? '')}"
+          ${f.required ? 'required' : ''}
+          ${f.step  !== undefined ? `step="${f.step}"` : ''}
+          ${f.min   !== undefined ? `min="${f.min}"`   : ''}
+          ${f.max   !== undefined ? `max="${f.max}"`   : ''}
+          ${f.placeholder ? `placeholder="${esc(f.placeholder)}"` : ''} />
+      </div>`;
+    }).join('');
+  }
+
   // ── Init ───────────────────────────────────────────────
   function init() {
     document.getElementById('btn-add-client').addEventListener('click', () => openClientModal());
@@ -195,7 +221,7 @@ const Clients = (() => {
     let client = null;
     if (clientId) client = await DB.clients.get(clientId);
 
-    const bodyHTML = UI.buildForm([
+    const bodyHTML = buildForm([
       {
         id: 'f-client-name', label: 'שם לקוח', type: 'text',
         value: client ? client.name : '', required: true,
@@ -250,7 +276,7 @@ const Clients = (() => {
     let caseRec = null;
     if (caseId) caseRec = await DB.cases.get(caseId);
 
-    const bodyHTML = UI.buildForm([
+    const bodyHTML = buildForm([
       {
         id: 'f-case-number', label: 'מספר תיק', type: 'text',
         value: caseRec ? caseRec.caseNumber : '', required: true,
