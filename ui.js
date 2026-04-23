@@ -26,8 +26,15 @@ const UI = (() => {
     '', 'ינואר','פברואר','מרץ','אפריל','מאי','יוני',
     'יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר',
   ];
+  const MONTHS_SHORT = [
+    '', 'ינו','פבר','מרץ','אפר','מאי','יוני',
+    'יול','אוג','ספט','אוק','נוב','דצמ',
+  ];
 
-  function monthName(n) { return MONTHS[n] || String(n); }
+  // short=true → ינו, פבר … (3-4 chars); short=false (default) → ינואר, פברואר …
+  function monthName(n, short = false) {
+    return (short ? MONTHS_SHORT[n] : MONTHS[n]) || String(n);
+  }
 
   // ─── Formatters ──────────────────────────────────────────
   function formatNumber(n) {
@@ -180,6 +187,11 @@ const UI = (() => {
     bodyEl.innerHTML    = bodyHTML;
     confirmBtn.textContent = confirmLabel;
 
+    // Reset confirm button to default (midnight) style — in case a previous
+    // UI.confirm() call styled it red (destructive). Always start fresh.
+    confirmBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+    confirmBtn.classList.add('bg-midnight-600', 'hover:bg-midnight-700');
+
     // Wide variant
     modal.classList.toggle('max-w-2xl', !!wide);
     modal.classList.toggle('max-w-md',  !wide);
@@ -233,12 +245,11 @@ const UI = (() => {
       onConfirm,
     });
 
-    // Style confirm button as destructive
+    // Style confirm button as destructive (openModal resets it to midnight on next open)
     const btn = document.getElementById('modal-confirm');
     if (btn) {
-      btn.className = btn.className
-        .replace('bg-midnight-600', 'bg-red-600')
-        .replace('hover:bg-midnight-700', 'hover:bg-red-700');
+      btn.classList.remove('bg-midnight-600', 'hover:bg-midnight-700');
+      btn.classList.add('bg-red-600', 'hover:bg-red-700');
     }
   }
 
@@ -307,28 +318,6 @@ const UI = (() => {
     modal?.classList.add('scale-95', 'opacity-0');
     modal?.classList.remove('scale-100', 'opacity-100');
     setTimeout(() => overlay.classList.add('hidden'), 200);
-  }
-
-  // ─── Wire nav active state ────────────────────────────────
-  function _wireNavActive() {
-    // Observe URL hash changes to keep nav in sync
-    const sync = () => {
-      const hash = (location.hash || '#dashboard').replace('#', '');
-      document.querySelectorAll('.nav-item, [data-view]').forEach(el => {
-        const isActive = el.dataset.view === hash;
-        // Active: filled/white style
-        el.classList.toggle('text-white',         isActive);
-        el.classList.toggle('bg-midnight-600/30', isActive);
-        el.classList.toggle('border',             isActive);
-        el.classList.toggle('border-midnight-500/20', isActive);
-        el.classList.toggle('shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]', isActive);
-        // Inactive: muted style
-        el.classList.toggle('text-midnight-300',       !isActive);
-        el.classList.toggle('hover:text-white',        !isActive);
-        el.classList.toggle('hover:bg-midnight-800/50',!isActive);
-      });
-    };
-    window.addEventListener('hashchange', sync);
   }
 
   // ─── Shared HTML snippet: form row ───────────────────────
@@ -419,7 +408,6 @@ const UI = (() => {
   // ─── Init ─────────────────────────────────────────────────
   function init() {
     _wireModal();
-    _wireNavActive();
   }
 
   // ─── Public ───────────────────────────────────────────────
@@ -445,6 +433,8 @@ const UI = (() => {
     confirm,
     openModal,
     closeModal,
+    // HTML escaping (shared — avoids duplicate escHtml in every module)
+    esc: _esc,
   };
 
 })();

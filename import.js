@@ -608,11 +608,6 @@ const Importer = (() => {
     return result;
   }
 
-  function parseCleanNumber(str) {
-    if (!str) return 0;
-    return parseFloat(str.replace(/,/g, '').replace(/[^\d.]/g, '')) || 0;
-  }
-
   // ── PDF Confirm Modal ──────────────────────────────────
   async function showPdfConfirmModal(extracted) {
     const cases   = await DB.cases.getAll();
@@ -747,19 +742,25 @@ const Importer = (() => {
       inv.month === month && inv.year === year && Math.abs(inv.amount - amount) < 0.01
     );
     if (duplicate) {
-      const proceed = await new Promise(resolve => {
-        UI.confirm(
-          `חשבונית עם אותו תיק, חודש ושנה כבר קיימת (${UI.formatCurrency(duplicate.amount)}).<br>האם לשמור בכל זאת?`,
-          () => resolve(true)
-        );
-        // If user cancels the confirm modal, resolve false
-        const cancelBtn = document.getElementById('modal-cancel');
-        const closeBtn  = document.getElementById('modal-close');
-        const onCancel  = () => resolve(false);
-        cancelBtn?.addEventListener('click', onCancel, { once: true });
-        closeBtn?.addEventListener('click',  onCancel, { once: true });
-      });
-      if (!proceed) return;
+      // Instead of stacking a second modal on top of the PDF modal,
+      // show an inline warning inside the PDF modal and ask the user to confirm.
+      const pdfBody = document.getElementById('pdf-modal-body');
+      const existing_warn = pdfBody?.querySelector('#pdf-dup-warning');
+      if (existing_warn) {
+        // User already saw the warning and clicked Save again → proceed
+        existing_warn.remove();
+      } else {
+        // First click — show warning and abort save
+        if (pdfBody) {
+          const warn = document.createElement('div');
+          warn.id = 'pdf-dup-warning';
+          warn.style.cssText = 'background:#fef3c7;border:1px solid #fbbf24;border-radius:12px;padding:12px 16px;margin-top:12px;font-size:0.85rem;color:#92400e;display:flex;align-items:center;gap:10px';
+          warn.innerHTML = `<span class="material-symbols-outlined" style="font-size:18px;flex-shrink:0">warning</span>
+            <span>חשבונית זהה כבר קיימת (${UI.formatCurrency(duplicate.amount)}). לחץ <strong>שמור חשבונית</strong> שוב לאישור.</span>`;
+          pdfBody.prepend(warn);
+        }
+        return; // abort — wait for second click
+      }
     }
 
     await DB.invoices.add({

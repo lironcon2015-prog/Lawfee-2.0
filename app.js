@@ -170,6 +170,12 @@ const App = (() => {
     _wireNav();
     _wireBackup();
 
+    // Handle browser back/forward navigation
+    window.addEventListener('hashchange', () => {
+      const hash = (location.hash || '').replace('#', '');
+      if (VIEWS[hash] && hash !== _currentView) navigate(hash);
+    });
+
     // Check hash routing
     const hash = (location.hash || '').replace('#', '');
     const startView = VIEWS[hash] ? hash : 'dashboard';

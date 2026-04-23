@@ -81,15 +81,8 @@ const Clients = (() => {
       const cases = casesByClient[client.id] || [];
       return buildClientCard(client, cases);
     }).join('');
-
-    // Wire toggle + buttons
-    container.querySelectorAll('.client-card-header').forEach(header => {
-      header.addEventListener('click', (e) => {
-        if (e.target.closest('button')) return;
-        const card = header.closest('.client-card');
-        card.classList.toggle('expanded');
-      });
-    });
+    // Note: accordion toggle is handled natively by <details>/<summary> elements.
+    // No JS click wiring needed.
   }
 
   // ── Case type badge ────────────────────────────────────
@@ -468,9 +461,7 @@ const Clients = (() => {
     await render();
   }
 
-  function escHtml(str) {
-    return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-  }
+  function escHtml(str) { return UI.esc(str); }
 
   return { init, render, openClientModal, openCaseModal, deleteClient, deleteCase, openMergeModal };
 })();

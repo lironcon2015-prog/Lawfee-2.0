@@ -261,12 +261,15 @@ const DB = (() => {
       return list.reduce((s, p) => s + (p.amount || 0), 0);
     },
 
-    /** Grouped by month for a given year */
+    /** Grouped by month for a given year.
+     *  Returns { 1: total, …, 12: total, 0: total_without_month }
+     *  Key 0 holds payments where month is null/unknown.
+     */
     byMonthForYear: async (year) => {
       const list = await _getAllByIndex('payments', 'year', year);
       const result = {};
       list.forEach(p => {
-        const m = p.month || 0;
+        const m = (p.month != null && p.month >= 1 && p.month <= 12) ? p.month : 0;
         result[m] = (result[m] || 0) + (p.amount || 0);
       });
       return result;

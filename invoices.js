@@ -243,9 +243,7 @@ const Invoices = (() => {
     });
   }
 
-  function escHtml(str) {
-    return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-  }
+  function escHtml(str) { return UI.esc(str); }
 
   return { init, render, openInvoiceModal, deleteInvoice, _onCaseChange, _onAmountChange };
 })();

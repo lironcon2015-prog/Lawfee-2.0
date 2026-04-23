@@ -112,8 +112,9 @@ const Dashboard = (() => {
     const bars = [];
     const xLabels = [];
     months.forEach((mo, idx) => {
-      const groupRight = W - padR - (idx * groupW);
-      const groupLeft  = groupRight - groupW;
+      // LTR order: idx=0 (January) starts at padL, idx=11 (December) at the right
+      const groupLeft  = padL + (idx * groupW);
+      const groupRight = groupLeft + groupW;
       const cx = (groupLeft + groupRight) / 2;
 
       const revH  = (mo.amount     / niceMax) * plotH;
@@ -292,6 +293,20 @@ const Dashboard = (() => {
         <td class="num">${inv.amount  > 0 ? UI.formatNumber(inv.amount)     : '—'}</td>
         <td class="num text-gold">${inv.commission > 0 ? UI.formatNumber(inv.commission) : '—'}</td>
         <td class="num positive">${pay > 0 ? UI.formatNumber(pay) : '—'}</td>
+        <td class="num ${runningBalance >= 0 ? '' : 'negative'}">${UI.formatNumber(runningBalance)}</td>
+      </tr>`;
+    }
+
+    // Payments with no month assigned (key 0) — deduct from balance but show separately
+    const unknownPay = payByMonth[0] || 0;
+    if (unknownPay > 0) {
+      runningBalance -= unknownPay;
+      totalPay += unknownPay;
+      rows += `<tr class="text-muted">
+        <td class="month-label" style="font-style:italic">ללא חודש</td>
+        <td class="num">—</td>
+        <td class="num">—</td>
+        <td class="num positive">${UI.formatNumber(unknownPay)}</td>
         <td class="num ${runningBalance >= 0 ? '' : 'negative'}">${UI.formatNumber(runningBalance)}</td>
       </tr>`;
     }
