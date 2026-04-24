@@ -393,7 +393,7 @@ select { appearance: none; -webkit-appearance: none; }
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
+  font-size: 0.95rem;
   font-family: 'Heebo', sans-serif;
 }
 
@@ -402,8 +402,8 @@ select { appearance: none; -webkit-appearance: none; }
 }
 
 .data-table th {
-  padding: 20px 28px;
-  font-size: 0.875rem;
+  padding: 14px 20px;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-muted);
   text-align: right;
@@ -420,7 +420,7 @@ select { appearance: none; -webkit-appearance: none; }
 }
 
 .data-table td {
-  padding: 20px 28px;
+  padding: 14px 20px;
   border-bottom: 1px solid var(--border);
   color: var(--text-primary);
   vertical-align: middle;
