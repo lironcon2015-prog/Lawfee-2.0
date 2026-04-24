@@ -120,7 +120,7 @@ const Clients = (() => {
     const casesHTML = cases.length
       ? `<div class="overflow-x-auto rounded-xl border border-neutral-200 bg-white">
           <table class="w-full text-right text-neutral-600 data-table">
-            <thead class="bg-neutral-50 text-neutral-500 border-b border-neutral-200 font-heading">
+            <thead class="bg-neutral-50 text-neutral-500 border-b border-neutral-200">
               <tr>
                 <th class="px-6 py-4" scope="col">מספר תיק</th>
                 <th class="px-6 py-4" scope="col">תיאור</th>

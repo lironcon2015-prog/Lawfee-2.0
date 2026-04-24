@@ -394,6 +394,7 @@ select { appearance: none; -webkit-appearance: none; }
   width: 100%;
   border-collapse: collapse;
   font-size: 0.875rem;
+  font-family: 'Heebo', sans-serif;
 }
 
 .data-table thead tr {
@@ -404,7 +405,6 @@ select { appearance: none; -webkit-appearance: none; }
   padding: 20px 28px;
   font-size: 0.875rem;
   font-weight: 700;
-  font-family: 'Rubik', sans-serif;
   color: var(--text-muted);
   text-align: right;
   border-bottom: 1px solid var(--border);
