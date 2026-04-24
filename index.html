@@ -337,18 +337,18 @@
 </div>
 <!-- Monthly Breakdown Table -->
 <div class="bg-white rounded-3xl border border-neutral-100 shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300">
-<div class="px-7 py-6 border-b border-neutral-100 bg-white">
+<div class="px-6 py-4 border-b border-neutral-100 bg-white">
 <h2 class="text-xl font-bold font-heading text-neutral-900">פירוט חודשי</h2>
 </div>
 <div class="overflow-x-auto">
 <table class="w-full text-sm text-right data-table" id="monthly-table">
-<thead class="text-xs text-neutral-500 uppercase bg-neutral-50/80 font-bold tracking-wider">
+<thead class="bg-neutral-50/80 text-neutral-500">
 <tr>
-<th class="px-7 py-5">חודש</th>
-<th class="px-7 py-5 num">הכנסות</th>
-<th class="px-7 py-5 num">עמלה</th>
-<th class="px-7 py-5 num">תשלומים</th>
-<th class="px-7 py-5 num">יתרה מצטברת</th>
+<th class="">חודש</th>
+<th class="num">הכנסות</th>
+<th class="num">עמלה</th>
+<th class="num">תשלומים</th>
+<th class="num">יתרה מצטברת</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-neutral-100" id="monthly-tbody">
@@ -359,7 +359,7 @@
 </div>
 <!-- Per-Client Table -->
 <div class="bg-white rounded-3xl border border-neutral-100 shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300">
-<div class="px-7 py-6 border-b border-neutral-100 bg-white flex items-center justify-between">
+<div class="px-6 py-4 border-b border-neutral-100 bg-white flex items-center justify-between">
 <h2 class="text-xl font-bold font-heading text-neutral-900">פירוט לפי לקוח</h2>
 <div class="flex gap-3">
 <button class="px-4 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-semibold text-neutral-700 flex items-center gap-2 hover:bg-neutral-100 transition-colors shadow-sm">
@@ -371,15 +371,15 @@
 </div>
 </div>
 <div class="overflow-x-auto">
-<table class="w-full text-right text-sm" id="client-breakdown-table">
+<table class="w-full text-right text-sm data-table" id="client-breakdown-table">
 <thead class="bg-neutral-50/80 text-neutral-500 font-heading">
 <tr>
-<th class="px-7 py-5 font-bold">לקוח</th>
-<th class="px-7 py-5 font-bold">תיק</th>
-<th class="px-7 py-5 font-bold num">% עמלה</th>
-<th class="px-7 py-5 font-bold num">סך הכנסות</th>
-<th class="px-7 py-5 font-bold num">סך עמלות</th>
-<th class="px-7 py-5 font-bold text-center">סטטוס</th>
+<th class="">לקוח</th>
+<th class="">תיק</th>
+<th class="num">% עמלה</th>
+<th class="num">סך הכנסות</th>
+<th class="num">סך עמלות</th>
+<th class="text-center">סטטוס</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-neutral-100" id="client-breakdown-tbody">
@@ -390,7 +390,7 @@
 </div>
 <!-- Per-Client Monthly Table -->
 <div class="bg-white rounded-3xl border border-neutral-100 shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300">
-<div class="px-7 py-6 border-b border-neutral-100 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="px-6 py-4 border-b border-neutral-100 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 <div>
 <h2 class="text-xl font-bold font-heading text-neutral-900">עמלות לפי לקוח וחודש</h2>
 <p class="text-sm text-neutral-500 mt-1">הנתונים ב-₪</p>
@@ -402,7 +402,7 @@
 </div>
 <div class="overflow-x-auto">
 <table class="w-full text-sm text-right data-table min-w-[900px]" id="client-monthly-table">
-<thead class="text-xs text-neutral-500 uppercase bg-neutral-50/80 font-bold tracking-wider" id="client-monthly-thead"></thead>
+<thead class="bg-neutral-50/80 text-neutral-500" id="client-monthly-thead"></thead>
 <tbody class="divide-y divide-neutral-100" id="client-monthly-tbody">
 <tr><td class="empty-state" colspan="14">טוען נתונים…</td></tr>
 </tbody>
@@ -476,22 +476,22 @@
 </div>
 </div>
 <div class="bg-white rounded-3xl border border-neutral-100 shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300">
-<div class="px-7 py-6 border-b border-neutral-100 bg-white">
+<div class="px-6 py-4 border-b border-neutral-100 bg-white">
 <h2 class="text-xl font-bold font-heading text-neutral-900">היסטוריית חשבוניות</h2>
 </div>
 <div class="overflow-x-auto">
 <table class="w-full text-sm text-right data-table" id="invoices-table">
-<thead class="text-xs text-neutral-500 uppercase bg-neutral-50/80 font-bold tracking-wider">
+<thead class="bg-neutral-50/80 text-neutral-500">
 <tr>
-<th class="px-7 py-5">לקוח</th>
-<th class="px-7 py-5">תיק</th>
-<th class="px-7 py-5">חודש</th>
-<th class="px-7 py-5">שנה</th>
-<th class="px-7 py-5 num">סכום</th>
-<th class="px-7 py-5 num">% עמלה</th>
-<th class="px-7 py-5 num">עמלה</th>
-<th class="px-7 py-5">מקור</th>
-<th class="px-7 py-5"></th>
+<th class="">לקוח</th>
+<th class="">תיק</th>
+<th class="">חודש</th>
+<th class="">שנה</th>
+<th class="num">סכום</th>
+<th class="num">% עמלה</th>
+<th class="num">עמלה</th>
+<th class="">מקור</th>
+<th class=""></th>
 </tr>
 </thead>
 <tbody class="divide-y divide-neutral-100" id="invoices-tbody">
@@ -518,13 +518,13 @@
 <div class="bg-white rounded-3xl border border-neutral-100 shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300">
 <div class="overflow-x-auto">
 <table class="w-full text-sm text-right data-table" id="payments-table">
-<thead class="text-xs text-neutral-500 uppercase bg-neutral-50/80 font-bold tracking-wider">
+<thead class="bg-neutral-50/80 text-neutral-500">
 <tr>
-<th class="px-7 py-5">חודש</th>
-<th class="px-7 py-5">שנה</th>
-<th class="px-7 py-5 num">סכום</th>
-<th class="px-7 py-5">הערות</th>
-<th class="px-7 py-5"></th>
+<th class="">חודש</th>
+<th class="">שנה</th>
+<th class="num">סכום</th>
+<th class="">הערות</th>
+<th class=""></th>
 </tr>
 </thead>
 <tbody class="divide-y divide-neutral-100" id="payments-tbody">
