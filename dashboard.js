@@ -279,7 +279,10 @@ const Dashboard = (() => {
     let totalAmt = 0, totalComm = 0, totalPay = 0;
     let rows = '';
 
-    for (let m = 1; m <= 12; m++) {
+    const now = new Date();
+    const maxMonth = _year === now.getFullYear() ? now.getMonth() + 1 : 12;
+
+    for (let m = 1; m <= maxMonth; m++) {
       const inv = invByMonth[m] || { amount: 0, commission: 0 };
       const pay = payByMonth[m]  || 0;
       runningBalance += inv.commission - pay;
@@ -449,7 +452,10 @@ const Dashboard = (() => {
 
     const sortedKeys = Object.keys(matrix).sort((a, b) => rowMeta[a].sortKey.localeCompare(rowMeta[b].sortKey, 'he'));
 
-    const monthHeaders = Array.from({length:12}, (_,i) =>
+    const now = new Date();
+    const maxMonth = _year === now.getFullYear() ? now.getMonth() + 1 : 12;
+
+    const monthHeaders = Array.from({length:maxMonth}, (_,i) =>
       `<th class="num py-4 px-4 font-bold" style="font-size:0.78rem">${UI.monthName(i+1, true)}</th>`
     ).join('');
     thead.innerHTML = `<tr>
@@ -467,7 +473,7 @@ const Dashboard = (() => {
       const months = matrix[rowKey] || {};
       let rowTotal = 0;
       let cells = '';
-      for (let m = 1; m <= 12; m++) {
+      for (let m = 1; m <= maxMonth; m++) {
         const val = (months[m] || {})[metric] || 0;
         rowTotal += val;
         monthTotals[m] = (monthTotals[m] || 0) + val;
@@ -483,7 +489,7 @@ const Dashboard = (() => {
     });
 
     // Styled total row — indigo tint, matching the design
-    const totalCells = Array.from({length:12}, (_,i) => {
+    const totalCells = Array.from({length:maxMonth}, (_,i) => {
       const v = monthTotals[i+1] || 0;
       return `<td class="num py-5 px-4 font-bold text-neutral-900">${v > 0 ? UI.formatNumber(v) : '—'}</td>`;
     }).join('');
