@@ -17,7 +17,7 @@ PWA ניהול שכר טרחה לעורך דין. Vanilla JS, HTML5, IndexedDB, 
 ```
 index.html       — shell ראשי + כל HTML של כל views (668 שורות)
 style.css        — עיצוב לתוכן שנוצר ב-JS (data-table, btn-*, cards, charts)
-sw.js            — Service Worker (CACHE_VERSION — המשתמש מעדכן ידנית)
+sw.js            — Service Worker (CACHE_VERSION — bump בכל commit שמשנה קוד)
 version.json     — { "version": "X.Y.Z", "date": "YYYY-MM-DD" }
 
 db.js            — IndexedDB wrapper (כל persistence)
@@ -367,21 +367,23 @@ nav a[data-view="dashboard|clients|invoices|payments|import|settings"]
 
 ## כללי עבודה
 
-1. **עדכן גרסה בכל פעולה** — בכל commit שמשנה קוד (HTML/CSS/JS), חובה לעדכן ביחד:
+1. **עבודה ישירה על `main`** — כל משימה מבוצעת על בראנץ' `main` (checkout main לפני התחלה אם נדרש). אין בראנצ'ים נפרדים בלי בקשה מפורשת.
+2. **תמיד להשלים את המשימה עד הסוף** — בצע שינוי → bump גרסה → commit → push ל-`origin main`. לא עוצרים באמצע. ה-remote חייב להיות מעודכן בסוף כל פעולה.
+3. **עדכן גרסה בכל פעולה** — בכל commit שמשנה קוד (HTML/CSS/JS), חובה לעדכן ביחד:
    - `sw.js` — שנה את `CACHE_VERSION` (למשל `'1.5.1'` → `'1.5.2'`)
    - `version.json` — עדכן `version` + `date` (YYYY-MM-DD, תאריך היום)
    - שיטת bump: patch (1.5.1→1.5.2) לתיקוני UI/באגים קטנים; minor (1.5→1.6) לפיצ'ר חדש; major לשינוי שובר תאימות
    - שני הקבצים חייבים להיות תמיד באותה הגרסה
-2. **RTL תמיד** — Tailwind: `ml-*` הוא visual-left (= physical-left, בעברית = כיוון ה"התחלה")
-3. **HTML ב-index.html** — views קיימים מראש; JS ממלא `innerHTML` בלבד
-4. **אל תוסף framework** — Vanilla JS בלבד
-5. **סדר scripts חשוב** — db → ui → import → dashboard → clients → invoices → payments → settings → app
-6. **design/** — לא לגעת בעבודה רגילה
-7. **Tailwind + style.css** — שניהם פעילים; Tailwind לshell/layout, style.css לJS-generated HTML
+4. **RTL תמיד** — Tailwind: `ml-*` הוא visual-left (= physical-left, בעברית = כיוון ה"התחלה")
+5. **HTML ב-index.html** — views קיימים מראש; JS ממלא `innerHTML` בלבד
+6. **אל תוסף framework** — Vanilla JS בלבד
+7. **סדר scripts חשוב** — db → ui → import → dashboard → clients → invoices → payments → settings → app
+8. **design/** — לא לגעת בעבודה רגילה
+9. **Tailwind + style.css** — שניהם פעילים; Tailwind לshell/layout, style.css לJS-generated HTML
 
-### Flow ביצוע סטנדרטי
-לכל משימה שמשנה קוד, סדר הפעולות:
-1. בצע את השינוי בקוד
-2. Bump ל-`sw.js` (CACHE_VERSION) **ו**-`version.json` (version + date) — תמיד ביחד
-3. Commit יחיד שכולל: שינויי הקוד + sw.js + version.json
-4. Push
+### Flow ביצוע סטנדרטי (חובה לכל משימה)
+1. ודא שאתה על `main` ומסונכרן (`git checkout main && git pull origin main`)
+2. בצע את השינוי בקוד
+3. Bump ל-`sw.js` (CACHE_VERSION) **ו**-`version.json` (version + date) — תמיד ביחד
+4. Commit יחיד שכולל: שינויי הקוד + sw.js + version.json
+5. `git push origin main` — חובה, אחרת המשימה לא הושלמה
