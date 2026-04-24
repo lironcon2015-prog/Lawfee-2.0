@@ -7,7 +7,7 @@
  */
 
 const CACHE_PREFIX  = 'lexledger-v';
-const CACHE_VERSION = '1.5.7';          // ← עדכן בכל deploy
+const CACHE_VERSION = '1.5.8';          // ← עדכן בכל deploy
 const CACHE_NAME    = CACHE_PREFIX + CACHE_VERSION;
 
 const ASSETS = [
