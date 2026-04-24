@@ -685,16 +685,29 @@ const Importer = (() => {
       </div>`;
 
     const overlay = document.getElementById('pdf-modal-overlay');
+    const modal   = document.getElementById('pdf-modal');
     document.getElementById('pdf-modal-body').innerHTML = bodyHTML;
     overlay.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        modal?.classList.remove('scale-95', 'opacity-0');
+        modal?.classList.add('scale-100', 'opacity-100');
+      });
+    });
 
-    document.getElementById('pdf-modal-close').onclick  = () => overlay.classList.add('hidden');
-    document.getElementById('pdf-modal-cancel').onclick = () => overlay.classList.add('hidden');
-    overlay.onclick = (e) => { if (e.target === overlay) overlay.classList.add('hidden'); };
+    const closeIt = () => {
+      modal?.classList.add('scale-95', 'opacity-0');
+      modal?.classList.remove('scale-100', 'opacity-100');
+      setTimeout(() => overlay.classList.add('hidden'), 200);
+    };
+
+    document.getElementById('pdf-modal-close').onclick  = closeIt;
+    document.getElementById('pdf-modal-cancel').onclick = closeIt;
+    overlay.onclick = (e) => { if (e.target === overlay) closeIt(); };
 
     document.getElementById('pdf-modal-save').onclick = async () => {
       await savePdfInvoice();
-      overlay.classList.add('hidden');
+      closeIt();
     };
   }
 
