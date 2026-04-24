@@ -456,7 +456,7 @@ const Dashboard = (() => {
     const maxMonth = _year === now.getFullYear() ? now.getMonth() + 1 : 12;
 
     const monthHeaders = Array.from({length:maxMonth}, (_,i) =>
-      `<th class="num py-4 px-4 font-bold" style="font-size:0.78rem">${UI.monthName(i+1, true)}</th>`
+      `<th class="num py-4 px-4 font-bold">${UI.monthName(i+1, true)}</th>`
     ).join('');
     thead.innerHTML = `<tr>
       <th class="py-4 px-4 text-right font-bold">${byCase ? 'לקוח / תיק' : 'לקוח'}</th>
@@ -477,15 +477,15 @@ const Dashboard = (() => {
         const val = (months[m] || {})[metric] || 0;
         rowTotal += val;
         monthTotals[m] = (monthTotals[m] || 0) + val;
-        cells += `<td class="num py-4 px-4" style="font-size:0.8rem">${val > 0 ? UI.formatNumber(val) : '<span style="color:var(--text-muted)">—</span>'}</td>`;
+        cells += `<td class="num py-4 px-4">${val > 0 ? UI.formatNumber(val) : '<span style="color:var(--text-muted)">—</span>'}</td>`;
       }
       grandTotal += rowTotal;
 
       const labelCell = byCase
-        ? `<td class="py-4 px-4" style="font-size:0.85rem"><div style="font-weight:500">${meta.label}</div><div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);margin-top:2px">${meta.subLabel}</div></td>`
-        : `<td class="py-4 px-4 font-semibold text-neutral-800" style="font-size:0.88rem;white-space:nowrap">${meta.label}</td>`;
+        ? `<td class="py-4 px-4"><div style="font-weight:500">${meta.label}</div><div style="font-family:var(--font-mono);font-size:0.8rem;color:var(--text-muted);margin-top:2px">${meta.subLabel}</div></td>`
+        : `<td class="py-4 px-4 font-semibold text-neutral-800" style="white-space:nowrap">${meta.label}</td>`;
 
-      rows += `<tr class="hover:bg-neutral-50/50 transition-colors">${labelCell}${cells}<td class="num py-4 px-4 font-bold ${metric === 'commission' ? 'text-midnight-600' : ''}" style="font-size:0.88rem">${UI.formatNumber(rowTotal)}</td></tr>`;
+      rows += `<tr class="hover:bg-neutral-50/50 transition-colors">${labelCell}${cells}<td class="num py-4 px-4 font-bold ${metric === 'commission' ? 'text-midnight-600' : ''}">${UI.formatNumber(rowTotal)}</td></tr>`;
     });
 
     // Styled total row — indigo tint, matching the design
@@ -494,9 +494,9 @@ const Dashboard = (() => {
       return `<td class="num py-5 px-4 font-bold text-neutral-900">${v > 0 ? UI.formatNumber(v) : '—'}</td>`;
     }).join('');
     rows += `<tr style="background:rgba(79,70,229,0.04);border-top:2px solid rgba(79,70,229,0.15)">
-      <td class="py-5 px-4 font-bold text-midnight-600" style="font-size:0.88rem">סה"כ חודשי</td>
+      <td class="py-5 px-4 font-bold text-midnight-600">סה"כ חודשי</td>
       ${totalCells}
-      <td class="num py-5 px-4 font-black text-midnight-600" style="font-size:0.88rem">${UI.formatNumber(grandTotal)}</td>
+      <td class="num py-5 px-4 font-black text-midnight-600">${UI.formatNumber(grandTotal)}</td>
     </tr>`;
 
     tbody.innerHTML = rows;
