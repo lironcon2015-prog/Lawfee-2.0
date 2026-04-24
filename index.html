@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-
-<html dir="rtl" lang="he"><head>
+<html dir="rtl" lang="he">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>LexLedger — ניהול שכר טרחה</title>
 <!-- Fonts -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&amp;family=Heebo:wght@400;500;600;700;800&amp;family=Rubik:wght@400;500;600;700;800;900&amp;family=IBM+Plex+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@300..700,0..1&amp;display=swap" rel="stylesheet"/>
-<!-- App styles (used by JS-generated content: tables, cards, charts, buttons) -->
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Rubik:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@300..700,0..1&display=swap" rel="stylesheet"/>
+<!-- App styles -->
 <link rel="stylesheet" href="style.css" />
 <!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -24,56 +24,24 @@
           },
           colors: {
             midnight: {
-              50: '#eef2ff',
-              100: '#e0e7ff',
-              200: '#c7d2fe',
-              300: '#a5b4fc',
-              400: '#818cf8',
-              500: '#6366f1',
-              600: '#4f46e5',
-              700: '#4338ca',
-              800: '#3730a3',
-              900: '#1e1b4b',
-              950: '#0f0d23',
+              50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc',
+              400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca',
+              800: '#3730a3', 900: '#1e1b4b', 950: '#0f0d23',
             },
             neutral: {
-              50: '#f8fafc',
-              100: '#f1f5f9',
-              200: '#e2e8f0',
-              300: '#cbd5e1',
-              400: '#94a3b8',
-              500: '#64748b',
-              600: '#475569',
-              700: '#334155',
-              800: '#1e293b',
-              900: '#0f172a',
-              950: '#020617',
+              50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1',
+              400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155',
+              800: '#1e293b', 900: '#0f172a', 950: '#020617',
             },
             accent: {
-              50: '#eff6ff',
-              100: '#dbeafe',
-              200: '#bfdbfe',
-              300: '#93c5fd',
-              400: '#60a5fa',
-              500: '#3b82f6',
-              600: '#2563eb',
-              700: '#1d4ed8',
-              800: '#1e40af',
-              900: '#1e3a8a',
-              950: '#172554',
+              50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+              400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8',
+              800: '#1e40af', 900: '#1e3a8a', 950: '#172554',
             },
             gold: {
-              50: '#fffbf0',
-              100: '#fff5d6',
-              200: '#ffe8ab',
-              300: '#ffd67a',
-              400: '#ffbf42',
-              500: '#f59e0b',
-              600: '#d97706',
-              700: '#b45309',
-              800: '#92400e',
-              900: '#78350f',
-              950: '#451a03',
+              50: '#fffbf0', 100: '#fff5d6', 200: '#ffe8ab', 300: '#ffd67a',
+              400: '#ffbf42', 500: '#f59e0b', 600: '#d97706', 700: '#b45309',
+              800: '#92400e', 900: '#78350f', 950: '#451a03',
             }
           },
           boxShadow: {
@@ -86,9 +54,7 @@
     }
   </script>
 <!-- External Libraries (CDN) -->
-<!-- SheetJS (xlsx) -->
 <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-<!-- PDF.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
     if (typeof pdfjsLib !== 'undefined') {
@@ -97,8 +63,6 @@
     }
   </script>
 <style>
-    /* Custom non-Tailwind styles mapped to new variables where possible, 
-       but primarily leveraging Tailwind classes in HTML now */
     :root {
       --bg-primary: #f8fafc;
       --bg-secondary: #ffffff;
@@ -111,74 +75,47 @@
       --color-gold: #b45309;
       --font-mono: 'IBM Plex Mono', monospace;
     }
-
     body {
       background-color: var(--bg-primary);
       color: var(--text-primary);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
-
-    /* Keep some essential structure/transitions */
     .hidden { display: none !important; }
-    
-    .view {
-      animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
+    .view { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    /* Modal */
     .modal-overlay {
       background-color: rgba(15, 13, 35, 0.6);
       backdrop-filter: blur(8px);
       z-index: 50;
     }
-    
-    /* Table specific styles for empty states/structure */
     .data-table th.num, .data-table td.num {
-      text-align: left;
-      font-family: var(--font-mono);
+      text-align: left; font-family: var(--font-mono);
     }
     .empty-state {
-      text-align: center;
-      padding: 4rem !important;
-      color: var(--text-muted);
-      font-style: italic;
+      text-align: center; padding: 4rem !important;
+      color: var(--text-muted); font-style: italic;
     }
-
-    /* Dropzones */
     .dropzone-inner, .import-dropzone {
-      border: 2px dashed var(--border-color);
-      border-radius: 1rem;
-      background-color: rgba(255, 255, 255, 0.5);
-      backdrop-filter: blur(4px);
+      border: 2px dashed var(--border-color); border-radius: 1rem;
+      background-color: rgba(255, 255, 255, 0.5); backdrop-filter: blur(4px);
       transition: all 0.3s ease;
     }
     .dropzone-inner:hover, .import-dropzone:hover {
-      border-color: var(--accent);
-      background-color: rgba(238, 242, 255, 0.8);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.1);
+      border-color: var(--accent); background-color: rgba(238, 242, 255, 0.8);
+      transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.1);
     }
-    
-    /* Chart stubs */
-    .chart-body { min-height: 300px; display: flex; align-items: flex-end; gap: 8px; padding-top: 1rem; }
-    .donut-body { min-height: 250px; display: flex; align-items: center; justify-content: center; }
-
     .gold-gradient-text {
       background: linear-gradient(to right, #d97706, #f59e0b, #d97706);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
   </style>
 </head>
 <body class="font-sans antialiased text-neutral-900 bg-neutral-50 selection:bg-midnight-200 selection:text-midnight-900">
-<!-- ===== APP SHELL ===== -->
 <div class="flex h-screen overflow-hidden" id="app">
 <!-- SIDEBAR -->
 <aside class="w-72 bg-midnight-950 border-l border-midnight-900 flex flex-col shadow-2xl z-20 text-neutral-100" id="sidebar">
@@ -218,16 +155,15 @@
 <div class="p-6 border-t border-midnight-900 bg-midnight-950/50 flex flex-col gap-3">
 <button class="flex items-center justify-center w-full px-4 py-2.5 text-sm font-medium text-midnight-100 bg-midnight-800/80 border border-midnight-700/50 rounded-xl hover:bg-midnight-700 hover:text-white transition-all duration-300 shadow-lg" id="btn-export-backup" title="גיבוי JSON מלא">
 <span class="material-symbols-outlined ml-2 text-[18px]">download</span> גיבוי נתונים
-        </button>
+</button>
 <button class="flex items-center justify-center w-full px-4 py-2.5 text-sm font-medium text-midnight-100 bg-midnight-800/80 border border-midnight-700/50 rounded-xl hover:bg-midnight-700 hover:text-white transition-all duration-300 shadow-lg" id="btn-import-backup" title="שחזור מגיבוי JSON">
 <span class="material-symbols-outlined ml-2 text-[18px]">upload</span> שחזור נתונים
-        </button>
+</button>
 <input accept=".json" class="hidden" id="input-restore-file" type="file"/>
 </div>
 </aside>
 <!-- MAIN CONTENT -->
 <main class="flex-1 overflow-y-auto bg-[#f4f6fa] p-8 md:p-12 relative" id="main-content">
-<!-- Subtle background decoration -->
 <div class="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-white to-transparent pointer-events-none z-0"></div>
 <!-- ── VIEW: DASHBOARD ── -->
 <section class="view max-w-7xl mx-auto space-y-8 relative z-10" id="view-dashboard">
@@ -313,28 +249,34 @@
 </div>
 </div>
 </div>
-<!-- Charts row -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-<div class="lg:col-span-2 bg-white rounded-3xl border border-neutral-100 shadow-card p-7 hover:shadow-card-hover transition-all duration-300">
-<div class="flex items-center justify-between mb-8">
-<div>
-<h2 class="text-xl font-bold font-heading text-neutral-900">תזרים חודשי</h2>
-<p class="text-neutral-500 text-sm">הכנסות מול עמלות (₪)</p>
+
+<!-- Charts row (Updated to 60/40 layout) -->
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+  <div class="lg:col-span-3 flex flex-col bg-white rounded-[24px] border border-neutral-200 shadow-sm p-6 md:p-8 min-h-[400px]">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h2 class="text-xl font-bold font-heading text-neutral-900">תזרים חודשי</h2>
+        <p class="text-neutral-500 text-sm mt-1">הכנסות מול עמלות (₪)</p>
+      </div>
+      <div class="flex gap-4 text-sm font-medium bg-neutral-50 px-4 py-2 rounded-xl border border-neutral-100">
+        <span class="flex items-center text-neutral-700"><span class="w-3 h-3 rounded-full bg-[#4f46e5] ml-2 shadow-sm"></span>הכנסות</span>
+        <!-- מקרא עמלות תוקן לירוק -->
+        <span class="flex items-center text-neutral-700"><span class="w-3 h-3 rounded-full bg-[#10b981] ml-2 shadow-sm"></span>עמלות</span>
+      </div>
+    </div>
+    <!-- מכל הגרף (גמיש) -->
+    <div class="flex-1 w-full relative flex flex-col justify-end mt-4" id="monthly-chart"></div>
+  </div>
+  
+  <div class="lg:col-span-2 flex flex-col bg-white rounded-[24px] border border-neutral-200 shadow-sm p-6 md:p-8 min-h-[400px]">
+    <div class="mb-4">
+      <h2 class="text-xl font-bold font-heading text-neutral-900">פילוח עמלות לפי לקוח</h2>
+    </div>
+    <!-- מכל הדונאט (גמיש, צד לצד) -->
+    <div class="flex-1 w-full flex flex-col sm:flex-row items-center justify-center gap-8 mt-2" id="client-donut"></div>
+  </div>
 </div>
-<div class="flex gap-4 text-sm font-medium bg-neutral-50 px-4 py-2 rounded-xl border border-neutral-100">
-<span class="flex items-center text-neutral-700"><span class="w-3 h-3 rounded-full bg-[#4f46e5] ml-2 shadow-sm"></span>הכנסות</span>
-<span class="flex items-center text-neutral-700"><span class="w-3 h-3 rounded-full bg-[#fcd34d] ml-2 shadow-sm"></span>עמלות</span>
-</div>
-</div>
-<div class="chart-body" id="monthly-chart"></div>
-</div>
-<div class="bg-white rounded-3xl border border-neutral-100 shadow-card p-7 hover:shadow-card-hover transition-all duration-300">
-<div class="mb-6">
-<h2 class="text-xl font-bold font-heading text-neutral-900">פילוח הכנסות לפי לקוח</h2>
-</div>
-<div class="chart-body donut-body" id="client-donut"></div>
-</div>
-</div>
+
 <!-- Monthly Breakdown Table -->
 <div class="bg-white rounded-2xl border border-neutral-100 shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300">
 <div class="px-6 py-4 border-b border-neutral-100 bg-white">
@@ -411,7 +353,6 @@
 </section>
 <!-- ── VIEW: CLIENTS ── -->
 <section class="view hidden max-w-6xl mx-auto space-y-8 relative z-10" id="view-clients">
-  <!-- Header -->
   <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
     <div>
       <h1 class="text-4xl font-extrabold font-heading text-neutral-900 tracking-tight">לקוחות ותיקים</h1>
@@ -421,7 +362,6 @@
       <span class="material-symbols-outlined text-[20px]">add</span> לקוח חדש
     </button>
   </div>
-  <!-- Search & Filters -->
   <div class="bg-white p-4 rounded-2xl shadow-sm border border-neutral-100 flex flex-col md:flex-row gap-4">
     <div class="relative flex-1">
       <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -443,7 +383,6 @@
       </button>
     </div>
   </div>
-  <!-- Client list — populated by clients.js -->
   <div class="space-y-4" id="clients-list"></div>
 </section>
 <!-- ── VIEW: INVOICES ── -->
@@ -460,10 +399,9 @@
 </select>
 <button class="px-5 py-2.5 text-sm font-semibold text-white bg-midnight-600 border border-transparent rounded-xl hover:bg-midnight-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2 transform hover:-translate-y-0.5 ml-2" id="btn-add-invoice">
 <span class="material-symbols-outlined text-[20px]">add</span> חשבונית ידנית
-            </button>
+</button>
 </div>
 </header>
-<!-- PDF Drop Zone -->
 <div class="pdf-dropzone w-full max-w-3xl mx-auto cursor-pointer group" id="pdf-dropzone">
 <div class="dropzone-inner p-14 text-center flex flex-col items-center justify-center border-2 border-dashed border-midnight-200/60 rounded-3xl bg-white/60 hover:border-midnight-500 hover:bg-white transition-all duration-300">
 <div class="w-20 h-20 rounded-full bg-midnight-50 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 group-hover:bg-midnight-100">
@@ -511,7 +449,7 @@
 <select class="block w-32 rounded-xl border-neutral-200 bg-neutral-50 py-2.5 pl-3 pr-10 text-base font-medium focus:border-midnight-500 focus:outline-none focus:ring-1 focus:ring-midnight-500 sm:text-sm hover:bg-neutral-100 transition-colors" id="payments-filter-year"></select>
 <button class="px-5 py-2.5 text-sm font-semibold text-white bg-midnight-600 border border-transparent rounded-xl hover:bg-midnight-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2 transform hover:-translate-y-0.5 ml-2" id="btn-add-payment">
 <span class="material-symbols-outlined text-[20px]">add</span> תשלום חדש
-            </button>
+</button>
 </div>
 </header>
 <div class="bg-white rounded-2xl border border-neutral-100 shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300">
@@ -554,14 +492,12 @@
 <p class="text-neutral-500 font-medium">או <label class="text-midnight-600 hover:text-midnight-700 font-bold cursor-pointer underline underline-offset-4" for="input-excel-file">לחץ לבחור קובץ</label></p>
 <input accept=".xlsx,.xls,.csv" class="hidden" id="input-excel-file" type="file"/>
 </div>
-<div class="hidden mt-8 border rounded-2xl overflow-hidden border-neutral-200 shadow-inner" id="excel-preview">
-<!-- Preview rendered here before confirm -->
-</div>
+<div class="hidden mt-8 border rounded-2xl overflow-hidden border-neutral-200 shadow-inner" id="excel-preview"></div>
 <div class="hidden mt-8 flex justify-end gap-4" id="excel-confirm-actions">
 <button class="px-6 py-3 text-sm font-semibold text-neutral-600 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-all shadow-sm hover:shadow-md" id="btn-import-cancel">ביטול</button>
 <button class="px-6 py-3 text-sm font-semibold text-white bg-midnight-600 border border-transparent rounded-xl hover:bg-midnight-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2" id="btn-import-confirm">
 <span class="material-symbols-outlined text-[18px]">check_circle</span> אשר ייבוא
-            </button>
+</button>
 </div>
 </div>
 <div class="bg-white rounded-3xl border border-neutral-100 shadow-card p-10 hover:shadow-card-hover transition-all duration-300">
@@ -609,7 +545,7 @@
 <div>
 <button class="px-6 py-3 text-sm font-semibold text-white bg-midnight-900 border border-transparent rounded-xl hover:bg-midnight-800 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 w-full sm:w-auto transform hover:-translate-y-0.5" id="btn-check-update">
 <span class="material-symbols-outlined text-[20px]">sync</span> בדוק עדכונים
-              </button>
+</button>
 </div>
 </div>
 </div>
@@ -626,7 +562,6 @@
 </main>
 </div>
 <!-- ===== MODALS ===== -->
-<!-- Generic Modal Container -->
 <div aria-modal="true" class="modal-overlay hidden fixed inset-0 flex items-center justify-center p-4" id="modal-overlay" role="dialog">
 <div class="modal bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-95 opacity-0 duration-300" id="modal">
 <div class="relative px-8 py-6 border-b border-neutral-100 bg-white/80 backdrop-blur-sm">
@@ -635,9 +570,7 @@
 <span class="material-symbols-outlined">close</span>
 </button>
 </div>
-<div class="px-8 py-6" id="modal-body">
-<!-- dynamic content -->
-</div>
+<div class="px-8 py-6" id="modal-body"></div>
 <div class="px-8 py-5 bg-neutral-50/80 backdrop-blur-sm border-t border-neutral-100 flex justify-end gap-3">
 <button class="px-5 py-2.5 text-sm font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-all shadow-sm hover:shadow-md" id="modal-cancel">ביטול</button>
 <button class="px-5 py-2.5 text-sm font-semibold text-white bg-midnight-600 border border-transparent rounded-xl hover:bg-midnight-700 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5" id="modal-confirm">שמור</button>
@@ -654,20 +587,16 @@
 <span class="material-symbols-outlined">close</span>
 </button>
 </div>
-<div class="px-8 py-6 overflow-y-auto flex-1 bg-neutral-50/30" id="pdf-modal-body">
-<!-- PDF extracted data form -->
-</div>
+<div class="px-8 py-6 overflow-y-auto flex-1 bg-neutral-50/30" id="pdf-modal-body"></div>
 <div class="px-8 py-5 bg-neutral-50/80 backdrop-blur-sm border-t border-neutral-100 flex justify-end gap-3">
 <button class="px-5 py-2.5 text-sm font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-all shadow-sm hover:shadow-md" id="pdf-modal-cancel">ביטול</button>
 <button class="px-5 py-2.5 text-sm font-semibold text-white bg-midnight-600 border border-transparent rounded-xl hover:bg-midnight-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2 transform hover:-translate-y-0.5" id="pdf-modal-save">
 <span class="material-symbols-outlined text-[18px]">check_circle</span> אשר ושמור חשבונית
-        </button>
+</button>
 </div>
 </div>
 </div>
-<!-- Toast Container -->
 <div aria-live="polite" class="fixed bottom-8 left-8 z-50 flex flex-col gap-4" id="toast-container"></div>
-<!-- App Scripts (order matters) -->
 <script src="db.js"></script>
 <script src="ui.js"></script>
 <script src="import.js"></script>
@@ -680,7 +609,6 @@
 <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').then(reg => {
-        // כשיש SW חדש שמחכה — הודע למשתמש
         reg.addEventListener('updatefound', () => {
           const newWorker = reg.installing;
           newWorker.addEventListener('statechange', () => {
@@ -691,8 +619,6 @@
         });
       });
     }
-
-    // Modal show animation patch
     document.addEventListener('DOMContentLoaded', () => {
       const originalShowModal = window.UI ? window.UI.showModal : null;
       if (originalShowModal) {
@@ -712,4 +638,5 @@
       }
     });
   </script>
-</body></html>
+</body>
+</html>
