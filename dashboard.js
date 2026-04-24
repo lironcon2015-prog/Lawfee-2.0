@@ -357,6 +357,7 @@ const Dashboard = (() => {
     const caseMap = {};
     allCases.forEach(c => { caseMap[c.id] = c; });
 
+    // Aggregate per case, then group under client
     const caseAgg = {};
     allInvoices.forEach(inv => {
       if (!caseAgg[inv.caseId]) caseAgg[inv.caseId] = { amount: 0, commission: 0 };
@@ -364,28 +365,55 @@ const Dashboard = (() => {
       caseAgg[inv.caseId].commission += inv.commission;
     });
 
-    const sorted = Object.entries(caseAgg)
-      .map(([caseId, agg]) => ({ ...agg, caseId, caseRec: caseMap[parseInt(caseId)] }))
-      .filter(r => r.caseRec)
-      .sort((a, b) => b.commission - a.commission);
+    const clientAgg = {};
+    Object.entries(caseAgg).forEach(([caseId, agg]) => {
+      const c = caseMap[parseInt(caseId)];
+      if (!c) return;
+      const cid = c.clientId;
+      if (!clientAgg[cid]) clientAgg[cid] = { amount: 0, commission: 0, cases: [] };
+      clientAgg[cid].amount     += agg.amount;
+      clientAgg[cid].commission += agg.commission;
+      clientAgg[cid].cases.push({ ...agg, caseRec: c });
+    });
+
+    const sortedClients = Object.entries(clientAgg)
+      .sort((a, b) => b[1].commission - a[1].commission);
 
     let totalAmt = 0, totalComm = 0;
     let rows = '';
-    sorted.forEach(r => {
-      const c = r.caseRec;
-      totalAmt  += r.amount;
-      totalComm += r.commission;
-      rows += `<tr class="hover:bg-neutral-50/50 transition-colors">
-        <td class="px-7 py-5 font-semibold text-neutral-800">${clientMap[c.clientId] || '—'}</td>
-        <td class="px-7 py-5">
-          <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--text-muted)">${c.caseNumber}</span>
-          ${c.description && c.description !== c.caseNumber ? ` <span class="text-neutral-500">${c.description}</span>` : ''}
+    sortedClients.forEach(([cid, data]) => {
+      totalAmt  += data.amount;
+      totalComm += data.commission;
+      data.cases.sort((a, b) => b.commission - a.commission);
+
+      rows += `<tr class="client-row hover:bg-neutral-50/50 transition-colors cursor-pointer" data-client-id="${cid}">
+        <td class="font-semibold text-neutral-800">
+          <span class="inline-flex items-center gap-2">
+            <span class="material-symbols-outlined text-neutral-400 text-[18px] chevron transition-transform">chevron_left</span>
+            ${clientMap[cid] || '—'}
+          </span>
         </td>
-        <td class="px-7 py-5 num">${UI.formatPct(c.commissionRate)}</td>
-        <td class="px-7 py-5 num">${UI.formatNumber(r.amount)}</td>
-        <td class="px-7 py-5 num font-bold text-neutral-900">${UI.formatNumber(r.commission)}</td>
-        <td class="px-7 py-5 text-center">${_statusBadge(c.caseType)}</td>
+        <td class="text-neutral-500">${data.cases.length} תיקים</td>
+        <td class="num text-neutral-400">—</td>
+        <td class="num">${UI.formatNumber(data.amount)}</td>
+        <td class="num font-bold text-neutral-900">${UI.formatNumber(data.commission)}</td>
+        <td class="text-center text-neutral-400">—</td>
       </tr>`;
+
+      data.cases.forEach(r => {
+        const c = r.caseRec;
+        rows += `<tr class="case-row hover:bg-neutral-50/50 transition-colors" data-parent-client="${cid}" hidden>
+          <td></td>
+          <td>
+            <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--text-muted)">${c.caseNumber}</span>
+            ${c.description && c.description !== c.caseNumber ? ` <span class="text-neutral-500">${c.description}</span>` : ''}
+          </td>
+          <td class="num">${UI.formatPct(c.commissionRate)}</td>
+          <td class="num">${UI.formatNumber(r.amount)}</td>
+          <td class="num font-bold text-neutral-900">${UI.formatNumber(r.commission)}</td>
+          <td class="text-center">${_statusBadge(c.caseType)}</td>
+        </tr>`;
+      });
     });
 
     rows += `<tr class="summary-row">
@@ -396,6 +424,22 @@ const Dashboard = (() => {
     </tr>`;
 
     tbody.innerHTML = rows;
+
+    // Click-to-expand (event delegation, attached once)
+    if (!tbody._expandWired) {
+      tbody.addEventListener('click', (e) => {
+        const row = e.target.closest('tr.client-row');
+        if (!row) return;
+        const cid = row.dataset.clientId;
+        const chev = row.querySelector('.chevron');
+        const isOpen = row.classList.toggle('expanded');
+        if (chev) chev.style.transform = isOpen ? 'rotate(-90deg)' : '';
+        tbody.querySelectorAll(`tr.case-row[data-parent-client="${cid}"]`).forEach(c => {
+          c.hidden = !isOpen;
+        });
+      });
+      tbody._expandWired = true;
+    }
   }
 
   // ── Per-Client Monthly Breakdown ───────────────────────
