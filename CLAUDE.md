@@ -382,11 +382,30 @@ nav a[data-view="dashboard|clients|invoices|payments|import|settings"]
 9. **Tailwind + style.css** — שניהם פעילים; Tailwind לshell/layout, style.css לJS-generated HTML
 
 ### סקיל פעיל: token-efficient-workflow
-הסקיל `token-efficient-workflow` פעיל בכל עבודה על פרויקט זה. הוא אוכף:
-- חיפוש ממוקד לפני קריאת קבצים (grep/head, לא קריאה ספקולטיבית)
-- קריאת טווחים בלבד — לא קבצים שלמים כשאפשר אחרת
-- עריכות כירורגיות (str_replace) — לא כתיבה מחדש של קבצים
-- אפס מילוי: לא ברכות, לא סיכומים, לא "ביצעתי את השינוי"
+
+> קובץ הסקיל המלא: `.claude/skills/token-efficient-workflow/SKILL.md`
+
+**Core Directive:** Deliver accurate code using the minimum tokens possible. Silence is preferred over explanation.
+
+**Tool & Edit Rules:**
+- **Map via MD, then safe search.** Read structural docs first, then `grep -n "exactName"` / `head -20`. No speculative reads.
+- **Targeted reads only.** Never read a full file if a `view_range` suffices.
+- **No redundant reads.** File already in context → work from it.
+- **Surgical edits.** `str_replace` on specific blocks > full file rewrite.
+
+**Output & Communication Rules:**
+- **Zero filler.** No greetings, transitions, or closing remarks.
+- **Silent completion.** After an edit, no "Changes applied." summary.
+- **Silent planning.** Simple fixes: execute directly. Complex refactors only: `<thinking>` max 3 bullets, never output the plan.
+- **Batch questions.** All clarifications in one bulleted message.
+- **Explain why, never what.** Max 2 bullets, only when counter-intuitive.
+
+**Anti-patterns:**
+1. Reading full files instead of view ranges.
+2. Outputting unchanged code alongside a fix.
+3. Running broad `grep` returning hundreds of lines.
+4. Saying "I will now…" or "I have updated…".
+5. Planning with `<thinking>` for trivial tasks.
 
 ### Flow ביצוע סטנדרטי (חובה לכל משימה)
 1. ודא שאתה על `main` ומסונכרן (`git checkout main && git pull origin main`)
