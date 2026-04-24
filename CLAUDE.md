@@ -381,6 +381,13 @@ nav a[data-view="dashboard|clients|invoices|payments|import|settings"]
 8. **design/** — לא לגעת בעבודה רגילה
 9. **Tailwind + style.css** — שניהם פעילים; Tailwind לshell/layout, style.css לJS-generated HTML
 
+### סקיל פעיל: token-efficient-workflow
+הסקיל `token-efficient-workflow` פעיל בכל עבודה על פרויקט זה. הוא אוכף:
+- חיפוש ממוקד לפני קריאת קבצים (grep/head, לא קריאה ספקולטיבית)
+- קריאת טווחים בלבד — לא קבצים שלמים כשאפשר אחרת
+- עריכות כירורגיות (str_replace) — לא כתיבה מחדש של קבצים
+- אפס מילוי: לא ברכות, לא סיכומים, לא "ביצעתי את השינוי"
+
 ### Flow ביצוע סטנדרטי (חובה לכל משימה)
 1. ודא שאתה על `main` ומסונכרן (`git checkout main && git pull origin main`)
 2. בצע את השינוי בקוד
