@@ -63,7 +63,7 @@ const Dashboard = (() => {
     }
   }
 
-  // ── Monthly Bar Chart (SVG) ────────────────────────────
+  // ── Monthly Bar Chart (HTML/Tailwind Based) ─────────────
   async function renderMonthlyChart() {
     const host = document.getElementById('monthly-chart');
     if (!host) return;
@@ -75,81 +75,66 @@ const Dashboard = (() => {
 
     const months = Array.from({length:12}, (_,i) => {
       const inv = invByMonth[i+1] || { amount: 0, commission: 0 };
-      const pay = payByMonth[i+1]  || 0;
+      const pay = payByMonth[i+1] || 0;
       return { m: i+1, amount: inv.amount, commission: inv.commission, payment: pay };
     });
 
     const hasData = months.some(x => x.amount > 0 || x.commission > 0);
     if (!hasData) {
-      host.innerHTML = `<div class="chart-empty">אין נתונים לשנת ${_year}</div>`;
+      host.innerHTML = `<div class="chart-empty absolute inset-0 flex items-center justify-center">אין נתונים לשנת ${_year}</div>`;
       return;
     }
 
     const maxVal = Math.max(...months.map(x => Math.max(x.amount, x.commission))) || 1;
     const niceMax = niceCeil(maxVal);
 
-    const W = 720, H = 260;
-    const padL = 48, padR = 12, padT = 16, padB = 30;
-    const plotW = W - padL - padR;
-    const plotH = H - padT - padB;
-    const groupW = plotW / 12;
-    const barW = Math.min(14, groupW / 3);
+    // Grid lines (horizontal)
+    const gridLines = `
+      <div class="absolute inset-0 flex flex-col justify-between pb-8 pointer-events-none">
+        <div class="w-full h-px bg-neutral-100 relative"><span class="absolute right-0 -translate-y-1/2 bg-white px-1 text-[10px] text-neutral-400 font-mono">${formatAxis(niceMax)}</span></div>
+        <div class="w-full h-px bg-neutral-100 relative"><span class="absolute right-0 -translate-y-1/2 bg-white px-1 text-[10px] text-neutral-400 font-mono">${formatAxis(niceMax * 0.75)}</span></div>
+        <div class="w-full h-px bg-neutral-100 relative"><span class="absolute right-0 -translate-y-1/2 bg-white px-1 text-[10px] text-neutral-400 font-mono">${formatAxis(niceMax * 0.5)}</span></div>
+        <div class="w-full h-px bg-neutral-100 relative"><span class="absolute right-0 -translate-y-1/2 bg-white px-1 text-[10px] text-neutral-400 font-mono">${formatAxis(niceMax * 0.25)}</span></div>
+        <div class="w-full h-px bg-neutral-200"></div>
+      </div>
+    `;
 
-    const gridLines = [];
-    const gridLabels = [];
-    for (let i = 0; i <= 4; i++) {
-      const y = padT + (plotH * i / 4);
-      const v = niceMax * (1 - i/4);
-      gridLines.push(`<line class="grid-line" x1="${padL}" x2="${W-padR}" y1="${y}" y2="${y}" />`);
-      gridLabels.push(`<text class="axis-label" x="${padL - 8}" y="${y + 3}" text-anchor="end">${formatAxis(v)}</text>`);
-    }
+    // Render bars
+    const currentMonth = _year === new Date().getFullYear() ? new Date().getMonth() + 1 : 12;
+    
+    const barsHTML = months.map(mo => {
+      const isCurrent = _year === new Date().getFullYear() && mo.m === currentMonth;
+      const isPastOrPresent = _year < new Date().getFullYear() || mo.m <= currentMonth;
+      
+      const revPct  = mo.amount > 0 ? Math.max(2, (mo.amount / niceMax) * 100) : 0;
+      const commPct = mo.commission > 0 ? Math.max(2, (mo.commission / niceMax) * 100) : 0;
 
-    const bars = [];
-    const xLabels = [];
-    months.forEach((mo, idx) => {
-      // LTR order: idx=0 (January) starts at padL, idx=11 (December) at the right
-      const groupLeft  = padL + (idx * groupW);
-      const groupRight = groupLeft + groupW;
-      const cx = (groupLeft + groupRight) / 2;
+      const title = `חודש ${UI.monthName(mo.m)}&#10;הכנסות: ${UI.formatNumber(mo.amount)} ₪&#10;עמלות: ${UI.formatNumber(mo.commission)} ₪`;
 
-      const revH  = (mo.amount     / niceMax) * plotH;
-      const commH = (mo.commission / niceMax) * plotH;
-      const revY  = padT + plotH - revH;
-      const commY = padT + plotH - commH;
-      const revX  = cx - barW - 1;
-      const commX = cx + 1;
+      if (!isPastOrPresent && mo.amount === 0 && mo.commission === 0) {
+        return `
+          <div class="flex flex-col items-center justify-end h-full">
+            <div class="w-full h-full pb-2"></div>
+            <span class="text-sm font-medium text-neutral-400 mt-1" dir="rtl">${UI.monthName(mo.m, true)}</span>
+          </div>`;
+      }
 
-      const tip = `חודש ${UI.monthName(mo.m)} — הכנסות ${UI.formatNumber(mo.amount)} · עמלות ${UI.formatNumber(mo.commission)}`;
-      bars.push(`<g class="bar-grp" data-tip="${tip}" data-cx="${cx}">
-        ${mo.amount > 0 ? `<rect x="${revX}" y="${revY}" width="${barW}" height="${Math.max(1,revH)}" rx="2" fill="var(--accent)"/>` : ''}
-        ${mo.commission > 0 ? `<rect x="${commX}" y="${commY}" width="${barW}" height="${Math.max(1,commH)}" rx="2" fill="var(--color-positive)"/>` : ''}
-      </g>`);
-      xLabels.push(`<text class="x-label" x="${cx}" y="${H - 10}">${UI.monthName(mo.m, true)}</text>`);
-    });
+      return `
+        <div class="flex flex-col items-center justify-end h-full group cursor-pointer" title="${title}">
+          <div class="flex items-end justify-center gap-[2px] w-full h-full pb-2">
+            ${mo.amount > 0 ? `<div class="w-[35%] max-w-[14px] bg-[#4f46e5] rounded-t-sm transition-opacity group-hover:opacity-80" style="height: ${revPct}%"></div>` : '<div class="w-[35%] max-w-[14px]"></div>'}
+            ${mo.commission > 0 ? `<div class="w-[35%] max-w-[14px] bg-[#10b981] rounded-t-sm transition-opacity group-hover:opacity-80" style="height: ${commPct}%"></div>` : '<div class="w-[35%] max-w-[14px]"></div>'}
+          </div>
+          <span class="text-sm ${isCurrent ? 'font-bold text-neutral-900' : 'font-medium text-neutral-500'} mt-1" dir="rtl">${UI.monthName(mo.m, true)}</span>
+        </div>`;
+    }).join('');
 
-    host.style.position = 'relative';
     host.innerHTML = `
-      <svg class="bars-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
-        ${gridLines.join('')}
-        ${gridLabels.join('')}
-        ${bars.join('')}
-        ${xLabels.join('')}
-      </svg>
-      <div class="bar-tip" id="bar-tip"></div>`;
-
-    const tip = host.querySelector('#bar-tip');
-    host.querySelectorAll('.bar-grp').forEach(g => {
-      g.addEventListener('mouseenter', () => {
-        tip.textContent = g.dataset.tip;
-        tip.classList.add('on');
-      });
-      g.addEventListener('mousemove', (e) => {
-        const r = host.getBoundingClientRect();
-        tip.style.left = (e.clientX - r.left + 10) + 'px';
-        tip.style.top  = (e.clientY - r.top - 28) + 'px';
-      });
-      g.addEventListener('mouseleave', () => tip.classList.remove('on'));
-    });
+      ${gridLines}
+      <div dir="ltr" class="relative z-10 w-full h-[220px] grid grid-cols-12 gap-1 px-1">
+        ${barsHTML}
+      </div>
+    `;
   }
 
   function niceCeil(v) {
@@ -183,7 +168,7 @@ const Dashboard = (() => {
     ]);
 
     if (!allInvoices.length) {
-      host.innerHTML = `<div class="chart-empty">אין נתונים לשנת ${_year}</div>`;
+      host.innerHTML = `<div class="chart-empty w-full text-center py-8">אין נתונים לשנת ${_year}</div>`;
       return;
     }
 
@@ -196,14 +181,20 @@ const Dashboard = (() => {
     allInvoices.forEach(inv => {
       const c = caseMap[inv.caseId];
       if (!c) return;
-      byClient[c.clientId] = (byClient[c.clientId] || 0) + inv.amount;
+      byClient[c.clientId] = (byClient[c.clientId] || 0) + inv.commission; // Show commissions in donut
     });
 
     let rows = Object.entries(byClient)
       .map(([cid, v]) => ({ name: clientMap[parseInt(cid)] || '—', val: v }))
-      .sort((a,b) => b.val - a.val);
+      .sort((a,b) => b.val - a.val)
+      .filter(r => r.val > 0);
 
     const total = rows.reduce((s,r) => s + r.val, 0);
+    
+    if (total === 0) {
+      host.innerHTML = `<div class="chart-empty w-full text-center py-8">אין עמלות לשנת ${_year}</div>`;
+      return;
+    }
 
     if (rows.length > 5) {
       const top = rows.slice(0, 5);
@@ -213,16 +204,16 @@ const Dashboard = (() => {
     }
 
     const palette = [
-      'var(--accent)',
-      'oklch(0.58 0.14 155)',
-      'oklch(0.66 0.14 75)',
-      'oklch(0.56 0.18 25)',
-      'oklch(0.55 0.14 210)',
-      'var(--n-300)',
+      '#4f46e5', // indigo-600
+      '#10b981', // emerald-500
+      '#f59e0b', // amber-500
+      '#0ea5e9', // sky-500
+      '#ec4899', // pink-500
+      '#cbd5e1', // slate-300
     ];
-    rows.forEach((r,i) => r.color = palette[i] || 'var(--n-300)');
+    rows.forEach((r,i) => r.color = palette[i] || '#cbd5e1');
 
-    const size = 170, strokeW = 22;
+    const size = 160, strokeW = 20;
     const cx = size/2, cy = size/2;
     const r = (size - strokeW) / 2;
     const circ = 2 * Math.PI * r;
@@ -243,20 +234,29 @@ const Dashboard = (() => {
 
     const legend = rows.map(r => {
       const pct = total > 0 ? ((r.val/total) * 100).toFixed(1) : '0.0';
-      return `<div class="dl-row">
-        <span class="dl-dot" style="background:${r.color}"></span>
-        <span class="dl-name" title="${r.name}">${r.name}</span>
-        <span class="dl-val">${pct}%</span>
-      </div>`;
+      return `
+        <div class="flex items-center justify-between text-sm group cursor-default" title="${r.name} - ${UI.formatNumber(r.val)} ₪">
+          <div class="flex items-center gap-3 truncate">
+            <span class="w-3.5 h-3.5 rounded flex-shrink-0 shadow-sm" style="background:${r.color}"></span>
+            <span class="truncate text-neutral-700 font-medium group-hover:text-neutral-900 transition-colors">${r.name}</span>
+          </div>
+          <span class="font-mono text-neutral-500 font-semibold mr-3">${pct}%</span>
+        </div>`;
     }).join('');
 
     host.innerHTML = `
-      <svg class="donut-svg" viewBox="0 0 ${size} ${size}">
-        ${segs}
-        <text class="donut-center-label" x="${cx}" y="${cy - 6}">סה״כ</text>
-        <text class="donut-center" x="${cx}" y="${cy + 14}">${formatAxis(total)}</text>
-      </svg>
-      <div class="donut-legend">${legend}</div>`;
+      <div class="w-[160px] h-[160px] rounded-full flex items-center justify-center flex-shrink-0 relative shadow-sm bg-white">
+        <svg class="w-full h-full absolute inset-0" viewBox="0 0 ${size} ${size}">
+          ${segs}
+        </svg>
+        <div class="text-center mt-1 z-10">
+          <div class="text-[11px] text-neutral-400 font-bold uppercase tracking-wider">סה"כ</div>
+          <div class="font-mono font-bold text-xl text-neutral-800">${formatAxis(total)}</div>
+        </div>
+      </div>
+      <div class="flex flex-col gap-4 flex-1 max-w-[200px] w-full sm:w-auto">
+        ${legend}
+      </div>`;
   }
 
   // ── Monthly Breakdown Table ────────────────────────────
@@ -295,7 +295,6 @@ const Dashboard = (() => {
       </tr>`;
     }
 
-    // Payments with no month assigned (key 0) — deduct from balance but show separately
     const unknownPay = payByMonth[0] || 0;
     if (unknownPay > 0) {
       runningBalance -= unknownPay;
@@ -320,7 +319,6 @@ const Dashboard = (() => {
     tbody.innerHTML = rows;
   }
 
-  // ── Status Badge Helper ────────────────────────────────
   function _statusBadge(caseType) {
     const map = {
       'שוטף':     { cls: 'bg-emerald-100 text-emerald-700', label: 'פעיל' },
@@ -352,7 +350,6 @@ const Dashboard = (() => {
     const caseMap = {};
     allCases.forEach(c => { caseMap[c.id] = c; });
 
-    // Aggregate per case, then group under client
     const caseAgg = {};
     allInvoices.forEach(inv => {
       if (!caseAgg[inv.caseId]) caseAgg[inv.caseId] = { amount: 0, commission: 0 };
@@ -420,7 +417,6 @@ const Dashboard = (() => {
 
     tbody.innerHTML = rows;
 
-    // Click-to-expand (event delegation, attached once)
     if (!tbody._expandWired) {
       tbody.addEventListener('click', (e) => {
         const row = e.target.closest('tr.client-row');
@@ -466,9 +462,8 @@ const Dashboard = (() => {
     allCases.forEach(c => { caseMap[c.id] = c; });
 
     const metric = _clientMonthlyMetric;
-
-    // Nested aggregation: client → { months, cases: { caseId → months } }
     const clients = {};
+
     allInvoices.forEach(inv => {
       const c = caseMap[inv.caseId];
       if (!c) return;
@@ -532,7 +527,6 @@ const Dashboard = (() => {
         <td class="num py-4 px-4 font-bold ${metric === 'commission' ? 'text-midnight-600' : ''}">${UI.formatNumber(clientTotal)}</td>
       </tr>`;
 
-      // Case sub-rows (hidden by default)
       const sortedCaseIds = Object.keys(data.cases).sort((a, b) =>
         data.cases[a].caseRec.caseNumber.localeCompare(data.cases[b].caseRec.caseNumber));
       sortedCaseIds.forEach(caseId => {
@@ -551,7 +545,6 @@ const Dashboard = (() => {
       });
     });
 
-    // Styled total row — indigo tint, matching the design
     const totalCells = Array.from({length:maxMonth}, (_,i) => {
       const v = monthTotals[i+1] || 0;
       return `<td class="num py-5 px-4 font-bold text-neutral-900">${v > 0 ? UI.formatNumber(v) : '—'}</td>`;
@@ -564,7 +557,6 @@ const Dashboard = (() => {
 
     tbody.innerHTML = rows;
 
-    // Click-to-expand (event delegation, attached once)
     if (!tbody._expandWired) {
       tbody.addEventListener('click', (e) => {
         const row = e.target.closest('tr.client-row');
