@@ -21,11 +21,6 @@ const Dashboard = (() => {
       await renderClientMonthlyTable();
     });
 
-    document.getElementById('toggle-client-monthly-group')?.addEventListener('click', async () => {
-      _clientMonthlyGroup = _clientMonthlyGroup === 'client' ? 'case' : 'client';
-      await renderClientMonthlyTable();
-    });
-
     await render();
   }
 
@@ -444,17 +439,14 @@ const Dashboard = (() => {
 
   // ── Per-Client Monthly Breakdown ───────────────────────
   let _clientMonthlyMetric = 'commission';
-  let _clientMonthlyGroup  = 'client';
 
   async function renderClientMonthlyTable() {
     const thead = document.getElementById('client-monthly-thead');
     const tbody = document.getElementById('client-monthly-tbody');
     const toggleMetricBtn = document.getElementById('toggle-client-monthly-metric');
-    const toggleGroupBtn  = document.getElementById('toggle-client-monthly-group');
     if (!thead || !tbody) return;
 
     if (toggleMetricBtn) toggleMetricBtn.textContent = _clientMonthlyMetric === 'commission' ? 'הצג הכנסות' : 'הצג עמלות';
-    if (toggleGroupBtn)  toggleGroupBtn.textContent  = _clientMonthlyGroup === 'client' ? 'פירוט לפי תיק' : 'קיבוץ לפי לקוח';
 
     const [allInvoices, allCases, allClients] = await Promise.all([
       DB.invoices.getByYear(_year),
@@ -474,27 +466,26 @@ const Dashboard = (() => {
     allCases.forEach(c => { caseMap[c.id] = c; });
 
     const metric = _clientMonthlyMetric;
-    const byCase = _clientMonthlyGroup === 'case';
 
-    const matrix = {};
-    const rowMeta = {};
-
+    // Nested aggregation: client → { months, cases: { caseId → months } }
+    const clients = {};
     allInvoices.forEach(inv => {
       const c = caseMap[inv.caseId];
       if (!c) return;
-      const rowKey = byCase ? `case_${inv.caseId}` : `client_${c.clientId}`;
-      if (!matrix[rowKey]) {
-        matrix[rowKey] = {};
-        rowMeta[rowKey] = byCase
-          ? { label: clientMap[c.clientId] || '—', subLabel: c.caseNumber + (c.description ? ' — ' + c.description : ''), sortKey: (clientMap[c.clientId] || '') + c.caseNumber }
-          : { label: clientMap[c.clientId] || '—', subLabel: null, sortKey: clientMap[c.clientId] || '' };
-      }
-      if (!matrix[rowKey][inv.month]) matrix[rowKey][inv.month] = { amount: 0, commission: 0 };
-      matrix[rowKey][inv.month].amount     += inv.amount;
-      matrix[rowKey][inv.month].commission += inv.commission;
+      const cid = c.clientId;
+      if (!clients[cid]) clients[cid] = { months: {}, cases: {} };
+      if (!clients[cid].months[inv.month]) clients[cid].months[inv.month] = { amount: 0, commission: 0 };
+      clients[cid].months[inv.month].amount     += inv.amount;
+      clients[cid].months[inv.month].commission += inv.commission;
+
+      if (!clients[cid].cases[inv.caseId]) clients[cid].cases[inv.caseId] = { months: {}, caseRec: c };
+      if (!clients[cid].cases[inv.caseId].months[inv.month]) clients[cid].cases[inv.caseId].months[inv.month] = { amount: 0, commission: 0 };
+      clients[cid].cases[inv.caseId].months[inv.month].amount     += inv.amount;
+      clients[cid].cases[inv.caseId].months[inv.month].commission += inv.commission;
     });
 
-    const sortedKeys = Object.keys(matrix).sort((a, b) => rowMeta[a].sortKey.localeCompare(rowMeta[b].sortKey, 'he'));
+    const sortedClientIds = Object.keys(clients).sort((a, b) =>
+      (clientMap[a] || '').localeCompare(clientMap[b] || '', 'he'));
 
     const now = new Date();
     const maxMonth = _year === now.getFullYear() ? now.getMonth() + 1 : 12;
@@ -503,7 +494,7 @@ const Dashboard = (() => {
       `<th class="num py-4 px-4 font-bold">${UI.monthName(i+1, true)}</th>`
     ).join('');
     thead.innerHTML = `<tr>
-      <th class="py-4 px-4 text-right font-bold">${byCase ? 'לקוח / תיק' : 'לקוח'}</th>
+      <th class="py-4 px-4 text-right font-bold">לקוח</th>
       ${monthHeaders}
       <th class="num py-4 px-4 font-bold text-left">סה"כ</th>
     </tr>`;
@@ -512,24 +503,52 @@ const Dashboard = (() => {
     let grandTotal = 0;
     let rows = '';
 
-    sortedKeys.forEach(rowKey => {
-      const meta = rowMeta[rowKey];
-      const months = matrix[rowKey] || {};
-      let rowTotal = 0;
-      let cells = '';
+    const renderMonthCells = (months) => {
+      let total = 0, html = '';
       for (let m = 1; m <= maxMonth; m++) {
         const val = (months[m] || {})[metric] || 0;
-        rowTotal += val;
-        monthTotals[m] = (monthTotals[m] || 0) + val;
-        cells += `<td class="num py-4 px-4">${val > 0 ? UI.formatNumber(val) : '<span style="color:var(--text-muted)">—</span>'}</td>`;
+        total += val;
+        html += `<td class="num py-4 px-4">${val > 0 ? UI.formatNumber(val) : '<span style="color:var(--text-muted)">—</span>'}</td>`;
       }
-      grandTotal += rowTotal;
+      return { html, total };
+    };
 
-      const labelCell = byCase
-        ? `<td class="py-4 px-4"><div style="font-weight:500">${meta.label}</div><div style="font-family:var(--font-mono);font-size:0.8rem;color:var(--text-muted);margin-top:2px">${meta.subLabel}</div></td>`
-        : `<td class="py-4 px-4 font-semibold text-neutral-800" style="white-space:nowrap">${meta.label}</td>`;
+    sortedClientIds.forEach(cid => {
+      const data = clients[cid];
+      const { html: clientCells, total: clientTotal } = renderMonthCells(data.months);
+      for (let m = 1; m <= maxMonth; m++) {
+        monthTotals[m] = (monthTotals[m] || 0) + ((data.months[m] || {})[metric] || 0);
+      }
+      grandTotal += clientTotal;
 
-      rows += `<tr class="hover:bg-neutral-50/50 transition-colors">${labelCell}${cells}<td class="num py-4 px-4 font-bold ${metric === 'commission' ? 'text-midnight-600' : ''}">${UI.formatNumber(rowTotal)}</td></tr>`;
+      rows += `<tr class="client-row hover:bg-neutral-50/50 transition-colors cursor-pointer" data-client-id="${cid}">
+        <td class="py-4 px-4 font-semibold text-neutral-800" style="white-space:nowrap">
+          <span class="inline-flex items-center gap-2">
+            <span class="material-symbols-outlined text-neutral-400 text-[18px] chevron transition-transform">chevron_left</span>
+            ${clientMap[cid] || '—'}
+          </span>
+        </td>
+        ${clientCells}
+        <td class="num py-4 px-4 font-bold ${metric === 'commission' ? 'text-midnight-600' : ''}">${UI.formatNumber(clientTotal)}</td>
+      </tr>`;
+
+      // Case sub-rows (hidden by default)
+      const sortedCaseIds = Object.keys(data.cases).sort((a, b) =>
+        data.cases[a].caseRec.caseNumber.localeCompare(data.cases[b].caseRec.caseNumber));
+      sortedCaseIds.forEach(caseId => {
+        const cd = data.cases[caseId];
+        const { html: caseCells, total: caseTotal } = renderMonthCells(cd.months);
+        const c = cd.caseRec;
+        rows += `<tr class="case-row hover:bg-neutral-50/50 transition-colors" data-parent-client="${cid}" hidden>
+          <td class="py-4 px-4">
+            <div style="font-family:var(--font-mono);font-size:0.85rem;color:var(--text-muted);padding-right:26px">
+              ${c.caseNumber}${c.description && c.description !== c.caseNumber ? ' — ' + c.description : ''}
+            </div>
+          </td>
+          ${caseCells}
+          <td class="num py-4 px-4 font-bold">${UI.formatNumber(caseTotal)}</td>
+        </tr>`;
+      });
     });
 
     // Styled total row — indigo tint, matching the design
@@ -544,6 +563,22 @@ const Dashboard = (() => {
     </tr>`;
 
     tbody.innerHTML = rows;
+
+    // Click-to-expand (event delegation, attached once)
+    if (!tbody._expandWired) {
+      tbody.addEventListener('click', (e) => {
+        const row = e.target.closest('tr.client-row');
+        if (!row) return;
+        const cid = row.dataset.clientId;
+        const chev = row.querySelector('.chevron');
+        const isOpen = row.classList.toggle('expanded');
+        if (chev) chev.style.transform = isOpen ? 'rotate(-90deg)' : '';
+        tbody.querySelectorAll(`tr.case-row[data-parent-client="${cid}"]`).forEach(c => {
+          c.hidden = !isOpen;
+        });
+      });
+      tbody._expandWired = true;
+    }
   }
 
   return { init, render };
