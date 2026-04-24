@@ -393,7 +393,7 @@ select { appearance: none; -webkit-appearance: none; }
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
 }
 
 .data-table thead tr {
@@ -401,8 +401,8 @@ select { appearance: none; -webkit-appearance: none; }
 }
 
 .data-table th {
-  padding: 12px 20px;
-  font-size: 0.9rem;
+  padding: 20px 28px;
+  font-size: 0.875rem;
   font-weight: 700;
   font-family: 'Rubik', sans-serif;
   color: var(--text-muted);
@@ -420,7 +420,7 @@ select { appearance: none; -webkit-appearance: none; }
 }
 
 .data-table td {
-  padding: 12px 20px;
+  padding: 20px 28px;
   border-bottom: 1px solid var(--border);
   color: var(--text-primary);
   vertical-align: middle;
