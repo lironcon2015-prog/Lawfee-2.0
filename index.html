@@ -117,7 +117,7 @@
   </style>
 </head>
 <body class="font-sans antialiased text-neutral-900 bg-neutral-50 selection:bg-midnight-200 selection:text-midnight-900">
-<script>window._BUNDLE_VERSION = '1.7.4';</script>
+<script>window._BUNDLE_VERSION = '1.7.5';</script>
 <div class="flex h-screen overflow-hidden" id="app">
 <!-- SIDEBAR -->
 <aside class="w-72 bg-midnight-950 border-l border-midnight-900 hidden md:flex md:flex-col shadow-2xl z-20 text-neutral-100" id="sidebar">
@@ -673,10 +673,18 @@
         _refreshing = true;
         window.location.reload();
       }
-      async function _checkVersion() {
+      async function _checkAndUpdate() {
         try {
           const d = await fetch('./version.json?_=' + Date.now()).then(r => r.json());
-          if (window._BUNDLE_VERSION && d.version !== window._BUNDLE_VERSION) _doReload();
+          if (!window._BUNDLE_VERSION || d.version === window._BUNDLE_VERSION) return;
+          const reg = await navigator.serviceWorker.getRegistration('./');
+          if (!reg) { _doReload(); return; }
+          if (reg.waiting) {
+            reg.waiting.postMessage('skipWaiting'); // controllerchange יטפל ב-reload
+          } else if (!reg.installing) {
+            _doReload(); // SW כבר עודכן, הדף עדיין ישן
+          }
+          // אם reg.installing — ממתינים ל-controllerchange
         } catch(e) {}
       }
       // 1. Standard: new SW took control
@@ -686,14 +694,16 @@
         if (!e.persisted) return;
         const reg = await navigator.serviceWorker.getRegistration('./');
         if (reg && reg.waiting) reg.waiting.postMessage('skipWaiting');
-        else _checkVersion();
+        else _checkAndUpdate();
       });
       // 3. iOS app coming to foreground
       document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') _checkVersion();
+        if (document.visibilityState === 'visible') _checkAndUpdate();
       });
+      // 4. בדיקה בטעינה ראשונית — תופסת פתיחה ישירה מהאייקון
       navigator.serviceWorker.register('./sw.js').then(reg => {
         if (reg.waiting) reg.waiting.postMessage('skipWaiting');
+        window.addEventListener('load', () => setTimeout(_checkAndUpdate, 2000));
       });
     }
     document.addEventListener('DOMContentLoaded', () => {
