@@ -54,6 +54,7 @@
     }
   </script>
 <!-- External Libraries (CDN) -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
@@ -160,6 +161,13 @@
 <span class="material-symbols-outlined ml-2 text-[18px]">upload</span> שחזור נתונים
 </button>
 <input accept=".json" class="hidden" id="input-restore-file" type="file"/>
+<div class="border-t border-midnight-800 my-1"></div>
+<button class="flex items-center justify-center w-full px-4 py-2.5 text-sm font-medium text-midnight-100 bg-midnight-800/80 border border-midnight-700/50 rounded-xl hover:bg-midnight-700 hover:text-white transition-all duration-300 shadow-lg" id="btn-drive-backup" title="גיבוי ל-Google Drive">
+<span class="material-symbols-outlined ml-2 text-[18px]">cloud_upload</span> גיבוי לדרייב
+</button>
+<button class="flex items-center justify-center w-full px-4 py-2.5 text-sm font-medium text-midnight-100 bg-midnight-800/80 border border-midnight-700/50 rounded-xl hover:bg-midnight-700 hover:text-white transition-all duration-300 shadow-lg" id="btn-drive-restore" title="שחזור מ-Google Drive">
+<span class="material-symbols-outlined ml-2 text-[18px]">cloud_download</span> שחזור מדרייב
+</button>
 </div>
 </aside>
 <!-- MAIN CONTENT -->
@@ -605,6 +613,7 @@
 <script src="invoices.js"></script>
 <script src="payments.js"></script>
 <script src="settings.js"></script>
+<script src="drive.js"></script>
 <script src="app.js"></script>
 <script>
     if ('serviceWorker' in navigator) {

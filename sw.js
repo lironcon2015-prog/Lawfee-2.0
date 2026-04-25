@@ -7,7 +7,7 @@
  */
 
 const CACHE_PREFIX  = 'lexledger-v';
-const CACHE_VERSION = '1.5.14';          // ← עדכן בכל deploy
+const CACHE_VERSION = '1.6.0';           // ← עדכן בכל deploy
 const CACHE_NAME    = CACHE_PREFIX + CACHE_VERSION;
 
 const ASSETS = [
@@ -23,6 +23,7 @@ const ASSETS = [
   './payments.js',
   './import.js',
   './settings.js',
+  './drive.js',
   './version.json',
 ];
 

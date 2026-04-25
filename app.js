@@ -138,6 +138,9 @@ const App = (() => {
         restoreInput.value = '';
       }
     });
+
+    document.getElementById('btn-drive-backup').addEventListener('click', () => Drive.saveBackup());
+    document.getElementById('btn-drive-restore').addEventListener('click', () => Drive.restoreBackup());
   }
 
   // ── Show onboarding if DB is empty ────────────────────
