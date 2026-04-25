@@ -372,8 +372,9 @@ nav a[data-view="dashboard|clients|invoices|payments|import|settings"]
 3. **עדכן גרסה בכל פעולה** — בכל commit שמשנה קוד (HTML/CSS/JS), חובה לעדכן ביחד:
    - `sw.js` — שנה את `CACHE_VERSION` (למשל `'1.5.1'` → `'1.5.2'`)
    - `version.json` — עדכן `version` + `date` (YYYY-MM-DD, תאריך היום)
+   - `index.html` — שנה את `window._BUNDLE_VERSION` (שורה ראשונה אחרי `<body>`) לאותה גרסה
    - שיטת bump: patch (1.5.1→1.5.2) לתיקוני UI/באגים קטנים; minor (1.5→1.6) לפיצ'ר חדש; major לשינוי שובר תאימות
-   - שני הקבצים חייבים להיות תמיד באותה הגרסה
+   - שלושת הקבצים חייבים להיות תמיד באותה הגרסה
 4. **RTL תמיד** — Tailwind: `ml-*` הוא visual-left (= physical-left, בעברית = כיוון ה"התחלה")
 5. **HTML ב-index.html** — views קיימים מראש; JS ממלא `innerHTML` בלבד
 6. **אל תוסף framework** — Vanilla JS בלבד
@@ -410,7 +411,7 @@ nav a[data-view="dashboard|clients|invoices|payments|import|settings"]
 ### Flow ביצוע סטנדרטי (חובה לכל משימה)
 1. ודא שאתה על `main` ומסונכרן (`git checkout main && git pull origin main`)
 2. בצע את השינוי בקוד
-3. Bump ל-`sw.js` (CACHE_VERSION) **ו**-`version.json` (version + date) — תמיד ביחד
+3. Bump ל-`sw.js` (CACHE_VERSION) **ו**-`version.json` (version + date) **ו**-`index.html` (`_BUNDLE_VERSION`) — תמיד שלושתם ביחד
 4. Commit יחיד שכולל: שינויי הקוד + sw.js + version.json
 5. `git push origin main` — חובה, אחרת המשימה לא הושלמה
 6. **אם עבדת על בראנץ' אחר** — מזג ל-`main` (`git checkout main && git merge <branch>`) ודחוף (`git push origin main`) לפני סיום. לא מחכים לבקשה.

@@ -143,6 +143,17 @@ const App = (() => {
 
     document.getElementById('btn-drive-backup').addEventListener('click', () => Drive.saveBackup());
     document.getElementById('btn-drive-restore').addEventListener('click', () => Drive.restoreBackup());
+
+    // Mobile-only backup buttons (settings screen)
+    const mobileRestoreInput = document.getElementById('input-restore-file-mobile');
+    document.getElementById('btn-export-backup-mobile').addEventListener('click', exportBackup);
+    document.getElementById('btn-import-backup-mobile').addEventListener('click', () => mobileRestoreInput.click());
+    mobileRestoreInput.addEventListener('change', () => {
+      const file = mobileRestoreInput.files[0];
+      if (file) { importBackup(file); mobileRestoreInput.value = ''; }
+    });
+    document.getElementById('btn-drive-backup-mobile').addEventListener('click', () => Drive.saveBackup());
+    document.getElementById('btn-drive-restore-mobile').addEventListener('click', () => Drive.restoreBackup());
   }
 
   // ── Show onboarding if DB is empty ────────────────────
