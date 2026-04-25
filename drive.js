@@ -4,7 +4,7 @@
  * Token lives in memory only; expires after ~1 hour.
  */
 const Drive = (() => {
-  const CLIENT_ID  = 'YOUR_CLIENT_ID_HERE.apps.googleusercontent.com';
+  const CLIENT_ID  = '495539747084-kpqb6to48406qtc5ltjb33k6116jn353.apps.googleusercontent.com';
   const SCOPE      = 'https://www.googleapis.com/auth/drive.file';
   const FILE_NAME  = 'lexledger-backup.json';
 
