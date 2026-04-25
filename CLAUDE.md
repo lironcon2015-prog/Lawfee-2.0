@@ -367,7 +367,7 @@ nav a[data-view="dashboard|clients|invoices|payments|import|settings"]
 
 ## כללי עבודה
 
-1. **עבודה ישירה על `main`** — כל משימה מבוצעת על בראנץ' `main` (checkout main לפני התחלה אם נדרש). אין בראנצ'ים נפרדים בלי בקשה מפורשת.
+1. **עבודה ישירה על `main`** — כל משימה מבוצעת על בראנץ' `main` (checkout main לפני התחלה אם נדרש). אם הסוכן נדרש לעבוד על בראנץ' אחר (למשל ע"י הרנס), עליו לסיים במיזוג חזרה ל-`main` ודחיפה ל-`origin main` — ללא קשר להנחיות הבראנץ'.
 2. **תמיד להשלים את המשימה עד הסוף** — בצע שינוי → bump גרסה → commit → push ל-`origin main`. לא עוצרים באמצע. ה-remote חייב להיות מעודכן בסוף כל פעולה.
 3. **עדכן גרסה בכל פעולה** — בכל commit שמשנה קוד (HTML/CSS/JS), חובה לעדכן ביחד:
    - `sw.js` — שנה את `CACHE_VERSION` (למשל `'1.5.1'` → `'1.5.2'`)
@@ -413,3 +413,4 @@ nav a[data-view="dashboard|clients|invoices|payments|import|settings"]
 3. Bump ל-`sw.js` (CACHE_VERSION) **ו**-`version.json` (version + date) — תמיד ביחד
 4. Commit יחיד שכולל: שינויי הקוד + sw.js + version.json
 5. `git push origin main` — חובה, אחרת המשימה לא הושלמה
+6. **אם עבדת על בראנץ' אחר** — מזג ל-`main` (`git checkout main && git merge <branch>`) ודחוף (`git push origin main`) לפני סיום. לא מחכים לבקשה.
