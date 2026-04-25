@@ -1281,3 +1281,21 @@ hr.divider {
   display: inline-block;
   margin-top: 16px;
 }
+
+/* ── Mobile bottom nav active state ── */
+.mobile-nav-item.active {
+  color: white;
+  border: none !important;
+  background: none !important;
+  position: relative;
+}
+.mobile-nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: #a78bfa;
+  border-radius: 0 0 2px 2px;
+}

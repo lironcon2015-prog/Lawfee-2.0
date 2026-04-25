@@ -115,12 +115,14 @@ const App = (() => {
 
   // ── Wire nav clicks ────────────────────────────────────
   function _wireNav() {
-    document.getElementById('sidebar-nav').addEventListener('click', (e) => {
+    function _handler(e) {
       const item = e.target.closest('.nav-item');
       if (!item) return;
       e.preventDefault();
       navigate(item.dataset.view);
-    });
+    }
+    document.getElementById('sidebar-nav').addEventListener('click', _handler);
+    document.getElementById('mobile-nav').addEventListener('click', _handler);
   }
 
   // ── Wire backup buttons ────────────────────────────────
