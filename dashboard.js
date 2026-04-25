@@ -6,6 +6,7 @@
 const Dashboard = (() => {
 
   let _year = new Date().getFullYear();
+  let _donutMetric = 'commission';
 
   // ── Init ───────────────────────────────────────────────
   async function init() {
@@ -19,6 +20,11 @@ const Dashboard = (() => {
     document.getElementById('toggle-client-monthly-metric')?.addEventListener('click', async () => {
       _clientMonthlyMetric = _clientMonthlyMetric === 'commission' ? 'amount' : 'commission';
       await renderClientMonthlyTable();
+    });
+
+    document.getElementById('toggle-donut-metric')?.addEventListener('click', async () => {
+      _donutMetric = _donutMetric === 'commission' ? 'amount' : 'commission';
+      await renderClientDonut();
     });
 
     await render();
@@ -177,11 +183,17 @@ const Dashboard = (() => {
     const caseMap = {};
     allCases.forEach(c => { caseMap[c.id] = c; });
 
+    const metric = _donutMetric;
+    const toggleBtn  = document.getElementById('toggle-donut-metric');
+    const titleEl    = document.getElementById('donut-title');
+    if (toggleBtn) toggleBtn.textContent = metric === 'commission' ? 'הצג הכנסות' : 'הצג עמלות';
+    if (titleEl)   titleEl.textContent   = metric === 'commission' ? 'פילוח עמלות לפי לקוח' : 'פילוח הכנסות לפי לקוח';
+
     const byClient = {};
     allInvoices.forEach(inv => {
       const c = caseMap[inv.caseId];
       if (!c) return;
-      byClient[c.clientId] = (byClient[c.clientId] || 0) + inv.commission; // Show commissions in donut
+      byClient[c.clientId] = (byClient[c.clientId] || 0) + (metric === 'commission' ? inv.commission : inv.amount);
     });
 
     let rows = Object.entries(byClient)
@@ -190,9 +202,9 @@ const Dashboard = (() => {
       .filter(r => r.val > 0);
 
     const total = rows.reduce((s,r) => s + r.val, 0);
-    
+
     if (total === 0) {
-      host.innerHTML = `<div class="chart-empty w-full text-center py-8">אין עמלות לשנת ${_year}</div>`;
+      host.innerHTML = `<div class="chart-empty w-full text-center py-8">אין ${metric === 'commission' ? 'עמלות' : 'הכנסות'} לשנת ${_year}</div>`;
       return;
     }
 

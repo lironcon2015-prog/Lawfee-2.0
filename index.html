@@ -277,8 +277,9 @@
   </div>
   
   <div class="lg:col-span-2 flex flex-col bg-white rounded-[24px] border border-neutral-200 shadow-sm p-6 md:p-8 min-h-[400px]">
-    <div class="mb-4">
-      <h2 class="text-xl font-bold font-heading text-neutral-900">פילוח עמלות לפי לקוח</h2>
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="text-xl font-bold font-heading text-neutral-900" id="donut-title">פילוח עמלות לפי לקוח</h2>
+      <button class="btn-ghost btn-sm text-xs" id="toggle-donut-metric">הצג הכנסות</button>
     </div>
     <!-- מכל הדונאט (גמיש, צד לצד) -->
     <div class="flex-1 w-full flex flex-col sm:flex-row items-center justify-center gap-8 mt-2" id="client-donut"></div>
