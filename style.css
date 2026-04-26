@@ -1299,3 +1299,8 @@ hr.divider {
   background: #a78bfa;
   border-radius: 0 0 2px 2px;
 }
+
+/* ── Responsive sidebar ── */
+@media (max-width: 767px) {
+  #sidebar { display: none !important; }
+}
