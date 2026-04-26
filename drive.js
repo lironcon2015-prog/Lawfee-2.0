@@ -10,6 +10,7 @@ const Drive = (() => {
 
   let _tokenClient = null;
   let _token       = null;
+  let _tokenExpiry = null;
 
   function _gisReady() {
     return typeof google !== 'undefined' && google.accounts && google.accounts.oauth2;
@@ -19,7 +20,39 @@ const Drive = (() => {
     _tokenClient = google.accounts.oauth2.initTokenClient({
       client_id: CLIENT_ID,
       scope:     SCOPE,
-      callback:  '',           // set before each request
+      callback:  '',
+    });
+  }
+
+  function _setToken(token) {
+    _token       = token;
+    _tokenExpiry = Date.now() + 3500 * 1000;
+    setTimeout(() => { _token = null; _tokenExpiry = null; _renderStatus(); }, 3500 * 1000);
+    _renderStatus();
+  }
+
+  function _clearToken() {
+    _token       = null;
+    _tokenExpiry = null;
+    _renderStatus();
+  }
+
+  // ── Status UI ──────────────────────────────────────────
+
+  function _renderStatus() {
+    const connected = !!_token;
+    const ids = ['drive-status-sidebar', 'drive-status-mobile'];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.className = connected
+        ? 'text-xs text-center font-medium text-emerald-400 py-1'
+        : 'text-xs text-center font-medium text-midnight-500 py-1';
+      el.textContent = connected ? '● מחובר ל-Google Drive' : '○ לא מחובר';
+    });
+    ['drive-disconnect-sidebar', 'drive-disconnect-mobile'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('hidden', !connected);
     });
   }
 
@@ -31,8 +64,7 @@ const Drive = (() => {
     return new Promise((resolve, reject) => {
       _tokenClient.callback = (resp) => {
         if (resp.error) { reject(new Error(resp.error_description || resp.error)); return; }
-        _token = resp.access_token;
-        setTimeout(() => { _token = null; }, 3500 * 1000);
+        _setToken(resp.access_token);
         resolve(_token);
       };
       _tokenClient.requestAccessToken({ prompt: '' });
@@ -92,6 +124,7 @@ const Drive = (() => {
       UI.toast('גיבוי נשמר ב-Google Drive ✓', 'success');
     } catch (err) {
       if (err.message === 'popup_closed_by_user') return;
+      _clearToken();
       UI.toast('שגיאה בגיבוי לדרייב: ' + err.message, 'error');
     }
   }
@@ -120,10 +153,27 @@ const Drive = (() => {
       );
     } catch (err) {
       if (err.message === 'popup_closed_by_user') return;
+      _clearToken();
       UI.toast('שגיאה בשחזור מדרייב: ' + err.message, 'error');
     }
   }
 
-  return { saveBackup, restoreBackup };
+  function disconnect() {
+    if (_token && _gisReady()) {
+      google.accounts.oauth2.revoke(_token, () => {});
+    }
+    _clearToken();
+    if (_tokenClient) { _tokenClient = null; }
+    UI.toast('התנתקת מ-Google Drive', 'info');
+  }
+
+  function init() {
+    _renderStatus();
+    ['drive-disconnect-sidebar', 'drive-disconnect-mobile'].forEach(id => {
+      document.getElementById(id)?.addEventListener('click', disconnect);
+    });
+  }
+
+  return { saveBackup, restoreBackup, disconnect, init };
 })();
 window.Drive = Drive;

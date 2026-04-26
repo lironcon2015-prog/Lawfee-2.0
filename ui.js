@@ -186,6 +186,7 @@ const UI = (() => {
     titleEl.textContent = title || '';
     bodyEl.innerHTML    = bodyHTML;
     confirmBtn.textContent = confirmLabel;
+    confirmBtn.disabled    = false;
 
     // Reset confirm button to default (midnight) style — in case a previous
     // UI.confirm() call styled it red (destructive). Always start fresh.
@@ -274,7 +275,7 @@ const UI = (() => {
         await _onConfirmFn();
       } catch (err) {
         toast(err.message || 'שגיאה בשמירה', 'error');
-        // Restore label
+      } finally {
         if (btn) {
           btn.disabled    = false;
           btn.textContent = btn.dataset.label || 'שמור';

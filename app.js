@@ -182,24 +182,27 @@ const App = (() => {
     // Init importer (registers drop events etc.)
     Importer.init();
 
-    // Wire nav + backup
+    // Wire nav + backup + drive status
     _wireNav();
     _wireBackup();
+    Drive.init();
 
-    // Handle browser back/forward navigation
+    // Clear URL hash without triggering hashchange — always start fresh at dashboard
+    history.replaceState(null, '', location.pathname + location.search);
+
+    // Runtime nav via mobile bottom-bar links (href="#view") still works via hashchange
     window.addEventListener('hashchange', () => {
       const hash = (location.hash || '').replace('#', '');
-      if (VIEWS[hash] && hash !== _currentView) navigate(hash);
+      if (VIEWS[hash] && hash !== _currentView) {
+        history.replaceState(null, '', location.pathname + location.search);
+        navigate(hash);
+      }
     });
 
-    // Check hash routing
-    const hash = (location.hash || '').replace('#', '');
-    const startView = VIEWS[hash] ? hash : 'dashboard';
-
-    // Check onboarding; if empty DB, go to import
+    // Always open at dashboard (or import if DB is empty)
     const redirected = await _checkOnboarding();
     if (!redirected) {
-      await navigate(startView);
+      await navigate('dashboard');
     }
   }
 

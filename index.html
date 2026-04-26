@@ -117,7 +117,7 @@
   </style>
 </head>
 <body class="font-sans antialiased text-neutral-900 bg-neutral-50 selection:bg-midnight-200 selection:text-midnight-900">
-<script>window._BUNDLE_VERSION = '1.7.6';</script>
+<script>window._BUNDLE_VERSION = '1.8.0';</script>
 <div class="flex h-screen overflow-hidden" id="app">
 <!-- SIDEBAR -->
 <aside class="w-72 bg-midnight-950 border-l border-midnight-900 flex flex-col shadow-2xl z-20 text-neutral-100" id="sidebar">
@@ -163,11 +163,15 @@
 </button>
 <input accept=".json" class="hidden" id="input-restore-file" type="file"/>
 <div class="border-t border-midnight-800 my-1"></div>
+<div id="drive-status-sidebar" class="text-xs text-center font-medium text-midnight-500 py-1">○ לא מחובר</div>
 <button class="flex items-center justify-center w-full px-4 py-2.5 text-sm font-medium text-midnight-100 bg-midnight-800/80 border border-midnight-700/50 rounded-xl hover:bg-midnight-700 hover:text-white transition-all duration-300 shadow-lg" id="btn-drive-backup" title="גיבוי ל-Google Drive">
 <span class="material-symbols-outlined ml-2 text-[18px]">cloud_upload</span> גיבוי לדרייב
 </button>
 <button class="flex items-center justify-center w-full px-4 py-2.5 text-sm font-medium text-midnight-100 bg-midnight-800/80 border border-midnight-700/50 rounded-xl hover:bg-midnight-700 hover:text-white transition-all duration-300 shadow-lg" id="btn-drive-restore" title="שחזור מ-Google Drive">
 <span class="material-symbols-outlined ml-2 text-[18px]">cloud_download</span> שחזור מדרייב
+</button>
+<button class="hidden flex items-center justify-center w-full px-4 py-2 text-xs font-medium text-red-400 bg-transparent border border-red-900/40 rounded-xl hover:bg-red-900/20 transition-all" id="drive-disconnect-sidebar">
+<span class="material-symbols-outlined ml-1 text-[14px]">logout</span> התנתק מדרייב
 </button>
 </div>
 </aside>
@@ -599,11 +603,15 @@
 </button>
 <input accept=".json" class="hidden" id="input-restore-file-mobile" type="file"/>
 <div class="border-t border-neutral-100 my-1"></div>
+<div id="drive-status-mobile" class="text-xs text-center font-medium text-neutral-400 py-1">○ לא מחובר</div>
 <button class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white bg-midnight-900 rounded-xl hover:bg-midnight-800 transition-all shadow-md" id="btn-drive-backup-mobile">
 <span class="material-symbols-outlined ml-2 text-[18px]">cloud_upload</span> גיבוי ל-Google Drive
 </button>
 <button class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white bg-midnight-900 rounded-xl hover:bg-midnight-800 transition-all shadow-md" id="btn-drive-restore-mobile">
 <span class="material-symbols-outlined ml-2 text-[18px]">cloud_download</span> שחזור מ-Google Drive
+</button>
+<button class="hidden flex items-center justify-center w-full px-4 py-2.5 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-xl hover:bg-red-100 transition-all" id="drive-disconnect-mobile">
+<span class="material-symbols-outlined ml-2 text-[18px]">logout</span> התנתק מ-Google Drive
 </button>
 </div>
 </div>

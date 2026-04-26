@@ -764,12 +764,13 @@ const Importer = (() => {
         existing_warn.remove();
       } else {
         // First click — show warning and abort save
+        UI.toast(`חשבונית זהה כבר קיימת (${UI.formatCurrency(duplicate.amount)}). לחץ שמור שוב לאישור.`, 'warning', 5000);
         if (pdfBody) {
           const warn = document.createElement('div');
           warn.id = 'pdf-dup-warning';
-          warn.style.cssText = 'background:#fef3c7;border:1px solid #fbbf24;border-radius:12px;padding:12px 16px;margin-top:12px;font-size:0.85rem;color:#92400e;display:flex;align-items:center;gap:10px';
-          warn.innerHTML = `<span class="material-symbols-outlined" style="font-size:18px;flex-shrink:0">warning</span>
-            <span>חשבונית זהה כבר קיימת (${UI.formatCurrency(duplicate.amount)}). לחץ <strong>שמור חשבונית</strong> שוב לאישור.</span>`;
+          warn.style.cssText = 'background:#fef3c7;border:2px solid #f59e0b;border-radius:12px;padding:14px 16px;margin-bottom:12px;font-size:0.875rem;color:#92400e;display:flex;align-items:center;gap:10px';
+          warn.innerHTML = `<span class="material-symbols-outlined" style="font-size:22px;flex-shrink:0;color:#d97706">warning</span>
+            <span><strong>חשבונית זהה כבר קיימת</strong> (${UI.formatCurrency(duplicate.amount)})<br>לחץ <strong>שמור חשבונית</strong> שוב כדי לשמור בכל זאת.</span>`;
           pdfBody.prepend(warn);
         }
         return; // abort — wait for second click
