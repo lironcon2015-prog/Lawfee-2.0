@@ -70,27 +70,27 @@ const Invoices = (() => {
       totalAmt  += inv.amount;
       totalComm += inv.commission;
 
-      rows += `<tr onmouseover="this.querySelectorAll('td').forEach(td=>td.style.background='#F9FAFB')" onmouseout="this.querySelectorAll('td').forEach(td=>td.style.background='')">
-        <td style="font-weight:600;color:#111827;">${escHtml(client)}</td>
-        <td style="font-family:'Inter',monospace;font-size:0.75rem;color:#9CA3AF;">${c ? escHtml(c.caseNumber) : '—'}</td>
-        <td style="font-size:0.82rem;color:#6B7280;">${UI.monthName(inv.month)}</td>
-        <td style="font-family:'Inter',sans-serif;font-size:0.8rem;color:#9CA3AF;">${inv.year}</td>
-        <td class="num" style="color:#374151;">${UI.formatNumber(inv.amount)}</td>
-        <td class="num" style="color:#9CA3AF;">${UI.formatPct(inv.commissionRate)}</td>
-        <td class="num" style="color:#D4AF37;font-weight:600;">${UI.formatNumber(inv.commission)}</td>
+      rows += `<tr>
+        <td style="font-weight:500;color:#111114;">${escHtml(client)}</td>
+        <td style="font-family:'Inter',monospace;font-size:0.72rem;color:#9EA3B0;font-weight:300;">${c ? escHtml(c.caseNumber) : '—'}</td>
+        <td style="font-size:0.8rem;color:#878C9E;">${UI.monthName(inv.month)}</td>
+        <td style="font-family:'Inter',sans-serif;font-size:0.78rem;color:#9EA3B0;font-weight:300;">${inv.year}</td>
+        <td class="num" style="color:#111114;font-weight:300;">${UI.formatNumber(inv.amount)}</td>
+        <td class="num" style="color:#9EA3B0;font-weight:300;">${UI.formatPct(inv.commissionRate)}</td>
+        <td class="num" style="color:#C5A880;font-weight:400;">${UI.formatNumber(inv.commission)}</td>
         <td>${UI.sourceBadge(inv.source)}</td>
         <td style="text-align:left;">
-          <button style="color:#9CA3AF;background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;transition:all 0.15s;" onmouseover="this.style.color='#1D4ED8';this.style.background='rgba(29,78,216,0.06)'" onmouseout="this.style.color='#9CA3AF';this.style.background='none'" onclick="Invoices.openInvoiceModal(${inv.id})" title="ערוך"><span class="material-symbols-outlined" style="font-size:16px;">edit</span></button>
-          <button style="color:#9CA3AF;background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;transition:all 0.15s;" onmouseover="this.style.color='#be123c';this.style.background='rgba(190,18,60,0.06)'" onmouseout="this.style.color='#9CA3AF';this.style.background='none'" onclick="Invoices.deleteInvoice(${inv.id})" title="מחק"><span class="material-symbols-outlined" style="font-size:16px;">delete</span></button>
+          <button style="color:#D1D5DB;background:none;border:none;cursor:pointer;padding:4px;border-radius:4px;transition:all 0.2s;" onmouseover="this.style.color='#0F1E36'" onmouseout="this.style.color='#D1D5DB'" onclick="Invoices.openInvoiceModal(${inv.id})" title="ערוך"><span class="material-symbols-outlined" style="font-size:16px;">edit</span></button>
+          <button style="color:#D1D5DB;background:none;border:none;cursor:pointer;padding:4px;border-radius:4px;transition:all 0.2s;" onmouseover="this.style.color='#7F1D1D'" onmouseout="this.style.color='#D1D5DB'" onclick="Invoices.deleteInvoice(${inv.id})" title="מחק"><span class="material-symbols-outlined" style="font-size:16px;">delete</span></button>
         </td>
       </tr>`;
     });
 
     rows += `<tr class="summary-row">
-      <td colspan="4" style="font-size:0.8rem;">סה"כ (${filtered.length} חשבוניות)</td>
-      <td class="num">${UI.formatNumber(totalAmt)}</td>
+      <td colspan="4" style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;">סה"כ (${filtered.length} חשבוניות)</td>
+      <td class="num" style="color:#111114;">${UI.formatNumber(totalAmt)}</td>
       <td></td>
-      <td class="num" style="color:#D4AF37;">${UI.formatNumber(totalComm)}</td>
+      <td class="num" style="color:#C5A880;">${UI.formatNumber(totalComm)}</td>
       <td colspan="2"></td>
     </tr>`;
 

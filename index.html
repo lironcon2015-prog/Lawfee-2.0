@@ -25,13 +25,13 @@
           },
           colors: {
             exec: {
-              bg:         '#F8F9FA',
+              bg:         '#FBFBFD',
               surface:    '#FFFFFF',
-              carbon:     '#0A0B0F',
-              slate:      '#1A1C23',
-              border:     '#E5E7EB',
-              sapphire:   '#1D4ED8',
-              champagne:  '#D4AF37',
+              carbon:     '#0A0A0C',
+              slate:      '#14151A',
+              border:     '#EBEBEF',
+              sapphire:   '#0F1E36',
+              champagne:  '#C5A880',
             },
             midnight: {
               50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc',
@@ -176,28 +176,28 @@
   <!-- Nav -->
   <nav class="flex-1 overflow-y-auto py-4 px-3" id="sidebar-nav">
     <div class="mb-2 px-3 text-[10px] font-bold uppercase tracking-widest" style="color:rgba(255,255,255,0.15);">ניווט</div>
-    <a class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl mb-0.5 transition-all duration-200" data-view="dashboard" href="#dashboard" style="color:rgba(255,255,255,0.55);font-size:0.875rem;font-weight:500;">
+    <a class="nav-item flex items-center gap-3 px-4 py-2.5 mb-0.5 transition-all duration-200" data-view="dashboard" href="#dashboard" style="color:#6B7280;font-size:0.875rem;font-weight:400;">
       <span class="material-symbols-outlined" style="font-size:18px;color:inherit;">dashboard</span>
       <span class="nav-label">לוח בקרה</span>
     </a>
-    <a class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl mb-0.5 transition-all duration-200" data-view="clients" href="#clients" style="color:rgba(255,255,255,0.55);font-size:0.875rem;font-weight:500;">
+    <a class="nav-item flex items-center gap-3 px-4 py-2.5 mb-0.5 transition-all duration-200" data-view="clients" href="#clients" style="color:#6B7280;font-size:0.875rem;font-weight:400;">
       <span class="material-symbols-outlined" style="font-size:18px;color:inherit;">group</span>
       <span class="nav-label">לקוחות ותיקים</span>
     </a>
-    <a class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl mb-0.5 transition-all duration-200" data-view="invoices" href="#invoices" style="color:rgba(255,255,255,0.55);font-size:0.875rem;font-weight:500;">
+    <a class="nav-item flex items-center gap-3 px-4 py-2.5 mb-0.5 transition-all duration-200" data-view="invoices" href="#invoices" style="color:#6B7280;font-size:0.875rem;font-weight:400;">
       <span class="material-symbols-outlined" style="font-size:18px;color:inherit;">receipt_long</span>
       <span class="nav-label">חשבוניות</span>
     </a>
-    <a class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl mb-0.5 transition-all duration-200" data-view="payments" href="#payments" style="color:rgba(255,255,255,0.55);font-size:0.875rem;font-weight:500;">
+    <a class="nav-item flex items-center gap-3 px-4 py-2.5 mb-0.5 transition-all duration-200" data-view="payments" href="#payments" style="color:#6B7280;font-size:0.875rem;font-weight:400;">
       <span class="material-symbols-outlined" style="font-size:18px;color:inherit;">payments</span>
       <span class="nav-label">תשלומים</span>
     </a>
-    <a class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl mb-0.5 transition-all duration-200" data-view="import" href="#import" style="color:rgba(255,255,255,0.55);font-size:0.875rem;font-weight:500;">
+    <a class="nav-item flex items-center gap-3 px-4 py-2.5 mb-0.5 transition-all duration-200" data-view="import" href="#import" style="color:#6B7280;font-size:0.875rem;font-weight:400;">
       <span class="material-symbols-outlined" style="font-size:18px;color:inherit;">upload_file</span>
       <span class="nav-label">ייבוא נתונים</span>
     </a>
-    <div class="my-3" style="border-top:1px solid rgba(255,255,255,0.06);"></div>
-    <a class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl mb-0.5 transition-all duration-200" data-view="settings" href="#settings" style="color:rgba(255,255,255,0.4);font-size:0.875rem;font-weight:500;">
+    <div class="my-3" style="border-top:1px solid rgba(255,255,255,0.04);"></div>
+    <a class="nav-item flex items-center gap-3 px-4 py-2.5 mb-0.5 transition-all duration-200" data-view="settings" href="#settings" style="color:#6B7280;font-size:0.875rem;font-weight:400;">
       <span class="material-symbols-outlined" style="font-size:18px;color:inherit;">settings</span>
       <span class="nav-label">הגדרות</span>
     </a>
@@ -252,7 +252,7 @@
 </a>
 </nav>
 <!-- MAIN CONTENT -->
-<main class="flex-1 overflow-y-auto p-4 md:p-8 pb-20 md:pb-8 relative" id="main-content" style="background:#F8F9FA;">
+<main class="flex-1 overflow-y-auto p-4 md:p-8 pb-20 md:pb-8 relative" id="main-content" style="background:#FBFBFD;">
 <!-- ── VIEW: DASHBOARD ── -->
 <section class="view max-w-7xl mx-auto space-y-5 relative z-10" id="view-dashboard">
   <!-- Header -->
@@ -270,79 +270,57 @@
 
   <!-- Bento KPI row -->
   <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
-    <!-- Hero dark glass: balance -->
-    <div class="lg:col-span-2 dark-glass rounded-3xl p-6 md:p-8 text-white relative overflow-hidden flex flex-col justify-between min-h-[200px]">
-      <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse at 80% 20%, rgba(29,78,216,0.15) 0%, transparent 70%);"></div>
+    <!-- Centurion Titanium Hero card: balance -->
+    <div class="lg:col-span-2 dark-glass rounded-3xl text-white relative overflow-hidden flex flex-col justify-between" style="min-height:220px;padding:32px 36px;ring:1px solid rgba(255,255,255,0.1);">
+      <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse at 70% 0%, rgba(197,168,128,0.08) 0%, transparent 60%);"></div>
       <div class="relative z-10">
-        <div class="flex items-center justify-between mb-6">
-          <div class="text-[11px] font-bold uppercase tracking-widest" style="color:rgba(255,255,255,0.4);">יתרה לתשלום</div>
-          <div class="w-8 h-8 rounded-xl flex items-center justify-center" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);">
-            <span class="material-symbols-outlined" style="font-size:16px;color:rgba(255,255,255,0.6);">account_balance_wallet</span>
-          </div>
+        <div class="flex items-center justify-between mb-8">
+          <div style="font-size:0.6rem;font-weight:600;letter-spacing:0.22em;color:rgba(255,255,255,0.3);text-transform:uppercase;">יתרה לתשלום</div>
+          <div style="font-size:0.6rem;font-weight:500;letter-spacing:0.08em;color:rgba(255,255,255,0.15);text-transform:uppercase;">LEXLEDGER</div>
         </div>
-        <div class="flex items-baseline gap-2 mb-2">
-          <span class="font-num font-bold text-white tabular-nums" style="font-size:2.4rem;letter-spacing:-0.04em;line-height:1;" id="kpi-balance">—</span>
-          <span style="font-size:1.2rem;color:rgba(255,255,255,0.4);font-family:'Inter',sans-serif;font-weight:500;">₪</span>
+        <div class="flex items-baseline gap-3 mb-3">
+          <span id="kpi-balance" class="font-num tabular-nums" style="font-size:3.8rem;font-weight:200;letter-spacing:-0.05em;line-height:1;color:#FFFFFF;">—</span>
+          <span class="font-num" style="font-size:1.4rem;font-weight:200;color:rgba(255,255,255,0.25);letter-spacing:-0.02em;">₪</span>
         </div>
-        <div class="font-num text-xs tabular-nums" style="color:rgba(255,255,255,0.35);direction:ltr;text-align:right;" id="hero-meta">—</div>
+        <div class="font-num tabular-nums" style="font-size:0.72rem;color:rgba(255,255,255,0.25);direction:ltr;text-align:right;letter-spacing:0.03em;" id="hero-meta">—</div>
       </div>
-      <!-- Decorative ring -->
-      <div class="absolute -bottom-8 -left-8 w-40 h-40 rounded-full pointer-events-none" style="border:1px solid rgba(255,255,255,0.04);"></div>
-      <div class="absolute -bottom-16 -left-16 w-64 h-64 rounded-full pointer-events-none" style="border:1px solid rgba(255,255,255,0.03);"></div>
+      <!-- Subtle decorative elements -->
+      <div class="absolute pointer-events-none" style="bottom:-40px;left:-40px;width:200px;height:200px;border-radius:50%;border:1px solid rgba(255,255,255,0.03);"></div>
+      <div class="absolute pointer-events-none" style="bottom:-80px;left:-80px;width:320px;height:320px;border-radius:50%;border:1px solid rgba(255,255,255,0.02);"></div>
     </div>
 
-    <!-- 4 white mini KPIs -->
+    <!-- 4 white mini KPIs — pristine, airy -->
     <div class="lg:col-span-3 grid grid-cols-2 gap-4">
       <!-- Opening balance -->
-      <div class="bg-white rounded-2xl p-5 ring-1 ring-inset ring-gray-900/5 shadow-card flex flex-col justify-between hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-xs font-semibold uppercase tracking-widest text-neutral-400">יתרת פתיחה</span>
-          <div class="w-7 h-7 rounded-lg bg-sky-50 flex items-center justify-center">
-            <span class="material-symbols-outlined text-sky-400" style="font-size:15px;">account_balance</span>
-          </div>
-        </div>
-        <div class="flex items-baseline gap-1.5">
-          <span class="font-num font-bold text-neutral-800 tabular-nums" style="font-size:1.6rem;letter-spacing:-0.03em;" id="kpi-opening">—</span>
-          <span class="text-neutral-400 font-num" style="font-size:0.9rem;">₪</span>
+      <div class="bg-white rounded-2xl flex flex-col justify-between" style="padding:24px 28px;box-shadow:0 20px 40px -10px rgba(0,0,0,0.03);">
+        <div class="mb-5" style="font-size:0.6rem;font-weight:600;letter-spacing:0.15em;color:#9EA3B0;text-transform:uppercase;">יתרת פתיחה</div>
+        <div class="flex items-baseline gap-2">
+          <span id="kpi-opening" class="font-num tabular-nums" style="font-size:1.8rem;font-weight:300;letter-spacing:-0.04em;color:#111114;">—</span>
+          <span class="font-num" style="font-size:0.85rem;font-weight:300;color:#9EA3B0;">₪</span>
         </div>
       </div>
       <!-- Revenue -->
-      <div class="bg-white rounded-2xl p-5 ring-1 ring-inset ring-gray-900/5 shadow-card flex flex-col justify-between hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-xs font-semibold uppercase tracking-widest text-neutral-400">הכנסה כוללת</span>
-          <div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
-            <span class="material-symbols-outlined text-emerald-500" style="font-size:15px;">trending_up</span>
-          </div>
-        </div>
-        <div class="flex items-baseline gap-1.5">
-          <span class="font-num font-bold text-neutral-800 tabular-nums" style="font-size:1.6rem;letter-spacing:-0.03em;" id="kpi-revenue">—</span>
-          <span class="text-neutral-400 font-num" style="font-size:0.9rem;">₪</span>
+      <div class="bg-white rounded-2xl flex flex-col justify-between" style="padding:24px 28px;box-shadow:0 20px 40px -10px rgba(0,0,0,0.03);">
+        <div class="mb-5" style="font-size:0.6rem;font-weight:600;letter-spacing:0.15em;color:#9EA3B0;text-transform:uppercase;">הכנסה כוללת</div>
+        <div class="flex items-baseline gap-2">
+          <span id="kpi-revenue" class="font-num tabular-nums" style="font-size:1.8rem;font-weight:300;letter-spacing:-0.04em;color:#111114;">—</span>
+          <span class="font-num" style="font-size:0.85rem;font-weight:300;color:#9EA3B0;">₪</span>
         </div>
       </div>
       <!-- Commissions -->
-      <div class="bg-white rounded-2xl p-5 ring-1 ring-inset ring-gray-900/5 shadow-card flex flex-col justify-between hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-xs font-semibold uppercase tracking-widest text-neutral-400">עמלות שנצברו</span>
-          <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:rgba(212,175,55,0.1);">
-            <span class="material-symbols-outlined" style="font-size:15px;color:#D4AF37;">pie_chart</span>
-          </div>
-        </div>
-        <div class="flex items-baseline gap-1.5">
-          <span class="font-num font-bold text-neutral-800 tabular-nums" style="font-size:1.6rem;letter-spacing:-0.03em;" id="kpi-commissions">—</span>
-          <span class="text-neutral-400 font-num" style="font-size:0.9rem;">₪</span>
+      <div class="bg-white rounded-2xl flex flex-col justify-between" style="padding:24px 28px;box-shadow:0 20px 40px -10px rgba(0,0,0,0.03);">
+        <div class="mb-5" style="font-size:0.6rem;font-weight:600;letter-spacing:0.15em;color:#C5A880;text-transform:uppercase;">עמלות שנצברו</div>
+        <div class="flex items-baseline gap-2">
+          <span id="kpi-commissions" class="font-num tabular-nums" style="font-size:1.8rem;font-weight:300;letter-spacing:-0.04em;color:#111114;">—</span>
+          <span class="font-num" style="font-size:0.85rem;font-weight:300;color:#9EA3B0;">₪</span>
         </div>
       </div>
       <!-- Payments -->
-      <div class="bg-white rounded-2xl p-5 ring-1 ring-inset ring-gray-900/5 shadow-card flex flex-col justify-between hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-xs font-semibold uppercase tracking-widest text-neutral-400">תשלומים שהתקבלו</span>
-          <div class="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center">
-            <span class="material-symbols-outlined text-violet-400" style="font-size:15px;">payments</span>
-          </div>
-        </div>
-        <div class="flex items-baseline gap-1.5">
-          <span class="font-num font-bold text-neutral-800 tabular-nums" style="font-size:1.6rem;letter-spacing:-0.03em;" id="kpi-payments">—</span>
-          <span class="text-neutral-400 font-num" style="font-size:0.9rem;">₪</span>
+      <div class="bg-white rounded-2xl flex flex-col justify-between" style="padding:24px 28px;box-shadow:0 20px 40px -10px rgba(0,0,0,0.03);">
+        <div class="mb-5" style="font-size:0.6rem;font-weight:600;letter-spacing:0.15em;color:#9EA3B0;text-transform:uppercase;">תשלומים שהתקבלו</div>
+        <div class="flex items-baseline gap-2">
+          <span id="kpi-payments" class="font-num tabular-nums" style="font-size:1.8rem;font-weight:300;letter-spacing:-0.04em;color:#111114;">—</span>
+          <span class="font-num" style="font-size:0.85rem;font-weight:300;color:#9EA3B0;">₪</span>
         </div>
       </div>
     </div>
@@ -350,33 +328,32 @@
 
   <!-- Charts row -->
   <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
-    <div class="lg:col-span-3 flex flex-col bg-white rounded-2xl ring-1 ring-inset ring-gray-900/5 shadow-card p-5 md:p-7 min-h-[280px]">
-      <div class="flex items-center justify-between mb-5">
+    <div class="lg:col-span-3 flex flex-col bg-white rounded-2xl p-6 md:p-8" style="min-height:280px;box-shadow:0 20px 40px -10px rgba(0,0,0,0.03);">
+      <div class="flex items-center justify-between mb-6">
         <div>
-          <h2 class="font-heading font-bold text-neutral-800" style="font-size:0.95rem;">תזרים חודשי</h2>
-          <p class="text-neutral-400 text-xs mt-0.5">הכנסות מול עמלות (₪)</p>
+          <h2 class="font-sans" style="font-size:0.78rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#9EA3B0;">תזרים חודשי</h2>
         </div>
-        <div class="flex gap-3 text-xs font-medium">
-          <span class="flex items-center gap-1.5 text-neutral-500"><span class="w-2 h-2 rounded-full" style="background:#1D4ED8;"></span>הכנסות</span>
-          <span class="flex items-center gap-1.5 text-neutral-500"><span class="w-2 h-2 rounded-[2px]" style="background:#D4AF37;"></span>עמלות</span>
+        <div class="flex gap-4" style="font-size:0.62rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">
+          <span class="flex items-center gap-1.5" style="color:#9EA3B0;"><span style="display:inline-block;width:16px;height:2px;background:#0F1E36;border-radius:1px;"></span>הכנסות</span>
+          <span class="flex items-center gap-1.5" style="color:#9EA3B0;"><span style="display:inline-block;width:16px;height:2px;background:#C5A880;border-radius:1px;"></span>עמלות</span>
         </div>
       </div>
       <div class="flex-1 w-full relative flex flex-col justify-end" id="monthly-chart"></div>
     </div>
 
-    <div class="lg:col-span-2 flex flex-col bg-white rounded-2xl ring-1 ring-inset ring-gray-900/5 shadow-card p-5 md:p-7 min-h-[280px]">
+    <div class="lg:col-span-2 flex flex-col bg-white rounded-2xl p-6 md:p-8" style="min-height:280px;box-shadow:0 20px 40px -10px rgba(0,0,0,0.03);">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="font-heading font-bold text-neutral-800" style="font-size:0.95rem;" id="donut-title">פילוח עמלות לפי לקוח</h2>
-        <button class="px-3 py-1 text-xs font-semibold rounded-lg transition-colors" id="toggle-donut-metric" style="color:#1D4ED8;background:rgba(29,78,216,0.06);border:1px solid rgba(29,78,216,0.12);">הצג הכנסות</button>
+        <h2 class="font-sans" style="font-size:0.7rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#9EA3B0;" id="donut-title">פילוח עמלות לפי לקוח</h2>
+        <button class="px-3 py-1 text-xs font-semibold rounded-lg transition-colors" id="toggle-donut-metric" style="color:#0F1E36;background:rgba(15,30,54,0.05);border:1px solid rgba(15,30,54,0.1);">הצג הכנסות</button>
       </div>
       <div class="flex-1 w-full flex flex-col sm:flex-row items-center justify-center gap-6 mt-2" id="client-donut"></div>
     </div>
   </div>
 
   <!-- Monthly Breakdown Table -->
-  <div class="bg-white rounded-2xl ring-1 ring-inset ring-gray-900/5 shadow-card overflow-hidden">
-    <div class="px-6 py-4 flex items-center justify-between" style="border-bottom:1px solid #F3F4F6;">
-      <h2 class="font-heading font-bold text-neutral-800" style="font-size:0.95rem;">פירוט חודשי</h2>
+  <div class="bg-white rounded-2xl overflow-hidden" style="box-shadow:0 20px 40px -10px rgba(0,0,0,0.03);">
+    <div class="px-6 py-4 flex items-center justify-between" style="border-bottom:1px solid #F4F4F7;">
+      <h2 class="font-sans" style="font-size:0.7rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#9EA3B0;">פירוט חודשי</h2>
     </div>
     <div class="overflow-x-auto">
       <table class="w-full text-sm text-right data-table" id="monthly-table">
@@ -397,9 +374,9 @@
   </div>
 
   <!-- Per-Client Table -->
-  <div class="bg-white rounded-2xl ring-1 ring-inset ring-gray-900/5 shadow-card overflow-hidden">
-    <div class="px-6 py-4 flex items-center justify-between" style="border-bottom:1px solid #F3F4F6;">
-      <h2 class="font-heading font-bold text-neutral-800" style="font-size:0.95rem;">פירוט לפי לקוח</h2>
+  <div class="bg-white rounded-2xl overflow-hidden" style="box-shadow:0 20px 40px -10px rgba(0,0,0,0.03);">
+    <div class="px-6 py-4 flex items-center justify-between" style="border-bottom:1px solid #F4F4F7;">
+      <h2 class="font-sans" style="font-size:0.7rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#9EA3B0;">פירוט לפי לקוח</h2>
     </div>
     <div class="overflow-x-auto">
       <table class="w-full text-right text-sm data-table" id="client-breakdown-table">
@@ -421,13 +398,12 @@
   </div>
 
   <!-- Per-Client Monthly Table -->
-  <div class="bg-white rounded-2xl ring-1 ring-inset ring-gray-900/5 shadow-card overflow-hidden">
-    <div class="px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3" style="border-bottom:1px solid #F3F4F6;">
+  <div class="bg-white rounded-2xl overflow-hidden" style="box-shadow:0 20px 40px -10px rgba(0,0,0,0.03);">
+    <div class="px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3" style="border-bottom:1px solid #F4F4F7;">
       <div>
-        <h2 class="font-heading font-bold text-neutral-800" style="font-size:0.95rem;">הכנסות ועמלות לפי לקוח וחודש</h2>
-        <p class="text-xs text-neutral-400 mt-0.5">הנתונים ב-₪</p>
+        <h2 class="font-sans" style="font-size:0.7rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#9EA3B0;">הכנסות ועמלות לפי לקוח וחודש</h2>
       </div>
-      <button class="px-3 py-1.5 text-xs font-semibold rounded-xl transition-colors self-start sm:self-auto" id="toggle-client-monthly-metric" style="color:#1D4ED8;background:rgba(29,78,216,0.06);border:1px solid rgba(29,78,216,0.12);">הצג הכנסות</button>
+      <button class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors self-start sm:self-auto" id="toggle-client-monthly-metric" style="color:#0F1E36;background:rgba(15,30,54,0.05);border:1px solid rgba(15,30,54,0.1);">הצג הכנסות</button>
     </div>
     <div class="overflow-x-auto">
       <table class="w-full text-sm text-right data-table min-w-[900px]" id="client-monthly-table">
@@ -492,9 +468,9 @@
       <input accept=".pdf" class="hidden" id="input-pdf-file" type="file"/>
     </div>
   </div>
-  <div class="bg-white rounded-2xl ring-1 ring-inset ring-gray-900/5 shadow-card overflow-hidden">
-    <div class="px-6 py-4 flex items-center justify-between" style="border-bottom:1px solid #F3F4F6;">
-      <h2 class="font-heading font-bold text-neutral-800" style="font-size:0.95rem;">היסטוריית חשבוניות</h2>
+  <div class="bg-white rounded-2xl overflow-hidden" style="box-shadow:0 20px 40px -10px rgba(0,0,0,0.03);">
+    <div class="px-6 py-4 flex items-center justify-between" style="border-bottom:1px solid #F4F4F7;">
+      <h2 class="font-sans" style="font-size:0.7rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#9EA3B0;">היסטוריית חשבוניות</h2>
     </div>
     <div class="overflow-x-auto">
       <table class="w-full text-sm text-right data-table" id="invoices-table">
@@ -532,7 +508,7 @@
       </button>
     </div>
   </header>
-  <div class="bg-white rounded-2xl ring-1 ring-inset ring-gray-900/5 shadow-card overflow-hidden">
+  <div class="bg-white rounded-2xl overflow-hidden" style="box-shadow:0 20px 40px -10px rgba(0,0,0,0.03);">
     <div class="overflow-x-auto">
       <table class="w-full text-sm text-right data-table" id="payments-table">
         <thead class="text-neutral-400" style="background:#FAFAFA;">
