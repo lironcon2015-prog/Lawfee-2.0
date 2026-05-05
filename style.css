@@ -5,22 +5,23 @@
 
 /* ── CSS Variables ─────────────────────────────────────── */
 :root {
-  --exec-bg:        #F8F9FA;
+  --exec-bg:        #FBFBFD;
   --exec-surface:   #FFFFFF;
-  --exec-carbon:    #0A0B0F;
-  --exec-slate:     #1A1C23;
-  --exec-border:    #E5E7EB;
-  --exec-border-lt: #F3F4F6;
-  --exec-sapphire:  #1D4ED8;
-  --exec-champagne: #D4AF37;
+  --exec-carbon:    #0A0A0C;
+  --exec-slate:     #14151A;
+  --exec-border:    #EBEBEF;
+  --exec-border-lt: #F4F4F7;
+  --exec-sapphire:  #0F1E36;
+  --exec-champagne: #C5A880;
+  --exec-soft-slate:#878C9E;
 
-  --text-primary:   #111827;
-  --text-secondary: #4B5563;
-  --text-muted:     #9CA3AF;
+  --text-primary:   #111114;
+  --text-secondary: #5A5F72;
+  --text-muted:     #9EA3B0;
 
-  --color-positive: #047857;
-  --color-negative: #be123c;
-  --color-gold:     #D4AF37;
+  --color-positive: #166534;
+  --color-negative: #7F1D1D;
+  --color-gold:     #C5A880;
 
   --font-ui:   'Assistant', -apple-system, sans-serif;
   --font-num:  'Inter', ui-sans-serif, sans-serif;
@@ -31,29 +32,29 @@
   --radius-lg: 16px;
   --radius-xl: 20px;
 
-  --shadow-card:      0 1px 3px rgba(0,0,0,0.04), 0 8px 24px -4px rgba(0,0,0,0.03);
-  --shadow-card-hover:0 4px 6px -1px rgba(0,0,0,0.04), 0 20px 40px -8px rgba(0,0,0,0.08);
-  --shadow-modal:     0 24px 48px -12px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.04);
+  --shadow-card:      0 20px 40px -10px rgba(0,0,0,0.03);
+  --shadow-card-hover:0 32px 60px -12px rgba(0,0,0,0.07);
+  --shadow-modal:     0 40px 80px -20px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04);
 
-  /* compat vars kept for JS that inlines them */
-  --border-color:     #E5E7EB;
+  /* compat vars */
+  --border-color:     #EBEBEF;
   --bg-secondary:     #FFFFFF;
   --bg-card:          #FFFFFF;
   --bg-card-alt:      #FAFAFA;
-  --bg-hover:         #F9FAFB;
+  --bg-hover:         #FAFAFA;
   --bg-input:         #FFFFFF;
   --bg-table-head:    #FFFFFF;
-  --bg-dropzone:      #FAFAFA;
-  --accent:           #1D4ED8;
-  --accent-soft:      rgba(29,78,216,0.06);
-  --accent-border:    rgba(29,78,216,0.15);
-  --accent-text:      #1D4ED8;
-  --accent-hover:     #1e40af;
+  --bg-dropzone:      rgba(255,255,255,0.8);
+  --accent:           #0F1E36;
+  --accent-soft:      rgba(15,30,54,0.06);
+  --accent-border:    rgba(15,30,54,0.12);
+  --accent-text:      #0F1E36;
+  --accent-hover:     #1a2f50;
   --accent-fg:        #FFFFFF;
-  --border:           #E5E7EB;
-  --border-light:     #F3F4F6;
-  --border-focus:     #1D4ED8;
-  --n-900:            #111827;
+  --border:           #EBEBEF;
+  --border-light:     #F4F4F7;
+  --border-focus:     #C5A880;
+  --n-900:            #111114;
 }
 
 /* ── Reset ─────────────────────────────────────────────── */
@@ -96,19 +97,23 @@ select { appearance: none; -webkit-appearance: none; }
 }
 
 /* ── Sidebar nav active state ────────────────────────────── */
+.nav-item {
+  border-right: 2px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
 .nav-item.active {
-  color: rgba(255,255,255,0.95) !important;
-  background: rgba(255,255,255,0.07) !important;
-  border-right: 2px solid #D4AF37 !important;
+  color: #FFFFFF !important;
+  background: none !important;
+  border-right: 2px solid #C5A880 !important;
 }
 .nav-item:hover:not(.active) {
-  color: rgba(255,255,255,0.8) !important;
-  background: rgba(255,255,255,0.04) !important;
+  color: rgba(255,255,255,0.65) !important;
+  background: none !important;
 }
 
 /* Mobile nav active state */
 .mobile-nav-item.active {
-  color: rgba(255,255,255,0.9) !important;
+  color: #FFFFFF !important;
   position: relative;
 }
 .mobile-nav-item.active::before {
@@ -116,7 +121,7 @@ select { appearance: none; -webkit-appearance: none; }
   position: absolute;
   top: 0; left: 20%; right: 20%;
   height: 2px;
-  background: #D4AF37;
+  background: #C5A880;
   border-radius: 0 0 2px 2px;
 }
 
@@ -133,15 +138,15 @@ select { appearance: none; -webkit-appearance: none; }
 .data-table thead tr { background: #FFFFFF; }
 
 .data-table th {
-  padding: 14px 24px;
-  font-size: 0.7rem;
+  padding: 10px 24px 16px;
+  font-size: 0.65rem;
   font-weight: 600;
-  color: #9CA3AF;
+  color: #9EA3B0;
   text-align: right;
-  border-bottom: 1px solid #E5E7EB;
+  border-bottom: 1px solid #F4F4F7;
   white-space: nowrap;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.15em;
   background: #FFFFFF;
 }
 
@@ -151,20 +156,26 @@ select { appearance: none; -webkit-appearance: none; }
   font-family: var(--font-num);
   direction: ltr;
   font-feature-settings: 'tnum';
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   font-size: 0.875rem;
+  font-weight: 300;
 }
 
 .data-table td {
-  padding: 18px 24px;
-  border-bottom: 1px solid #F3F4F6;
-  color: var(--text-primary);
+  padding: 20px 24px;
+  border-bottom: 1px solid #F4F4F7;
+  color: #111114;
   vertical-align: middle;
   background: #FFFFFF;
-  transition: background 0.2s ease-out;
+  transition: all 0.25s ease;
 }
 
-.data-table tbody tr:hover td { background: #F9FAFB; }
+.data-table tbody tr:hover td {
+  background: rgba(197,168,128,0.025);
+}
+.data-table tbody tr:hover td:first-child {
+  box-shadow: inset -3px 0 0 #C5A880;
+}
 .data-table tbody tr:last-child td { border-bottom: none; }
 
 .empty-state {
@@ -190,14 +201,15 @@ select { appearance: none; -webkit-appearance: none; }
 
 /* ── Summary row ─────────────────────────────────────────── */
 .summary-row td {
-  background: rgba(249,250,251,0.6) !important;
-  font-weight: 700;
-  color: #111827;
-  border-top: 2px solid #111827 !important;
+  background: #FBFBFD !important;
+  font-weight: 600;
+  color: #111114;
+  border-top: 1px solid #EBEBEF !important;
   border-bottom: none !important;
   font-family: var(--font-num);
   font-feature-settings: 'tnum';
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  font-size: 0.85rem;
 }
 
 /* ── Buttons ─────────────────────────────────────────────── */
@@ -319,19 +331,23 @@ select { appearance: none; -webkit-appearance: none; }
 
 /* ── Drop zones ─────────────────────────────────────────── */
 .pdf-dropzone, .import-dropzone {
-  border: 1.5px dashed var(--exec-border);
+  border: 1px solid rgba(0,0,0,0.05);
   border-radius: var(--radius-lg);
-  background: #FAFAFA;
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   padding: 32px 24px;
   text-align: center;
   cursor: pointer;
-  transition: border-color 0.18s, background 0.18s;
+  transition: all 0.25s ease;
   position: relative;
+  box-shadow: 0 8px 32px -8px rgba(0,0,0,0.04);
 }
 .pdf-dropzone:hover, .import-dropzone:hover,
 .pdf-dropzone.drag-over, .import-dropzone.drag-over {
-  border-color: var(--exec-sapphire);
-  background: rgba(29,78,216,0.03);
+  border-color: rgba(197,168,128,0.4);
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 16px 40px -8px rgba(0,0,0,0.06);
 }
 .dropzone-inner { pointer-events: none; }
 
@@ -479,13 +495,15 @@ select { appearance: none; -webkit-appearance: none; }
 @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
 
 .modal {
-  background: var(--exec-surface);
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border-radius: var(--radius-lg);
   width: 90%;
   max-width: 500px;
   max-height: 90vh;
   display: flex; flex-direction: column;
-  box-shadow: var(--shadow-modal);
+  box-shadow: 0 40px 80px -20px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05);
   animation: modalIn 0.2s ease;
   overflow: hidden;
   position: relative;
@@ -523,10 +541,10 @@ select { appearance: none; -webkit-appearance: none; }
   animation: toastIn 0.2s ease;
   border-right: 3px solid transparent;
 }
-.toast.success { border-right-color: #059669; }
-.toast.error   { border-right-color: #DC2626; }
-.toast.warning { border-right-color: #D97706; }
-.toast.info    { border-right-color: #1D4ED8; }
+.toast.success { border-right-color: #166534; }
+.toast.error   { border-right-color: #7F1D1D; }
+.toast.warning { border-right-color: #92400E; }
+.toast.info    { border-right-color: #0F1E36; }
 .toast-icon { font-size: 1rem; flex-shrink: 0; }
 @keyframes toastIn  { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes toastOut { from { opacity: 1; transform: translateX(0); } to   { opacity: 0; transform: translateX(-16px); } }

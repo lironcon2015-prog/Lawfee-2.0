@@ -77,16 +77,16 @@
   </script>
 <style>
     :root {
-      --bg-primary:    #F8F9FA;
+      --bg-primary:    #FBFBFD;
       --bg-secondary:  #FFFFFF;
-      --text-primary:  #0A0B0F;
-      --text-secondary:#4B5563;
-      --text-muted:    #9CA3AF;
-      --border-color:  #E5E7EB;
-      --accent:        #1D4ED8;
-      --color-positive:#059669;
-      --color-negative:#DC2626;
-      --color-gold:    #D4AF37;
+      --text-primary:  #111114;
+      --text-secondary:#5A5F72;
+      --text-muted:    #9EA3B0;
+      --border-color:  #EBEBEF;
+      --accent:        #0F1E36;
+      --color-positive:#166534;
+      --color-negative:#7F1D1D;
+      --color-gold:    #C5A880;
       --font-mono:     'Inter', 'IBM Plex Mono', monospace;
       --font-num:      'Inter', sans-serif;
     }
@@ -122,8 +122,8 @@
     }
     /* Dark-glass hero card */
     .dark-glass {
-      background: linear-gradient(135deg, #0A0B0F 0%, #1A1C23 100%);
-      box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.08), 0 20px 60px -10px rgba(0,0,0,0.5);
+      background: linear-gradient(160deg, #1A1C23 0%, #0A0A0C 100%);
+      box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.15), 0 30px 60px -15px rgba(0,0,0,0.6);
     }
     /* Executive ring card */
     .exec-card {
@@ -159,12 +159,12 @@
   </style>
 </head>
 <body class="font-sans antialiased text-neutral-900 bg-exec-bg selection:bg-exec-sapphire/20 selection:text-exec-sapphire">
-<script>window._BUNDLE_VERSION = '2.0.1';</script>
+<script>window._BUNDLE_VERSION = '2.1.0';</script>
 <div class="flex h-screen overflow-hidden" id="app">
 <!-- SIDEBAR — Executive Carbon -->
-<aside class="w-64 flex-shrink-0 flex flex-col z-20" id="sidebar" style="background:#0A0B0F;border-left:1px solid rgba(255,255,255,0.06);">
+<aside class="w-64 flex-shrink-0 flex flex-col z-20" id="sidebar" style="background:#050505;border-left:none;">
   <!-- Brand -->
-  <div class="flex items-center gap-3 px-6 py-5" style="border-bottom:1px solid rgba(255,255,255,0.06);">
+  <div class="flex items-center gap-3 px-6 py-5" style="border-bottom:1px solid rgba(255,255,255,0.04);">
     <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,#1D4ED8,#2563EB);box-shadow:0 4px 12px rgba(29,78,216,0.4);">
       <span class="material-symbols-outlined text-white" style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">balance</span>
     </div>
@@ -175,7 +175,7 @@
   </div>
   <!-- Nav -->
   <nav class="flex-1 overflow-y-auto py-4 px-3" id="sidebar-nav">
-    <div class="mb-2 px-3 text-[10px] font-bold uppercase tracking-widest" style="color:rgba(255,255,255,0.2);">ניווט</div>
+    <div class="mb-2 px-3 text-[10px] font-bold uppercase tracking-widest" style="color:rgba(255,255,255,0.15);">ניווט</div>
     <a class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl mb-0.5 transition-all duration-200" data-view="dashboard" href="#dashboard" style="color:rgba(255,255,255,0.55);font-size:0.875rem;font-weight:500;">
       <span class="material-symbols-outlined" style="font-size:18px;color:inherit;">dashboard</span>
       <span class="nav-label">לוח בקרה</span>
