@@ -70,28 +70,28 @@ const Invoices = (() => {
       totalAmt  += inv.amount;
       totalComm += inv.commission;
 
-      rows += `<tr>
-        <td>${escHtml(client)}</td>
-        <td style="font-family:var(--font-mono);font-size:0.82rem;color:var(--text-muted)">${c ? escHtml(c.caseNumber) : '—'}</td>
-        <td>${UI.monthName(inv.month)}</td>
-        <td style="font-family:var(--font-mono)">${inv.year}</td>
-        <td class="num">${UI.formatNumber(inv.amount)}</td>
-        <td class="num" style="color:var(--text-secondary)">${UI.formatPct(inv.commissionRate)}</td>
-        <td class="num text-gold">${UI.formatNumber(inv.commission)}</td>
-        <td>${UI.sourceBadge(inv.source)}</td>
-        <td>
-          <button class="btn-icon" onclick="Invoices.openInvoiceModal(${inv.id})" title="ערוך">✎</button>
-          <button class="btn-icon" style="color:var(--color-negative)" onclick="Invoices.deleteInvoice(${inv.id})" title="מחק">✕</button>
+      rows += `<tr onmouseover="this.style.background='#FAFAFA'" onmouseout="this.style.background=''">
+        <td style="padding:10px 16px;font-weight:600;color:#111827;font-size:0.85rem;">${escHtml(client)}</td>
+        <td style="padding:10px 16px;font-family:'Inter',monospace;font-size:0.78rem;color:#9CA3AF;">${c ? escHtml(c.caseNumber) : '—'}</td>
+        <td style="padding:10px 16px;font-size:0.85rem;color:#374151;">${UI.monthName(inv.month)}</td>
+        <td style="padding:10px 16px;font-family:'Inter',sans-serif;font-size:0.82rem;color:#6B7280;">${inv.year}</td>
+        <td class="num" style="padding:10px 16px;color:#374151;">${UI.formatNumber(inv.amount)}</td>
+        <td class="num" style="padding:10px 16px;color:#9CA3AF;">${UI.formatPct(inv.commissionRate)}</td>
+        <td class="num" style="padding:10px 16px;color:#D4AF37;font-weight:600;">${UI.formatNumber(inv.commission)}</td>
+        <td style="padding:10px 16px;">${UI.sourceBadge(inv.source)}</td>
+        <td style="padding:10px 16px;text-align:left;">
+          <button style="color:#9CA3AF;background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;" onmouseover="this.style.color='#1D4ED8';this.style.background='rgba(29,78,216,0.06)'" onmouseout="this.style.color='#9CA3AF';this.style.background='none'" onclick="Invoices.openInvoiceModal(${inv.id})" title="ערוך"><span class="material-symbols-outlined" style="font-size:16px;">edit</span></button>
+          <button style="color:#9CA3AF;background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;" onmouseover="this.style.color='#DC2626';this.style.background='rgba(220,38,38,0.06)'" onmouseout="this.style.color='#9CA3AF';this.style.background='none'" onclick="Invoices.deleteInvoice(${inv.id})" title="מחק"><span class="material-symbols-outlined" style="font-size:16px;">delete</span></button>
         </td>
       </tr>`;
     });
 
-    rows += `<tr class="summary-row">
-      <td colspan="4">סה"כ (${filtered.length} חשבוניות)</td>
-      <td class="num">${UI.formatNumber(totalAmt)}</td>
-      <td></td>
-      <td class="num">${UI.formatNumber(totalComm)}</td>
-      <td colspan="2"></td>
+    rows += `<tr style="background:#FAFAFA;border-top:1px solid #E5E7EB;">
+      <td colspan="4" style="padding:11px 16px;font-weight:700;color:#111827;font-size:0.85rem;">סה"כ (${filtered.length} חשבוניות)</td>
+      <td class="num" style="padding:11px 16px;font-weight:700;color:#111827;">${UI.formatNumber(totalAmt)}</td>
+      <td style="padding:11px 16px;"></td>
+      <td class="num" style="padding:11px 16px;font-weight:700;color:#D4AF37;">${UI.formatNumber(totalComm)}</td>
+      <td colspan="2" style="padding:11px 16px;"></td>
     </tr>`;
 
     tbody.innerHTML = rows;

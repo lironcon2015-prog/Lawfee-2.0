@@ -38,22 +38,22 @@ const Payments = (() => {
 
     payments.forEach(p => {
       total += p.amount;
-      rows += `<tr>
-        <td>${p.month ? UI.monthName(p.month) : '—'}</td>
-        <td style="font-family:var(--font-mono)">${p.year}</td>
-        <td class="num positive">${UI.formatNumber(p.amount)}</td>
-        <td style="color:var(--text-secondary);font-size:0.85rem">${p.notes || '—'}</td>
-        <td>
-          <button class="btn-icon" onclick="Payments.openPaymentModal(${p.id})" title="ערוך">✎</button>
-          <button class="btn-icon" style="color:var(--color-negative)" onclick="Payments.deletePayment(${p.id})" title="מחק">✕</button>
+      rows += `<tr onmouseover="this.style.background='#FAFAFA'" onmouseout="this.style.background=''">
+        <td style="padding:11px 16px;font-size:0.85rem;color:#374151;">${p.month ? UI.monthName(p.month) : '—'}</td>
+        <td style="padding:11px 16px;font-family:'Inter',sans-serif;font-size:0.82rem;color:#6B7280;">${p.year}</td>
+        <td class="num" style="padding:11px 16px;color:#059669;font-weight:600;">${UI.formatNumber(p.amount)}</td>
+        <td style="padding:11px 16px;font-size:0.82rem;color:#9CA3AF;">${p.notes || '—'}</td>
+        <td style="padding:11px 16px;text-align:left;">
+          <button style="color:#9CA3AF;background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;" onmouseover="this.style.color='#1D4ED8';this.style.background='rgba(29,78,216,0.06)'" onmouseout="this.style.color='#9CA3AF';this.style.background='none'" onclick="Payments.openPaymentModal(${p.id})" title="ערוך"><span class="material-symbols-outlined" style="font-size:16px;">edit</span></button>
+          <button style="color:#9CA3AF;background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;" onmouseover="this.style.color='#DC2626';this.style.background='rgba(220,38,38,0.06)'" onmouseout="this.style.color='#9CA3AF';this.style.background='none'" onclick="Payments.deletePayment(${p.id})" title="מחק"><span class="material-symbols-outlined" style="font-size:16px;">delete</span></button>
         </td>
       </tr>`;
     });
 
-    rows += `<tr class="summary-row">
-      <td colspan="2">סה"כ תשלומים</td>
-      <td class="num">${UI.formatNumber(total)}</td>
-      <td colspan="2"></td>
+    rows += `<tr style="background:#FAFAFA;border-top:1px solid #E5E7EB;">
+      <td colspan="2" style="padding:11px 16px;font-weight:700;color:#111827;font-size:0.85rem;">סה"כ תשלומים</td>
+      <td class="num" style="padding:11px 16px;font-weight:700;color:#059669;">${UI.formatNumber(total)}</td>
+      <td colspan="2" style="padding:11px 16px;"></td>
     </tr>`;
 
     tbody.innerHTML = rows;

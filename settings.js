@@ -48,7 +48,7 @@ const Settings = (() => {
     } catch (err) {
       _showStatus('לא ניתן לבדוק עדכונים — בדוק חיבור לאינטרנט.', 'warning');
     } finally {
-      if (btn) { btn.textContent = '🔍 בדוק עדכונים'; btn.disabled = false; }
+      if (btn) { btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-left:6px;">sync</span> בדוק עדכונים'; btn.disabled = false; }
     }
   }
 
@@ -90,17 +90,20 @@ const Settings = (() => {
     const el = document.getElementById('settings-update-status');
     if (!el) return;
     const colors = {
-      success: { bg: 'rgba(74,222,128,0.08)',  border: 'rgba(74,222,128,0.25)', color: '#4ade80' },
-      info:    { bg: 'rgba(212,175,55,0.08)',   border: 'rgba(212,175,55,0.25)', color: 'var(--color-gold)' },
-      warning: { bg: 'rgba(251,191,36,0.08)',   border: 'rgba(251,191,36,0.25)', color: '#fbbf24' },
+      success: { bg: 'rgba(5,150,105,0.07)',   border: 'rgba(5,150,105,0.2)',   color: '#059669' },
+      info:    { bg: 'rgba(29,78,216,0.06)',    border: 'rgba(29,78,216,0.15)',  color: '#1D4ED8' },
+      warning: { bg: 'rgba(217,119,6,0.07)',    border: 'rgba(217,119,6,0.2)',   color: '#D97706' },
     };
     const s = colors[type] || colors.info;
     el.classList.remove('hidden');
-    el.style.display    = 'block';
-    el.style.background = s.bg;
-    el.style.border     = `1px solid ${s.border}`;
-    el.style.color      = s.color;
-    el.innerHTML        = html;
+    el.style.display      = 'block';
+    el.style.background   = s.bg;
+    el.style.border       = `1px solid ${s.border}`;
+    el.style.color        = s.color;
+    el.style.borderRadius = '10px';
+    el.style.fontSize     = '0.83rem';
+    el.style.fontWeight   = '600';
+    el.innerHTML          = html;
   }
 
   function _hideStatus() {

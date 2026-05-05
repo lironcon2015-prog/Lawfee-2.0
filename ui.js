@@ -57,15 +57,15 @@ const UI = (() => {
 
   // ─── Source Badge ────────────────────────────────────────
   const SOURCE_META = {
-    pdf:    { label: 'PDF',    cls: 'bg-blue-50 text-blue-700 border-blue-100',    icon: 'picture_as_pdf' },
-    manual: { label: 'ידני',  cls: 'bg-neutral-100 text-neutral-600 border-neutral-200', icon: 'edit_note' },
-    import: { label: 'ייבוא', cls: 'bg-emerald-50 text-emerald-700 border-emerald-100',  icon: 'upload_file' },
+    pdf:    { label: 'PDF',    style: 'color:#1D4ED8;background:rgba(29,78,216,0.07);border:1px solid rgba(29,78,216,0.15);',    icon: 'picture_as_pdf' },
+    manual: { label: 'ידני',  style: 'color:#6B7280;background:#F9FAFB;border:1px dashed #E5E7EB;', icon: 'edit_note' },
+    import: { label: 'ייבוא', style: 'color:#065f46;background:rgba(5,150,105,0.07);border:1px solid rgba(5,150,105,0.15);',  icon: 'upload_file' },
   };
 
   function sourceBadge(source) {
     const m = SOURCE_META[source] || SOURCE_META.manual;
-    return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-semibold border ${m.cls}">
-      <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1">${m.icon}</span>
+    return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-semibold" style="${m.style}font-family:'Assistant',sans-serif;">
+      <span class="material-symbols-outlined" style="font-size:12px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 16;">${m.icon}</span>
       ${m.label}
     </span>`;
   }
@@ -74,10 +74,9 @@ const UI = (() => {
   function emptyRow(colspan, msg = 'אין נתונים להצגה') {
     return `<tr>
       <td colspan="${colspan}" class="py-16 text-center">
-        <div class="flex flex-col items-center gap-3 text-neutral-400">
-          <span class="material-symbols-outlined text-5xl text-neutral-300"
-            style="font-variation-settings:'wght' 300">inbox</span>
-          <span class="text-sm font-medium">${msg}</span>
+        <div class="flex flex-col items-center gap-2" style="color:#9CA3AF;">
+          <span class="material-symbols-outlined" style="font-size:36px;color:#D1D5DB;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24;">inbox</span>
+          <span style="font-size:0.82rem;font-family:'Assistant',sans-serif;">${msg}</span>
         </div>
       </td>
     </tr>`;
@@ -117,10 +116,10 @@ const UI = (() => {
 
   // ─── Toast ───────────────────────────────────────────────
   const TOAST_ICONS = {
-    success: { icon: 'check_circle',      cls: 'bg-emerald-50 border-emerald-200 text-emerald-800', iconCls: 'text-emerald-500' },
-    error:   { icon: 'error',             cls: 'bg-red-50 border-red-200 text-red-800',             iconCls: 'text-red-500'     },
-    info:    { icon: 'info',              cls: 'bg-blue-50 border-blue-200 text-blue-800',          iconCls: 'text-blue-500'    },
-    warning: { icon: 'warning',           cls: 'bg-amber-50 border-amber-200 text-amber-800',       iconCls: 'text-amber-500'   },
+    success: { icon: 'check_circle', color: '#059669' },
+    error:   { icon: 'error',        color: '#DC2626' },
+    info:    { icon: 'info',         color: '#1D4ED8' },
+    warning: { icon: 'warning',      color: '#D97706' },
   };
 
   function toast(msg, type = 'info', duration = 3500) {
@@ -132,20 +131,22 @@ const UI = (() => {
 
     const el = document.createElement('div');
     el.id = id;
-    el.className = `
-      flex items-start gap-3 px-5 py-4 rounded-2xl border shadow-lg
-      text-sm font-medium max-w-sm w-full
-      translate-y-2 opacity-0 transition-all duration-300
-      ${meta.cls}
+    el.style.cssText = `
+      display:flex;align-items:flex-start;gap:10px;
+      padding:11px 14px;border-radius:12px;
+      background:#fff;border:1px solid #E5E7EB;
+      box-shadow:0 8px 24px rgba(0,0,0,0.1),0 0 0 1px rgba(0,0,0,0.03);
+      min-width:220px;max-width:340px;
+      opacity:0;transform:translateX(-12px);
+      transition:opacity 0.25s,transform 0.25s;
+      border-right:3px solid ${meta.color};
     `.replace(/\s+/g, ' ').trim();
 
     el.innerHTML = `
-      <span class="material-symbols-outlined text-xl flex-shrink-0 mt-0.5 ${meta.iconCls}"
-        style="font-variation-settings:'FILL' 1">${meta.icon}</span>
-      <span class="flex-1 leading-snug">${msg}</span>
-      <button onclick="document.getElementById('${id}')?.remove()"
-        class="text-neutral-400 hover:text-neutral-600 transition-colors flex-shrink-0 mt-0.5">
-        <span class="material-symbols-outlined text-lg">close</span>
+      <span class="material-symbols-outlined flex-shrink-0" style="font-size:18px;color:${meta.color};margin-top:1px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">${meta.icon}</span>
+      <span style="flex:1;font-size:0.83rem;font-family:'Assistant',sans-serif;color:#111827;line-height:1.45;">${msg}</span>
+      <button onclick="document.getElementById('${id}')?.remove()" style="color:#9CA3AF;background:none;border:none;cursor:pointer;flex-shrink:0;margin-top:1px;">
+        <span class="material-symbols-outlined" style="font-size:16px;">close</span>
       </button>
     `;
 
@@ -182,16 +183,14 @@ const UI = (() => {
 
     if (!overlay || !modal) return;
 
-    // Inject content
     titleEl.textContent = title || '';
     bodyEl.innerHTML    = bodyHTML;
     confirmBtn.textContent = confirmLabel;
     confirmBtn.disabled    = false;
 
-    // Reset confirm button to default (midnight) style — in case a previous
-    // UI.confirm() call styled it red (destructive). Always start fresh.
-    confirmBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
-    confirmBtn.classList.add('bg-midnight-600', 'hover:bg-midnight-700');
+    // Reset confirm button to exec-carbon (not red)
+    confirmBtn.style.background = '#0A0B0F';
+    confirmBtn.style.color      = '#fff';
 
     // Wide variant
     modal.classList.toggle('max-w-2xl', !!wide);
@@ -235,23 +234,18 @@ const UI = (() => {
     openModal({
       title: 'אישור פעולה',
       bodyHTML: `
-        <div class="flex items-start gap-4 py-2">
-          <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center flex-shrink-0">
-            <span class="material-symbols-outlined text-2xl text-amber-500"
-              style="font-variation-settings:'FILL' 1">warning</span>
+        <div class="flex items-start gap-3 py-1">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(220,38,38,0.08);">
+            <span class="material-symbols-outlined" style="font-size:20px;color:#DC2626;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">warning</span>
           </div>
-          <p class="text-neutral-700 font-medium leading-relaxed text-base pt-2">${msg}</p>
+          <p style="color:#374151;font-size:0.875rem;line-height:1.55;padding-top:6px;">${msg}</p>
         </div>`,
       confirmLabel: 'אשר',
       onConfirm,
     });
 
-    // Style confirm button as destructive (openModal resets it to midnight on next open)
     const btn = document.getElementById('modal-confirm');
-    if (btn) {
-      btn.classList.remove('bg-midnight-600', 'hover:bg-midnight-700');
-      btn.classList.add('bg-red-600', 'hover:bg-red-700');
-    }
+    if (btn) { btn.style.background = '#DC2626'; btn.style.color = '#fff'; }
   }
 
   // ─── Wire modal buttons ───────────────────────────────────
@@ -330,37 +324,37 @@ const UI = (() => {
    */
   function formField({ id, label, type = 'text', value = '', required = false, opts = {} }) {
     const baseInput = `
-      block w-full rounded-xl border border-neutral-200 bg-neutral-50
-      px-4 py-2.5 text-sm font-medium text-neutral-900
-      placeholder-neutral-400
-      focus:border-midnight-500 focus:outline-none focus:ring-2 focus:ring-midnight-500/20
-      transition-colors hover:border-neutral-300 hover:bg-white
+      block w-full rounded-xl
+      px-3 py-2.5 text-sm text-neutral-900
+      placeholder-neutral-300
+      focus:outline-none transition-colors
     `.replace(/\s+/g, ' ').trim();
+    const baseStyle = `border:1px solid #E5E7EB;background:#fff;font-family:'Assistant',sans-serif;`;
 
     let input;
     if (type === 'select') {
       const options = (opts.options || [])
         .map(o => `<option value="${_esc(o.value)}" ${o.value == value ? 'selected' : ''}>${_esc(o.label)}</option>`)
         .join('');
-      input = `<select id="${id}" class="${baseInput} cursor-pointer">${options}</select>`;
+      input = `<select id="${id}" class="${baseInput}" style="${baseStyle}cursor:pointer;">${options}</select>`;
     } else if (type === 'textarea') {
-      input = `<textarea id="${id}" class="${baseInput} resize-none" rows="3">${_esc(value)}</textarea>`;
+      input = `<textarea id="${id}" class="${baseInput}" style="${baseStyle}" rows="3">${_esc(value)}</textarea>`;
     } else {
       const extra = type === 'number'
         ? `step="${opts.step || 'any'}" min="${opts.min ?? ''}" max="${opts.max ?? ''}"`
         : '';
-      input = `<input type="${type}" id="${id}" class="${baseInput}" value="${_esc(value)}"
+      input = `<input type="${type}" id="${id}" class="${baseInput}" style="${baseStyle}" value="${_esc(value)}"
         placeholder="${_esc(opts.placeholder || '')}" ${extra} />`;
     }
 
     const hint = opts.hint
-      ? `<p class="mt-1.5 text-xs text-neutral-400 leading-relaxed">${opts.hint}</p>`
+      ? `<p style="margin-top:5px;font-size:0.73rem;color:#9CA3AF;line-height:1.4;">${opts.hint}</p>`
       : '';
 
     return `
-      <div class="form-group flex flex-col gap-1.5">
-        <label for="${id}" class="text-xs font-bold text-neutral-500 uppercase tracking-wider">
-          ${label}${required ? ' <span class="text-red-400">*</span>' : ''}
+      <div class="form-group">
+        <label for="${id}" style="font-size:0.72rem;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;">
+          ${label}${required ? ' <span style="color:#EF4444;">*</span>' : ''}
         </label>
         ${input}
         ${hint}
@@ -371,29 +365,28 @@ const UI = (() => {
 
   /** Standard <td> for monetary values */
   function tdNum(val, { positive = false, gold = false, negative = false } = {}) {
-    let cls = 'px-7 py-4 text-left font-mono text-sm font-semibold tabular-nums';
-    if (positive)  cls += ' text-emerald-600';
-    else if (gold) cls += ' text-amber-700';
-    else if (negative) cls += ' text-red-500';
-    else           cls += ' text-neutral-800';
-    return `<td class="${cls}">${val}</td>`;
+    let color = '#374151';
+    if (positive)  color = '#059669';
+    else if (gold) color = '#D4AF37';
+    else if (negative) color = '#DC2626';
+    return `<td class="num" style="padding:11px 16px;color:${color};font-weight:600;">${val}</td>`;
   }
 
   /** Standard <td> for regular text */
   function tdText(val, cls = '') {
-    return `<td class="px-7 py-4 text-sm font-medium text-neutral-700 ${cls}">${val}</td>`;
+    return `<td style="padding:11px 16px;font-size:0.875rem;color:#374151;" class="${cls}">${val}</td>`;
   }
 
   /** Summary/total row */
   function summaryRow(cells) {
-    const tds = cells.map((c, i) => {
+    const tds = cells.map((c) => {
       const num = typeof c === 'object' && c.num;
       const v   = typeof c === 'object' ? c.v : c;
       return num
-        ? `<td class="px-7 py-4 text-left font-mono text-sm font-black text-neutral-900 tabular-nums">${v}</td>`
-        : `<td class="px-7 py-4 text-sm font-black text-neutral-900">${v}</td>`;
+        ? `<td class="num" style="padding:11px 16px;font-weight:700;color:#111827;">${v}</td>`
+        : `<td style="padding:11px 16px;font-size:0.875rem;font-weight:700;color:#111827;">${v}</td>`;
     }).join('');
-    return `<tr class="bg-neutral-50 border-t-2 border-neutral-200">${tds}</tr>`;
+    return `<tr style="background:#FAFAFA;border-top:1px solid #E5E7EB;">${tds}</tr>`;
   }
 
   // ─── Escape HTML ──────────────────────────────────────────
