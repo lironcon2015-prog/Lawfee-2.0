@@ -125,8 +125,8 @@ const Dashboard = (() => {
       return `
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;cursor:pointer;" title="${title}" class="group">
           <div style="display:flex;align-items:flex-end;justify-content:center;gap:2px;width:100%;height:100%;padding-bottom:4px;">
-            ${mo.amount > 0 ? `<div style="width:38%;max-width:12px;background:#1D4ED8;border-radius:3px 3px 0 0;height:${revPct}%;opacity:0.9;transition:opacity 0.12s;" class="group-hover:opacity-70"></div>` : '<div style="width:38%;max-width:12px;"></div>'}
-            ${mo.commission > 0 ? `<div style="width:38%;max-width:12px;background:#059669;border-radius:3px 3px 0 0;height:${commPct}%;opacity:0.9;transition:opacity 0.12s;" class="group-hover:opacity-70"></div>` : '<div style="width:38%;max-width:12px;"></div>'}
+            ${mo.amount > 0 ? `<div style="width:38%;max-width:12px;background:#1D4ED8;border-radius:3px 3px 0 0;height:${revPct}%;opacity:0.9;transition:opacity 0.15s;" class="group-hover:opacity-70"></div>` : '<div style="width:38%;max-width:12px;"></div>'}
+            ${mo.commission > 0 ? `<div style="width:38%;max-width:12px;background:#D4AF37;border-radius:3px 3px 0 0;height:${commPct}%;opacity:0.9;transition:opacity 0.15s;" class="group-hover:opacity-70"></div>` : '<div style="width:38%;max-width:12px;"></div>'}
           </div>
           <span style="font-size:10px;font-family:'Assistant',sans-serif;color:${isCurrent ? '#111827' : '#9CA3AF'};font-weight:${isCurrent ? '700' : '500'};margin-top:3px;" dir="rtl">${UI.monthName(mo.m, true)}</span>
         </div>`;
@@ -215,16 +215,16 @@ const Dashboard = (() => {
     }
 
     const palette = [
-      '#1D4ED8', // exec-sapphire
-      '#059669', // emerald
+      '#1D4ED8', // sapphire
       '#D4AF37', // champagne
+      '#1A1C23', // slate
+      '#9CA3AF', // gray
       '#0284C7', // sky
-      '#7C3AED', // violet
-      '#D1D5DB', // neutral
+      '#D1D5DB', // muted
     ];
     rows.forEach((r,i) => r.color = palette[i] || '#cbd5e1');
 
-    const size = 160, strokeW = 20;
+    const size = 160, strokeW = 14;
     const cx = size/2, cy = size/2;
     const r = (size - strokeW) / 2;
     const circ = 2 * Math.PI * r;
@@ -297,12 +297,12 @@ const Dashboard = (() => {
       totalPay  += pay;
 
       const hasData = inv.amount > 0 || pay > 0;
-      rows += `<tr style="${!hasData ? 'opacity:0.45;' : ''}">
-        <td class="month-label" style="font-weight:600;color:#111827;padding:11px 16px;">${UI.monthName(m)}</td>
+      rows += `<tr style="${!hasData ? 'opacity:0.35;' : ''}">
+        <td class="month-label" style="font-weight:600;color:#111827;">${UI.monthName(m)}</td>
         <td class="num" style="color:#374151;">${inv.amount  > 0 ? UI.formatNumber(inv.amount)     : '<span style="color:#D1D5DB;">—</span>'}</td>
         <td class="num" style="color:#D4AF37;font-weight:600;">${inv.commission > 0 ? UI.formatNumber(inv.commission) : '<span style="color:#D1D5DB;">—</span>'}</td>
-        <td class="num" style="color:#059669;font-weight:600;">${pay > 0 ? UI.formatNumber(pay) : '<span style="color:#D1D5DB;">—</span>'}</td>
-        <td class="num" style="color:${runningBalance >= 0 ? '#111827' : '#DC2626'};font-weight:700;">${UI.formatNumber(runningBalance)}</td>
+        <td class="num" style="color:#047857;font-weight:600;">${pay > 0 ? UI.formatNumber(pay) : '<span style="color:#D1D5DB;">—</span>'}</td>
+        <td class="num" style="color:${runningBalance >= 0 ? '#111827' : '#be123c'};font-weight:700;">${UI.formatNumber(runningBalance)}</td>
       </tr>`;
     }
 
@@ -332,9 +332,9 @@ const Dashboard = (() => {
 
   function _statusBadge(caseType) {
     const map = {
-      'שוטף':     { style: 'background:rgba(5,150,105,0.08);color:#059669;', label: 'פעיל' },
-      'ליטיגציה': { style: 'background:rgba(220,38,38,0.08);color:#DC2626;', label: 'ליטיגציה' },
-      'עסקה':     { style: 'background:#F3F4F6;color:#6B7280;',              label: 'סגור' },
+      'שוטף':     { style: 'background:rgba(29,78,216,0.07);color:#1D4ED8;',    label: 'פעיל' },
+      'ליטיגציה': { style: 'background:rgba(190,18,60,0.07);color:#be123c;',    label: 'ליטיגציה' },
+      'עסקה':     { style: 'background:rgba(124,58,237,0.07);color:#7C3AED;',   label: 'עסקה' },
     };
     const s = map[caseType] || { style: 'background:#F3F4F6;color:#9CA3AF;', label: caseType || '—' };
     return `<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:0.7rem;font-weight:700;${s.style}">${s.label}</span>`;
@@ -390,39 +390,39 @@ const Dashboard = (() => {
       data.cases.sort((a, b) => b.commission - a.commission);
 
       rows += `<tr class="client-row" data-client-id="${cid}" style="cursor:pointer;">
-        <td style="padding:11px 16px;font-weight:700;color:#111827;">
+        <td style="font-weight:700;color:#111827;">
           <span style="display:inline-flex;align-items:center;gap:6px;">
             <span class="material-symbols-outlined chevron" style="font-size:16px;color:#9CA3AF;transition:transform 0.2s;">chevron_left</span>
             ${clientMap[cid] || '—'}
           </span>
         </td>
-        <td style="padding:11px 16px;color:#9CA3AF;font-size:0.82rem;">${data.cases.length} תיקים</td>
+        <td style="color:#9CA3AF;font-size:0.8rem;">${data.cases.length} תיקים</td>
         <td class="num" style="color:#D1D5DB;">—</td>
         <td class="num" style="color:#374151;">${UI.formatNumber(data.amount)}</td>
-        <td class="num" style="color:#111827;font-weight:700;">${UI.formatNumber(data.commission)}</td>
+        <td class="num" style="color:#D4AF37;font-weight:700;">${UI.formatNumber(data.commission)}</td>
         <td style="text-align:center;color:#D1D5DB;">—</td>
       </tr>`;
 
       data.cases.forEach(r => {
         const c = r.caseRec;
-        rows += `<tr class="case-row" data-parent-client="${cid}" hidden style="background:#FAFAFA;">
-          <td style="padding:9px 16px;"></td>
-          <td style="padding:9px 16px;">
-            <span style="font-family:'Inter',monospace;font-size:0.78rem;color:#9CA3AF;">${c.caseNumber}</span>
-            ${c.description && c.description !== c.caseNumber ? ` <span style="color:#6B7280;font-size:0.82rem;">${c.description}</span>` : ''}
+        rows += `<tr class="case-row" data-parent-client="${cid}" hidden style="background:#F9FAFB;">
+          <td></td>
+          <td>
+            <span style="font-family:'Inter',monospace;font-size:0.75rem;color:#9CA3AF;">${c.caseNumber}</span>
+            ${c.description && c.description !== c.caseNumber ? ` <span style="color:#6B7280;font-size:0.8rem;">${c.description}</span>` : ''}
           </td>
-          <td class="num" style="color:#6B7280;">${UI.formatPct(c.commissionRate)}</td>
-          <td class="num" style="color:#374151;">${UI.formatNumber(r.amount)}</td>
-          <td class="num" style="color:#111827;font-weight:700;">${UI.formatNumber(r.commission)}</td>
+          <td class="num" style="color:#9CA3AF;">${UI.formatPct(c.commissionRate)}</td>
+          <td class="num" style="color:#6B7280;">${UI.formatNumber(r.amount)}</td>
+          <td class="num" style="color:#D4AF37;font-weight:600;">${UI.formatNumber(r.commission)}</td>
           <td style="text-align:center;">${_statusBadge(c.caseType)}</td>
         </tr>`;
       });
     });
 
     rows += `<tr class="summary-row">
-      <td colspan="3">סה"כ</td>
+      <td colspan="3" style="font-size:0.8rem;">סה"כ</td>
       <td class="num">${UI.formatNumber(totalAmt)}</td>
-      <td class="num">${UI.formatNumber(totalComm)}</td>
+      <td class="num" style="color:#D4AF37;">${UI.formatNumber(totalComm)}</td>
       <td></td>
     </tr>`;
 
@@ -497,12 +497,12 @@ const Dashboard = (() => {
     const maxMonth = _year === now.getFullYear() ? now.getMonth() + 1 : 12;
 
     const monthHeaders = Array.from({length:maxMonth}, (_,i) =>
-      `<th class="num" style="padding:10px 12px;">${UI.monthName(i+1, true)}</th>`
+      `<th class="num">${UI.monthName(i+1, true)}</th>`
     ).join('');
     thead.innerHTML = `<tr>
-      <th style="padding:10px 16px;text-align:right;">לקוח</th>
+      <th style="text-align:right;">לקוח</th>
       ${monthHeaders}
-      <th class="num" style="padding:10px 16px;">סה"כ</th>
+      <th class="num">סה"כ</th>
     </tr>`;
 
     const monthTotals = {};
@@ -514,7 +514,7 @@ const Dashboard = (() => {
       for (let m = 1; m <= maxMonth; m++) {
         const val = (months[m] || {})[metric] || 0;
         total += val;
-        html += `<td class="num" style="padding:11px 12px;color:${val > 0 ? '#374151' : '#D1D5DB'};">${val > 0 ? UI.formatNumber(val) : '—'}</td>`;
+        html += `<td class="num" style="color:${val > 0 ? '#374151' : '#D1D5DB'};">${val > 0 ? UI.formatNumber(val) : '—'}</td>`;
       }
       return { html, total };
     };
@@ -528,14 +528,14 @@ const Dashboard = (() => {
       grandTotal += clientTotal;
 
       rows += `<tr class="client-row" data-client-id="${cid}" style="cursor:pointer;">
-        <td style="padding:11px 16px;font-weight:700;color:#111827;white-space:nowrap;">
+        <td style="font-weight:700;color:#111827;white-space:nowrap;">
           <span style="display:inline-flex;align-items:center;gap:6px;">
             <span class="material-symbols-outlined chevron" style="font-size:16px;color:#9CA3AF;transition:transform 0.2s;">chevron_left</span>
             ${clientMap[cid] || '—'}
           </span>
         </td>
         ${clientCells}
-        <td class="num" style="padding:11px 16px;font-weight:700;color:${metric === 'commission' ? '#1D4ED8' : '#111827'};">${UI.formatNumber(clientTotal)}</td>
+        <td class="num" style="font-weight:700;color:${metric === 'commission' ? '#D4AF37' : '#111827'};">${UI.formatNumber(clientTotal)}</td>
       </tr>`;
 
       const sortedCaseIds = Object.keys(data.cases).sort((a, b) =>
@@ -544,26 +544,26 @@ const Dashboard = (() => {
         const cd = data.cases[caseId];
         const { html: caseCells, total: caseTotal } = renderMonthCells(cd.months);
         const c = cd.caseRec;
-        rows += `<tr class="case-row" data-parent-client="${cid}" hidden style="background:#FAFAFA;">
-          <td style="padding:9px 16px;">
-            <div style="font-family:'Inter',monospace;font-size:0.78rem;color:#9CA3AF;padding-right:22px;">
+        rows += `<tr class="case-row" data-parent-client="${cid}" hidden style="background:#F9FAFB;">
+          <td>
+            <div style="font-family:'Inter',monospace;font-size:0.75rem;color:#9CA3AF;padding-right:22px;">
               ${c.caseNumber}${c.description && c.description !== c.caseNumber ? ' — ' + c.description : ''}
             </div>
           </td>
           ${caseCells}
-          <td class="num" style="padding:9px 16px;font-weight:600;color:#374151;">${UI.formatNumber(caseTotal)}</td>
+          <td class="num" style="font-weight:600;color:#6B7280;">${UI.formatNumber(caseTotal)}</td>
         </tr>`;
       });
     });
 
     const totalCells = Array.from({length:maxMonth}, (_,i) => {
       const v = monthTotals[i+1] || 0;
-      return `<td class="num" style="padding:11px 16px;font-weight:700;color:#111827;">${v > 0 ? UI.formatNumber(v) : '<span style="color:#D1D5DB;">—</span>'}</td>`;
+      return `<td class="num" style="font-weight:700;color:#111827;">${v > 0 ? UI.formatNumber(v) : '<span style="color:#D1D5DB;">—</span>'}</td>`;
     }).join('');
-    rows += `<tr style="background:#FAFAFA;border-top:1px solid #E5E7EB;">
-      <td style="padding:11px 16px;font-weight:700;color:#1D4ED8;">סה"כ חודשי</td>
+    rows += `<tr class="summary-row">
+      <td style="font-size:0.8rem;">סה"כ חודשי</td>
       ${totalCells}
-      <td class="num" style="padding:11px 16px;font-weight:800;color:#1D4ED8;">${UI.formatNumber(grandTotal)}</td>
+      <td class="num" style="color:${_clientMonthlyMetric === 'commission' ? '#D4AF37' : '#111827'};">${UI.formatNumber(grandTotal)}</td>
     </tr>`;
 
     tbody.innerHTML = rows;

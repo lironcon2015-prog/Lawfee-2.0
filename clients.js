@@ -87,8 +87,8 @@ const Clients = (() => {
 
   // ── Case type badge ────────────────────────────────────
   const CASE_TYPE_BADGE = {
-    'ליטיגציה': 'background:rgba(220,38,38,0.08);color:#DC2626;',
-    'עסקה':     'background:rgba(124,58,237,0.08);color:#7C3AED;',
+    'ליטיגציה': 'background:rgba(190,18,60,0.07);color:#be123c;',
+    'עסקה':     'background:rgba(124,58,237,0.07);color:#7C3AED;',
     'שוטף':     'background:rgba(29,78,216,0.07);color:#1D4ED8;',
   };
 
@@ -100,10 +100,10 @@ const Clients = (() => {
   // ── Avatar initials + color ────────────────────────────
   const AVATAR_STYLES = [
     'background:rgba(29,78,216,0.08);color:#1D4ED8;',
-    'background:rgba(5,150,105,0.08);color:#059669;',
+    'background:rgba(4,120,87,0.08);color:#047857;',
     'background:rgba(212,175,55,0.10);color:#92400e;',
     'background:rgba(124,58,237,0.08);color:#7C3AED;',
-    'background:rgba(220,38,38,0.08);color:#DC2626;',
+    'background:rgba(190,18,60,0.08);color:#be123c;',
     'background:rgba(2,132,199,0.08);color:#0284C7;',
   ];
 

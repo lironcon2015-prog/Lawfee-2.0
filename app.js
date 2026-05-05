@@ -31,17 +31,10 @@ const App = (() => {
       document.getElementById(v.el)?.classList.add('hidden');
     });
 
-    // Update nav — toggle Tailwind classes directly (no CSS .active rule exists)
+    // Update nav active state — driven by CSS .nav-item.active rule in style.css
     document.querySelectorAll('.nav-item').forEach(el => {
       const isActive = el.dataset.view === viewName;
-      el.classList.toggle('active',                isActive);
-      el.classList.toggle('bg-midnight-600/30',    isActive);
-      el.classList.toggle('border',                isActive);
-      el.classList.toggle('border-midnight-500/20',isActive);
-      el.classList.toggle('font-semibold',         isActive);
-      el.classList.toggle('text-white',            isActive);
-      el.classList.toggle('font-medium',           !isActive);
-      el.classList.toggle('text-midnight-300',     !isActive);
+      el.classList.toggle('active', isActive);
     });
 
     // Show target view
