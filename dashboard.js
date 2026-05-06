@@ -95,7 +95,7 @@ const Dashboard = (() => {
     const niceMax = niceCeil(maxVal);
 
     const gridLines = `
-      <div style="position:absolute;bottom:28px;right:0;left:0;height:1px;background:#F4F4F7;pointer-events:none;"></div>
+      <div style="position:absolute;bottom:28px;right:0;left:0;height:1px;background:rgba(255,255,255,0.04);pointer-events:none;"></div>
     `;
 
     const currentMonth = _year === new Date().getFullYear() ? new Date().getMonth() + 1 : 12;
@@ -112,17 +112,17 @@ const Dashboard = (() => {
         return `
           <div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;">
             <div style="flex:1;"></div>
-            <span style="font-size:10px;color:#D1D5DB;font-family:'Assistant',sans-serif;margin-top:4px;font-weight:300;" dir="rtl">${UI.monthName(mo.m, true)}</span>
+            <span style="font-size:10px;color:#4d4635;font-family:'Assistant',sans-serif;margin-top:4px;font-weight:300;" dir="rtl">${UI.monthName(mo.m, true)}</span>
           </div>`;
       }
 
       return `
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;cursor:pointer;" title="${title}" class="group">
           <div style="display:flex;align-items:flex-end;justify-content:center;gap:2px;width:100%;height:100%;padding-bottom:4px;">
-            ${mo.amount > 0 ? `<div style="width:3px;background:#0F1E36;border-radius:2px;height:${revPct}%;transition:opacity 0.2s;" class="group-hover:opacity-60"></div>` : '<div style="width:3px;"></div>'}
-            ${mo.commission > 0 ? `<div style="width:3px;background:#C5A880;border-radius:2px;height:${commPct}%;transition:opacity 0.2s;" class="group-hover:opacity-60"></div>` : '<div style="width:3px;"></div>'}
+            ${mo.amount > 0 ? `<div style="width:3px;background:#f2ca50;border-radius:2px;height:${revPct}%;box-shadow:0 0 8px rgba(242,202,80,0.4);transition:opacity 0.2s;" class="group-hover:opacity-60"></div>` : '<div style="width:3px;"></div>'}
+            ${mo.commission > 0 ? `<div style="width:3px;background:#86dfff;border-radius:2px;height:${commPct}%;box-shadow:0 0 8px rgba(134,223,255,0.3);transition:opacity 0.2s;" class="group-hover:opacity-60"></div>` : '<div style="width:3px;"></div>'}
           </div>
-          <span style="font-size:10px;font-family:'Assistant',sans-serif;color:${isCurrent ? '#111114' : '#9EA3B0'};font-weight:${isCurrent ? '600' : '400'};margin-top:3px;" dir="rtl">${UI.monthName(mo.m, true)}</span>
+          <span style="font-size:10px;font-family:'Assistant',sans-serif;color:${isCurrent ? '#f2ca50' : '#9ca3af'};font-weight:${isCurrent ? '600' : '400'};margin-top:3px;" dir="rtl">${UI.monthName(mo.m, true)}</span>
         </div>`;
     }).join('');
 
@@ -209,14 +209,14 @@ const Dashboard = (() => {
     }
 
     const palette = [
-      '#0F1E36', // deep sapphire
-      '#C5A880', // muted champagne
-      '#878C9E', // soft slate
-      '#2D3748', // dark slate
-      '#4A5568', // medium slate
-      '#CBD5E0', // light muted
+      '#f2ca50', // primary gold
+      '#86dfff', // sky cyan
+      '#c084fc', // soft violet
+      '#34d399', // emerald
+      '#f87171', // coral
+      '#fbbf24', // amber
     ];
-    rows.forEach((r,i) => r.color = palette[i] || '#cbd5e1');
+    rows.forEach((r,i) => r.color = palette[i] || '#9ca3af');
 
     const size = 160, strokeW = 5;
     const cx = size/2, cy = size/2;
@@ -243,9 +243,9 @@ const Dashboard = (() => {
         <div style="display:flex;align-items:center;justify-content:space-between;cursor:default;" title="${r.name} - ${UI.formatNumber(r.val)} ₪">
           <div style="display:flex;align-items:center;gap:8px;overflow:hidden;">
             <span style="width:8px;height:8px;border-radius:2px;flex-shrink:0;background:${r.color};display:inline-block;"></span>
-            <span style="font-size:0.8rem;color:#111114;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;">${r.name}</span>
+            <span style="font-size:0.8rem;color:#e7e5e0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;">${r.name}</span>
           </div>
-          <span style="font-family:'Inter',sans-serif;font-size:0.75rem;color:#9CA3AF;font-weight:600;margin-right:8px;white-space:nowrap;">${pct}%</span>
+          <span style="font-family:'Inter',sans-serif;font-size:0.75rem;color:#9ca3af;font-weight:600;margin-right:8px;white-space:nowrap;">${pct}%</span>
         </div>`;
     }).join('');
 
@@ -255,8 +255,8 @@ const Dashboard = (() => {
           ${segs}
         </svg>
         <div style="text-align:center;z-index:10;position:relative;">
-          <div style="font-size:9px;color:#9CA3AF;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;">סה"כ</div>
-          <div style="font-family:'Inter',sans-serif;font-weight:300;font-size:1.1rem;color:#111114;letter-spacing:-0.03em;">${formatAxis(total)}</div>
+          <div style="font-size:9px;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;">סה"כ</div>
+          <div style="font-family:'Inter',sans-serif;font-weight:300;font-size:1.1rem;color:#e7e5e0;letter-spacing:-0.03em;">${formatAxis(total)}</div>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;flex:1;min-width:120px;max-width:180px;">
@@ -292,10 +292,10 @@ const Dashboard = (() => {
 
       const hasData = inv.amount > 0 || pay > 0;
       rows += `<tr style="${!hasData ? 'opacity:0.35;' : ''}">
-        <td class="month-label" style="font-weight:500;color:#111114;">${UI.monthName(m)}</td>
-        <td class="num" style="color:#111114;font-weight:300;">${inv.amount  > 0 ? UI.formatNumber(inv.amount)     : '<span style="color:#D1D5DB;">—</span>'}</td>
-        <td class="num" style="color:#C5A880;font-weight:400;">${inv.commission > 0 ? UI.formatNumber(inv.commission) : '<span style="color:#D1D5DB;">—</span>'}</td>
-        <td class="num" style="color:#166534;font-weight:300;">${pay > 0 ? UI.formatNumber(pay) : '<span style="color:#D1D5DB;">—</span>'}</td>
+        <td class="month-label" style="font-weight:500;color:#e7e5e0;">${UI.monthName(m)}</td>
+        <td class="num" style="color:#e7e5e0;font-weight:300;">${inv.amount  > 0 ? UI.formatNumber(inv.amount)     : '<span style="color:#4d4635;">—</span>'}</td>
+        <td class="num" style="color:#f2ca50;font-weight:400;">${inv.commission > 0 ? UI.formatNumber(inv.commission) : '<span style="color:#4d4635;">—</span>'}</td>
+        <td class="num" style="color:#34d399;font-weight:300;">${pay > 0 ? UI.formatNumber(pay) : '<span style="color:#4d4635;">—</span>'}</td>
         <td class="num" style="color:${runningBalance >= 0 ? '#111114' : '#7F1D1D'};font-weight:500;">${UI.formatNumber(runningBalance)}</td>
       </tr>`;
     }
@@ -315,10 +315,10 @@ const Dashboard = (() => {
 
     rows += `<tr class="summary-row">
       <td style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;">סה"כ</td>
-      <td class="num" style="color:#111114;">${UI.formatNumber(totalAmt)}</td>
-      <td class="num" style="color:#C5A880;">${UI.formatNumber(totalComm)}</td>
-      <td class="num" style="color:#166534;">${UI.formatNumber(totalPay)}</td>
-      <td class="num" style="color:#111114;">${UI.formatNumber(ledger.closingBalance)}</td>
+      <td class="num" style="color:#e7e5e0;">${UI.formatNumber(totalAmt)}</td>
+      <td class="num" style="color:#f2ca50;">${UI.formatNumber(totalComm)}</td>
+      <td class="num" style="color:#34d399;">${UI.formatNumber(totalPay)}</td>
+      <td class="num" style="color:#e7e5e0;">${UI.formatNumber(ledger.closingBalance)}</td>
     </tr>`;
 
     tbody.innerHTML = rows;
@@ -326,12 +326,12 @@ const Dashboard = (() => {
 
   function _statusBadge(caseType) {
     const map = {
-      'שוטף':     { style: 'background:rgba(15,30,54,0.06);color:#0F1E36;',    label: 'פעיל' },
-      'ליטיגציה': { style: 'background:rgba(127,29,29,0.06);color:#7F1D1D;',   label: 'ליטיגציה' },
-      'עסקה':     { style: 'background:rgba(197,168,128,0.12);color:#8B6914;', label: 'עסקה' },
+      'שוטף':     { style: 'background:rgba(134,223,255,0.10);color:#86dfff;border:1px solid rgba(134,223,255,0.20);', label: 'פעיל' },
+      'ליטיגציה': { style: 'background:rgba(248,113,113,0.10);color:#f87171;border:1px solid rgba(248,113,113,0.20);', label: 'ליטיגציה' },
+      'עסקה':     { style: 'background:rgba(242,202,80,0.10);color:#f2ca50;border:1px solid rgba(242,202,80,0.25);',   label: 'עסקה' },
     };
-    const s = map[caseType] || { style: 'background:#F4F4F7;color:#9EA3B0;', label: caseType || '—' };
-    return `<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:0.65rem;font-weight:600;letter-spacing:0.05em;${s.style}">${s.label}</span>`;
+    const s = map[caseType] || { style: 'background:rgba(255,255,255,0.04);color:#9ca3af;border:1px solid rgba(255,255,255,0.06);', label: caseType || '—' };
+    return `<span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:0.65rem;font-weight:600;letter-spacing:0.05em;${s.style}">${s.label}</span>`;
   }
 
   // ── Per-Client Breakdown ────────────────────────────────
@@ -384,30 +384,30 @@ const Dashboard = (() => {
       data.cases.sort((a, b) => b.commission - a.commission);
 
       rows += `<tr class="client-row" data-client-id="${cid}" style="cursor:pointer;">
-        <td style="font-weight:500;color:#111114;">
+        <td style="font-weight:500;color:#e7e5e0;">
           <span style="display:inline-flex;align-items:center;gap:6px;">
-            <span class="material-symbols-outlined chevron" style="font-size:16px;color:#9EA3B0;transition:transform 0.2s;">chevron_left</span>
+            <span class="material-symbols-outlined chevron" style="font-size:16px;color:#9ca3af;transition:transform 0.2s;">chevron_left</span>
             ${clientMap[cid] || '—'}
           </span>
         </td>
-        <td style="color:#9EA3B0;font-size:0.78rem;font-weight:300;">${data.cases.length} תיקים</td>
-        <td class="num" style="color:#D1D5DB;">—</td>
-        <td class="num" style="color:#111114;font-weight:300;">${UI.formatNumber(data.amount)}</td>
-        <td class="num" style="color:#C5A880;font-weight:400;">${UI.formatNumber(data.commission)}</td>
-        <td style="text-align:center;color:#D1D5DB;">—</td>
+        <td style="color:#9ca3af;font-size:0.78rem;font-weight:300;">${data.cases.length} תיקים</td>
+        <td class="num" style="color:#4d4635;">—</td>
+        <td class="num" style="color:#e7e5e0;font-weight:300;">${UI.formatNumber(data.amount)}</td>
+        <td class="num" style="color:#f2ca50;font-weight:400;">${UI.formatNumber(data.commission)}</td>
+        <td style="text-align:center;color:#4d4635;">—</td>
       </tr>`;
 
       data.cases.forEach(r => {
         const c = r.caseRec;
-        rows += `<tr class="case-row" data-parent-client="${cid}" hidden style="background:#FAFAFA;">
+        rows += `<tr class="case-row" data-parent-client="${cid}" hidden style="background:rgba(0,0,0,0.20);">
           <td></td>
           <td>
-            <span style="font-family:'Inter',monospace;font-size:0.72rem;color:#9EA3B0;font-weight:300;">${c.caseNumber}</span>
-            ${c.description && c.description !== c.caseNumber ? ` <span style="color:#878C9E;font-size:0.78rem;">${c.description}</span>` : ''}
+            <span style="font-family:'Inter',monospace;font-size:0.72rem;color:#9ca3af;font-weight:300;">${c.caseNumber}</span>
+            ${c.description && c.description !== c.caseNumber ? ` <span style="color:#9ca3af;font-size:0.78rem;">${c.description}</span>` : ''}
           </td>
-          <td class="num" style="color:#9EA3B0;font-weight:300;">${UI.formatPct(c.commissionRate)}</td>
-          <td class="num" style="color:#111114;font-weight:300;">${UI.formatNumber(r.amount)}</td>
-          <td class="num" style="color:#C5A880;font-weight:400;">${UI.formatNumber(r.commission)}</td>
+          <td class="num" style="color:#9ca3af;font-weight:300;">${UI.formatPct(c.commissionRate)}</td>
+          <td class="num" style="color:#e7e5e0;font-weight:300;">${UI.formatNumber(r.amount)}</td>
+          <td class="num" style="color:#f2ca50;font-weight:400;">${UI.formatNumber(r.commission)}</td>
           <td style="text-align:center;">${_statusBadge(c.caseType)}</td>
         </tr>`;
       });
@@ -415,8 +415,8 @@ const Dashboard = (() => {
 
     rows += `<tr class="summary-row">
       <td colspan="3" style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;">סה"כ</td>
-      <td class="num" style="color:#111114;">${UI.formatNumber(totalAmt)}</td>
-      <td class="num" style="color:#C5A880;">${UI.formatNumber(totalComm)}</td>
+      <td class="num" style="color:#e7e5e0;">${UI.formatNumber(totalAmt)}</td>
+      <td class="num" style="color:#f2ca50;">${UI.formatNumber(totalComm)}</td>
       <td></td>
     </tr>`;
 
@@ -522,9 +522,9 @@ const Dashboard = (() => {
       grandTotal += clientTotal;
 
       rows += `<tr class="client-row" data-client-id="${cid}" style="cursor:pointer;">
-        <td style="font-weight:500;color:#111114;white-space:nowrap;">
+        <td style="font-weight:500;color:#e7e5e0;white-space:nowrap;">
           <span style="display:inline-flex;align-items:center;gap:6px;">
-            <span class="material-symbols-outlined chevron" style="font-size:16px;color:#9EA3B0;transition:transform 0.2s;">chevron_left</span>
+            <span class="material-symbols-outlined chevron" style="font-size:16px;color:#9ca3af;transition:transform 0.2s;">chevron_left</span>
             ${clientMap[cid] || '—'}
           </span>
         </td>
@@ -538,21 +538,21 @@ const Dashboard = (() => {
         const cd = data.cases[caseId];
         const { html: caseCells, total: caseTotal } = renderMonthCells(cd.months);
         const c = cd.caseRec;
-        rows += `<tr class="case-row" data-parent-client="${cid}" hidden style="background:#FAFAFA;">
+        rows += `<tr class="case-row" data-parent-client="${cid}" hidden style="background:rgba(0,0,0,0.20);">
           <td>
-            <div style="font-family:'Inter',monospace;font-size:0.72rem;color:#9EA3B0;padding-right:22px;font-weight:300;">
+            <div style="font-family:'Inter',monospace;font-size:0.72rem;color:#9ca3af;padding-right:22px;font-weight:300;">
               ${c.caseNumber}${c.description && c.description !== c.caseNumber ? ' — ' + c.description : ''}
             </div>
           </td>
           ${caseCells}
-          <td class="num" style="font-weight:300;color:#878C9E;">${UI.formatNumber(caseTotal)}</td>
+          <td class="num" style="font-weight:300;color:#9ca3af;">${UI.formatNumber(caseTotal)}</td>
         </tr>`;
       });
     });
 
     const totalCells = Array.from({length:maxMonth}, (_,i) => {
       const v = monthTotals[i+1] || 0;
-      return `<td class="num" style="font-weight:400;color:#111114;">${v > 0 ? UI.formatNumber(v) : '<span style="color:#D1D5DB;">—</span>'}</td>`;
+      return `<td class="num" style="font-weight:400;color:#e7e5e0;">${v > 0 ? UI.formatNumber(v) : '<span style="color:#4d4635;">—</span>'}</td>`;
     }).join('');
     rows += `<tr class="summary-row">
       <td style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;">סה"כ חודשי</td>

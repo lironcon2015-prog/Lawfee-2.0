@@ -90,9 +90,9 @@ const Settings = (() => {
     const el = document.getElementById('settings-update-status');
     if (!el) return;
     const colors = {
-      success: { bg: 'rgba(5,150,105,0.07)',   border: 'rgba(5,150,105,0.2)',   color: '#059669' },
-      info:    { bg: 'rgba(29,78,216,0.06)',    border: 'rgba(29,78,216,0.15)',  color: '#1D4ED8' },
-      warning: { bg: 'rgba(217,119,6,0.07)',    border: 'rgba(217,119,6,0.2)',   color: '#D97706' },
+      success: { bg: 'rgba(52,211,153,0.10)',  border: 'rgba(52,211,153,0.25)',  color: '#34d399' },
+      info:    { bg: 'rgba(242,202,80,0.10)',  border: 'rgba(242,202,80,0.25)',  color: '#f2ca50' },
+      warning: { bg: 'rgba(251,191,36,0.10)',  border: 'rgba(251,191,36,0.25)',  color: '#fbbf24' },
     };
     const s = colors[type] || colors.info;
     el.classList.remove('hidden');

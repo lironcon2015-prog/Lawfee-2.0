@@ -39,20 +39,20 @@ const Payments = (() => {
     payments.forEach(p => {
       total += p.amount;
       rows += `<tr>
-        <td style="color:#111114;font-weight:500;">${p.month ? UI.monthName(p.month) : '—'}</td>
-        <td style="font-family:'Inter',sans-serif;font-size:0.78rem;color:#9EA3B0;font-weight:300;">${p.year}</td>
-        <td class="num" style="color:#166534;font-weight:300;">${UI.formatNumber(p.amount)}</td>
-        <td style="font-size:0.8rem;color:#9EA3B0;font-weight:300;">${p.notes || '—'}</td>
+        <td style="color:#e7e5e0;font-weight:500;">${p.month ? UI.monthName(p.month) : '—'}</td>
+        <td style="font-family:'Inter',sans-serif;font-size:0.78rem;color:#9ca3af;font-weight:300;">${p.year}</td>
+        <td class="num" style="color:#34d399;font-weight:300;">${UI.formatNumber(p.amount)}</td>
+        <td style="font-size:0.8rem;color:#9ca3af;font-weight:300;">${p.notes || '—'}</td>
         <td style="text-align:left;">
-          <button style="color:#D1D5DB;background:none;border:none;cursor:pointer;padding:4px;border-radius:4px;transition:all 0.2s;" onmouseover="this.style.color='#0F1E36'" onmouseout="this.style.color='#D1D5DB'" onclick="Payments.openPaymentModal(${p.id})" title="ערוך"><span class="material-symbols-outlined" style="font-size:16px;">edit</span></button>
-          <button style="color:#D1D5DB;background:none;border:none;cursor:pointer;padding:4px;border-radius:4px;transition:all 0.2s;" onmouseover="this.style.color='#7F1D1D'" onmouseout="this.style.color='#D1D5DB'" onclick="Payments.deletePayment(${p.id})" title="מחק"><span class="material-symbols-outlined" style="font-size:16px;">delete</span></button>
+          <button style="color:#4d4635;background:none;border:none;cursor:pointer;padding:4px;border-radius:4px;transition:all 0.2s;" onmouseover="this.style.color='#f2ca50'" onmouseout="this.style.color='#4d4635'" onclick="Payments.openPaymentModal(${p.id})" title="ערוך"><span class="material-symbols-outlined" style="font-size:16px;">edit</span></button>
+          <button style="color:#4d4635;background:none;border:none;cursor:pointer;padding:4px;border-radius:4px;transition:all 0.2s;" onmouseover="this.style.color='#f87171'" onmouseout="this.style.color='#4d4635'" onclick="Payments.deletePayment(${p.id})" title="מחק"><span class="material-symbols-outlined" style="font-size:16px;">delete</span></button>
         </td>
       </tr>`;
     });
 
     rows += `<tr class="summary-row">
       <td colspan="2" style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;">סה"כ תשלומים</td>
-      <td class="num" style="color:#166534;">${UI.formatNumber(total)}</td>
+      <td class="num" style="color:#34d399;">${UI.formatNumber(total)}</td>
       <td colspan="2"></td>
     </tr>`;
 

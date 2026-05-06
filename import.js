@@ -300,7 +300,7 @@ const Importer = (() => {
           <td style="font-family:var(--font-mono)">${r.commissionRate}%</td>
           <td>${UI.monthName(r.month, true)}</td>
           <td style="font-family:var(--font-mono)">${UI.formatNumber(r.amount)}</td>
-          <td style="font-family:var(--font-mono);color:var(--gold-400)">${UI.formatNumber(r.commission)}</td>
+          <td style="font-family:var(--font-mono);color:var(--primary)">${UI.formatNumber(r.commission)}</td>
         </tr>`;
       });
 
@@ -768,8 +768,8 @@ const Importer = (() => {
         if (pdfBody) {
           const warn = document.createElement('div');
           warn.id = 'pdf-dup-warning';
-          warn.style.cssText = 'background:#fef3c7;border:2px solid #f59e0b;border-radius:12px;padding:14px 16px;margin-bottom:12px;font-size:0.875rem;color:#92400e;display:flex;align-items:center;gap:10px';
-          warn.innerHTML = `<span class="material-symbols-outlined" style="font-size:22px;flex-shrink:0;color:#d97706">warning</span>
+          warn.style.cssText = 'background:rgba(251,191,36,0.10);border:1px solid rgba(251,191,36,0.30);border-radius:14px;padding:14px 16px;margin-bottom:12px;font-size:0.875rem;color:#fbbf24;display:flex;align-items:center;gap:10px';
+          warn.innerHTML = `<span class="material-symbols-outlined" style="font-size:22px;flex-shrink:0;color:#fbbf24">warning</span>
             <span><strong>חשבונית זהה כבר קיימת</strong> (${UI.formatCurrency(duplicate.amount)})<br>לחץ <strong>שמור חשבונית</strong> שוב כדי לשמור בכל זאת.</span>`;
           pdfBody.prepend(warn);
         }

@@ -57,14 +57,14 @@ const UI = (() => {
 
   // ─── Source Badge ────────────────────────────────────────
   const SOURCE_META = {
-    pdf:    { label: 'PDF',    style: 'color:#1D4ED8;background:rgba(29,78,216,0.07);border:1px solid rgba(29,78,216,0.15);',    icon: 'picture_as_pdf' },
-    manual: { label: 'ידני',  style: 'color:#6B7280;background:#F9FAFB;border:1px dashed #E5E7EB;', icon: 'edit_note' },
-    import: { label: 'ייבוא', style: 'color:#065f46;background:rgba(5,150,105,0.07);border:1px solid rgba(5,150,105,0.15);',  icon: 'upload_file' },
+    pdf:    { label: 'PDF',    style: 'color:#86dfff;background:rgba(134,223,255,0.08);border:1px solid rgba(134,223,255,0.20);', icon: 'picture_as_pdf' },
+    manual: { label: 'ידני',  style: 'color:#9ca3af;background:rgba(255,255,255,0.04);border:1px dashed rgba(255,255,255,0.15);', icon: 'edit_note' },
+    import: { label: 'ייבוא', style: 'color:#f2ca50;background:rgba(242,202,80,0.10);border:1px solid rgba(242,202,80,0.25);',     icon: 'upload_file' },
   };
 
   function sourceBadge(source) {
     const m = SOURCE_META[source] || SOURCE_META.manual;
-    return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-semibold" style="${m.style}font-family:'Assistant',sans-serif;">
+    return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold" style="${m.style}font-family:'Assistant',sans-serif;">
       <span class="material-symbols-outlined" style="font-size:12px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 16;">${m.icon}</span>
       ${m.label}
     </span>`;
@@ -73,10 +73,10 @@ const UI = (() => {
   // ─── Empty Row ───────────────────────────────────────────
   function emptyRow(colspan, msg = 'אין נתונים להצגה') {
     return `<tr>
-      <td colspan="${colspan}" class="py-16 text-center">
-        <div class="flex flex-col items-center gap-2" style="color:#9CA3AF;">
-          <span class="material-symbols-outlined" style="font-size:36px;color:#D1D5DB;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24;">inbox</span>
-          <span style="font-size:0.82rem;font-family:'Assistant',sans-serif;">${msg}</span>
+      <td colspan="${colspan}" class="py-16 text-center" style="background:transparent;">
+        <div class="flex flex-col items-center gap-2" style="color:#9ca3af;">
+          <span class="material-symbols-outlined" style="font-size:40px;color:#4d4635;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24;">inbox</span>
+          <span style="font-size:0.82rem;font-family:'Assistant',sans-serif;color:#6b7280;">${msg}</span>
         </div>
       </td>
     </tr>`;
@@ -116,10 +116,10 @@ const UI = (() => {
 
   // ─── Toast ───────────────────────────────────────────────
   const TOAST_ICONS = {
-    success: { icon: 'check_circle', color: '#059669' },
-    error:   { icon: 'error',        color: '#DC2626' },
-    info:    { icon: 'info',         color: '#1D4ED8' },
-    warning: { icon: 'warning',      color: '#D97706' },
+    success: { icon: 'check_circle', color: '#34d399' },
+    error:   { icon: 'error',        color: '#f87171' },
+    info:    { icon: 'info',         color: '#f2ca50' },
+    warning: { icon: 'warning',      color: '#fbbf24' },
   };
 
   function toast(msg, type = 'info', duration = 3500) {
@@ -133,19 +133,21 @@ const UI = (() => {
     el.id = id;
     el.style.cssText = `
       display:flex;align-items:flex-start;gap:10px;
-      padding:11px 14px;border-radius:12px;
-      background:#fff;border:1px solid #E5E7EB;
-      box-shadow:0 8px 24px rgba(0,0,0,0.1),0 0 0 1px rgba(0,0,0,0.03);
-      min-width:220px;max-width:340px;
+      padding:12px 16px;border-radius:14px;
+      background:rgba(31,31,33,0.92);
+      border:1px solid rgba(255,255,255,0.08);
+      backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+      box-shadow:0 16px 40px rgba(0,0,0,0.5);
+      min-width:240px;max-width:360px;
       opacity:0;transform:translateX(-12px);
-      transition:opacity 0.25s,transform 0.25s;
+      transition:opacity 0.28s,transform 0.28s;
       border-right:3px solid ${meta.color};
     `.replace(/\s+/g, ' ').trim();
 
     el.innerHTML = `
       <span class="material-symbols-outlined flex-shrink-0" style="font-size:18px;color:${meta.color};margin-top:1px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">${meta.icon}</span>
-      <span style="flex:1;font-size:0.83rem;font-family:'Assistant',sans-serif;color:#111827;line-height:1.45;">${msg}</span>
-      <button onclick="document.getElementById('${id}')?.remove()" style="color:#9CA3AF;background:none;border:none;cursor:pointer;flex-shrink:0;margin-top:1px;">
+      <span style="flex:1;font-size:0.83rem;font-family:'Assistant',sans-serif;color:#e7e5e0;line-height:1.45;">${msg}</span>
+      <button onclick="document.getElementById('${id}')?.remove()" style="color:#6b7280;background:none;border:none;cursor:pointer;flex-shrink:0;margin-top:1px;">
         <span class="material-symbols-outlined" style="font-size:16px;">close</span>
       </button>
     `;
@@ -188,9 +190,10 @@ const UI = (() => {
     confirmBtn.textContent = confirmLabel;
     confirmBtn.disabled    = false;
 
-    // Reset confirm button to exec-carbon (not red)
-    confirmBtn.style.background = '#0A0B0F';
-    confirmBtn.style.color      = '#fff';
+    // Reset confirm button to primary gold (not red)
+    confirmBtn.style.background = '#f2ca50';
+    confirmBtn.style.color      = '#131315';
+    confirmBtn.style.boxShadow  = '0 0 20px rgba(242,202,80,0.3)';
 
     // Wide variant
     modal.classList.toggle('max-w-2xl', !!wide);
@@ -235,17 +238,21 @@ const UI = (() => {
       title: 'אישור פעולה',
       bodyHTML: `
         <div class="flex items-start gap-3 py-1">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(220,38,38,0.08);">
-            <span class="material-symbols-outlined" style="font-size:20px;color:#DC2626;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">warning</span>
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(248,113,113,0.10);border:1px solid rgba(248,113,113,0.25);">
+            <span class="material-symbols-outlined" style="font-size:20px;color:#f87171;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">warning</span>
           </div>
-          <p style="color:#374151;font-size:0.875rem;line-height:1.55;padding-top:6px;">${msg}</p>
+          <p style="color:#d1d5db;font-size:0.875rem;line-height:1.55;padding-top:6px;">${msg}</p>
         </div>`,
       confirmLabel: 'אשר',
       onConfirm,
     });
 
     const btn = document.getElementById('modal-confirm');
-    if (btn) { btn.style.background = '#DC2626'; btn.style.color = '#fff'; }
+    if (btn) {
+      btn.style.background = '#f87171';
+      btn.style.color = '#131315';
+      btn.style.boxShadow = '0 0 20px rgba(248,113,113,0.4)';
+    }
   }
 
   // ─── Wire modal buttons ───────────────────────────────────
@@ -325,11 +332,10 @@ const UI = (() => {
   function formField({ id, label, type = 'text', value = '', required = false, opts = {} }) {
     const baseInput = `
       block w-full rounded-xl
-      px-3 py-2.5 text-sm text-neutral-900
-      placeholder-neutral-300
+      px-3 py-2.5 text-sm
       focus:outline-none transition-colors
     `.replace(/\s+/g, ' ').trim();
-    const baseStyle = `border:1px solid #E5E7EB;background:#fff;font-family:'Assistant',sans-serif;`;
+    const baseStyle = `border:1px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.04);color:#e7e5e0;font-family:'Assistant',sans-serif;`;
 
     let input;
     if (type === 'select') {
@@ -348,13 +354,13 @@ const UI = (() => {
     }
 
     const hint = opts.hint
-      ? `<p style="margin-top:5px;font-size:0.73rem;color:#9CA3AF;line-height:1.4;">${opts.hint}</p>`
+      ? `<p style="margin-top:5px;font-size:0.73rem;color:#6b7280;line-height:1.4;">${opts.hint}</p>`
       : '';
 
     return `
       <div class="form-group">
-        <label for="${id}" style="font-size:0.72rem;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;">
-          ${label}${required ? ' <span style="color:#EF4444;">*</span>' : ''}
+        <label for="${id}" style="font-size:0.72rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em;">
+          ${label}${required ? ' <span style="color:#f87171;">*</span>' : ''}
         </label>
         ${input}
         ${hint}
@@ -365,16 +371,16 @@ const UI = (() => {
 
   /** Standard <td> for monetary values */
   function tdNum(val, { positive = false, gold = false, negative = false } = {}) {
-    let color = '#374151';
-    if (positive)  color = '#059669';
-    else if (gold) color = '#D4AF37';
-    else if (negative) color = '#DC2626';
-    return `<td class="num" style="padding:11px 16px;color:${color};font-weight:600;">${val}</td>`;
+    let color = '#e7e5e0';
+    if (positive)  color = '#34d399';
+    else if (gold) color = '#f2ca50';
+    else if (negative) color = '#f87171';
+    return `<td class="num" style="padding:14px 20px;color:${color};font-weight:500;">${val}</td>`;
   }
 
   /** Standard <td> for regular text */
   function tdText(val, cls = '') {
-    return `<td style="padding:11px 16px;font-size:0.875rem;color:#374151;" class="${cls}">${val}</td>`;
+    return `<td style="padding:14px 20px;font-size:0.875rem;color:#e7e5e0;" class="${cls}">${val}</td>`;
   }
 
   /** Summary/total row */
@@ -383,10 +389,10 @@ const UI = (() => {
       const num = typeof c === 'object' && c.num;
       const v   = typeof c === 'object' ? c.v : c;
       return num
-        ? `<td class="num" style="padding:11px 16px;font-weight:700;color:#111827;">${v}</td>`
-        : `<td style="padding:11px 16px;font-size:0.875rem;font-weight:700;color:#111827;">${v}</td>`;
+        ? `<td class="num" style="padding:14px 20px;font-weight:700;color:#fff;">${v}</td>`
+        : `<td style="padding:14px 20px;font-size:0.875rem;font-weight:700;color:#fff;">${v}</td>`;
     }).join('');
-    return `<tr style="background:#FAFAFA;border-top:1px solid #E5E7EB;">${tds}</tr>`;
+    return `<tr class="summary-row" style="background:rgba(242,202,80,0.04);border-top:1px solid rgba(242,202,80,0.2);">${tds}</tr>`;
   }
 
   // ─── Escape HTML ──────────────────────────────────────────
