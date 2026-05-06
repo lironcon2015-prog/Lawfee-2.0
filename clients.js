@@ -87,24 +87,24 @@ const Clients = (() => {
 
   // ── Case type badge ────────────────────────────────────
   const CASE_TYPE_BADGE = {
-    'ליטיגציה': 'background:rgba(190,18,60,0.07);color:#be123c;',
-    'עסקה':     'background:rgba(124,58,237,0.07);color:#7C3AED;',
-    'שוטף':     'background:rgba(29,78,216,0.07);color:#1D4ED8;',
+    'ליטיגציה': 'background:rgba(190,18,60,0.07);color:#f87171;',
+    'עסקה':     'background:rgba(124,58,237,0.07);color:#c084fc;',
+    'שוטף':     'background:rgba(29,78,216,0.07);color:#86dfff;',
   };
 
   function caseTypeBadge(type) {
-    const s = CASE_TYPE_BADGE[type] || 'background:#F3F4F6;color:#6B7280;';
+    const s = CASE_TYPE_BADGE[type] || 'background:rgba(255,255,255,0.05);color:#9ca3af;';
     return `<span style="display:inline-block;padding:2px 7px;border-radius:20px;font-size:0.7rem;font-weight:700;${s}">${escHtml(type || '—')}</span>`;
   }
 
   // ── Avatar initials + color ────────────────────────────
   const AVATAR_STYLES = [
-    'background:rgba(29,78,216,0.08);color:#1D4ED8;',
-    'background:rgba(4,120,87,0.08);color:#047857;',
-    'background:rgba(212,175,55,0.10);color:#92400e;',
-    'background:rgba(124,58,237,0.08);color:#7C3AED;',
-    'background:rgba(190,18,60,0.08);color:#be123c;',
-    'background:rgba(2,132,199,0.08);color:#0284C7;',
+    'background:rgba(134,223,255,0.10);color:#86dfff;border:1px solid rgba(134,223,255,0.22);',
+    'background:rgba(52,211,153,0.10);color:#34d399;border:1px solid rgba(52,211,153,0.22);',
+    'background:rgba(242,202,80,0.12);color:#f2ca50;border:1px solid rgba(242,202,80,0.28);',
+    'background:rgba(192,132,252,0.10);color:#c084fc;border:1px solid rgba(192,132,252,0.22);',
+    'background:rgba(248,113,113,0.10);color:#f87171;border:1px solid rgba(248,113,113,0.22);',
+    'background:rgba(251,191,36,0.10);color:#fbbf24;border:1px solid rgba(251,191,36,0.22);',
   ];
 
   function avatarStyle(name) {
@@ -118,17 +118,17 @@ const Clients = (() => {
     const activeCases = cases.length;
 
     const casesHTML = cases.length
-      ? `<div style="overflow-x:auto;border-radius:12px;border:1px solid #E5E7EB;background:#fff;">
+      ? `<div style="overflow-x:auto;border-radius:12px;border:1px solid rgba(255,255,255,0.10);background:rgba(31,31,33,0.4);">
           <table class="w-full text-right data-table" style="font-size:0.83rem;">
-            <thead style="background:#FAFAFA;">
+            <thead style="background:rgba(255,255,255,0.03);">
               <tr>
-                <th style="padding:9px 14px;font-size:0.68rem;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.05em;text-align:right;border-bottom:1px solid #E5E7EB;">מספר תיק</th>
-                <th style="padding:9px 14px;font-size:0.68rem;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.05em;text-align:right;border-bottom:1px solid #E5E7EB;">תיאור</th>
-                <th style="padding:9px 14px;font-size:0.68rem;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.05em;text-align:right;border-bottom:1px solid #E5E7EB;">סוג</th>
-                <th style="padding:9px 14px;font-size:0.68rem;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.05em;text-align:right;border-bottom:1px solid #E5E7EB;">% עמלה</th>
-                <th style="padding:9px 14px;font-size:0.68rem;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.05em;text-align:right;border-bottom:1px solid #E5E7EB;">הסדר</th>
-                <th style="padding:9px 14px;font-size:0.68rem;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.05em;text-align:right;border-bottom:1px solid #E5E7EB;">תאריך פתיחה</th>
-                <th style="padding:9px 14px;border-bottom:1px solid #E5E7EB;"></th>
+                <th style="padding:9px 14px;font-size:0.68rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;text-align:right;border-bottom:1px solid rgba(255,255,255,0.06);">מספר תיק</th>
+                <th style="padding:9px 14px;font-size:0.68rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;text-align:right;border-bottom:1px solid rgba(255,255,255,0.06);">תיאור</th>
+                <th style="padding:9px 14px;font-size:0.68rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;text-align:right;border-bottom:1px solid rgba(255,255,255,0.06);">סוג</th>
+                <th style="padding:9px 14px;font-size:0.68rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;text-align:right;border-bottom:1px solid rgba(255,255,255,0.06);">% עמלה</th>
+                <th style="padding:9px 14px;font-size:0.68rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;text-align:right;border-bottom:1px solid rgba(255,255,255,0.06);">הסדר</th>
+                <th style="padding:9px 14px;font-size:0.68rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;text-align:right;border-bottom:1px solid rgba(255,255,255,0.06);">תאריך פתיחה</th>
+                <th style="padding:9px 14px;border-bottom:1px solid rgba(255,255,255,0.06);"></th>
               </tr>
             </thead>
             <tbody>
@@ -138,68 +138,68 @@ const Clients = (() => {
         </div>
         <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;">
           <button onclick="Clients.openClientModal(${client.id})"
-            style="display:inline-flex;align-items:center;gap:4px;font-size:0.8rem;font-weight:500;color:#9CA3AF;cursor:pointer;border:none;background:none;transition:color 0.12s;" onmouseover="this.style.color='#374151'" onmouseout="this.style.color='#9CA3AF'">
+            style="display:inline-flex;align-items:center;gap:4px;font-size:0.8rem;font-weight:500;color:#9ca3af;cursor:pointer;border:none;background:none;transition:color 0.12s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#9ca3af'">
             <span class="material-symbols-outlined" style="font-size:15px;">edit</span> ערוך לקוח
           </button>
           <div style="display:flex;align-items:center;gap:10px;">
             <button onclick="Clients.deleteClient(${client.id}, '${escHtml(client.name)}')"
-              style="display:inline-flex;align-items:center;gap:4px;font-size:0.8rem;font-weight:500;color:#FCA5A5;cursor:pointer;border:none;background:none;transition:color 0.12s;" onmouseover="this.style.color='#DC2626'" onmouseout="this.style.color='#FCA5A5'">
+              style="display:inline-flex;align-items:center;gap:4px;font-size:0.8rem;font-weight:500;color:#fca5a5;cursor:pointer;border:none;background:none;transition:color 0.12s;" onmouseover="this.style.color='#f87171'" onmouseout="this.style.color='#fca5a5'">
               <span class="material-symbols-outlined" style="font-size:15px;">delete</span> מחק
             </button>
             <button onclick="Clients.openCaseModal(${client.id})"
-              style="display:inline-flex;align-items:center;gap:4px;font-size:0.82rem;font-weight:600;color:#1D4ED8;cursor:pointer;border:none;background:none;transition:opacity 0.12s;" onmouseover="this.style.opacity='0.75'" onmouseout="this.style.opacity='1'">
+              style="display:inline-flex;align-items:center;gap:4px;font-size:0.82rem;font-weight:600;color:#86dfff;cursor:pointer;border:none;background:none;transition:opacity 0.12s;" onmouseover="this.style.opacity='0.75'" onmouseout="this.style.opacity='1'">
               <span class="material-symbols-outlined" style="font-size:15px;">add</span> הוסף תיק
             </button>
           </div>
         </div>`
-      : `<p style="font-size:0.82rem;color:#9CA3AF;padding:12px 0;">אין תיקים ללקוח זה.</p>
+      : `<p style="font-size:0.82rem;color:#9ca3af;padding:12px 0;">אין תיקים ללקוח זה.</p>
          <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;">
           <button onclick="Clients.openClientModal(${client.id})"
-            style="display:inline-flex;align-items:center;gap:4px;font-size:0.8rem;font-weight:500;color:#9CA3AF;cursor:pointer;border:none;background:none;">
+            style="display:inline-flex;align-items:center;gap:4px;font-size:0.8rem;font-weight:500;color:#9ca3af;cursor:pointer;border:none;background:none;">
             <span class="material-symbols-outlined" style="font-size:15px;">edit</span> ערוך לקוח
           </button>
           <button onclick="Clients.openCaseModal(${client.id})"
-            style="display:inline-flex;align-items:center;gap:4px;font-size:0.82rem;font-weight:600;color:#1D4ED8;cursor:pointer;border:none;background:none;">
+            style="display:inline-flex;align-items:center;gap:4px;font-size:0.82rem;font-weight:600;color:#86dfff;cursor:pointer;border:none;background:none;">
             <span class="material-symbols-outlined" style="font-size:15px;">add</span> הוסף תיק
           </button>
         </div>`;
 
     return `
-      <details class="group" style="background:#fff;border-radius:16px;border:1px solid #E5E7EB;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04);" data-client-id="${client.id}">
-        <summary style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:16px 20px;transition:background 0.12s;list-style:none;" class="select-none [&::-webkit-details-marker]:hidden" onmouseover="this.style.background='#FAFAFA'" onmouseout="this.style.background=''">
+      <details class="group" style="background:rgba(42,42,44,0.40);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-radius:18px;border:1px solid rgba(255,255,255,0.08);overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.25);transition:border-color 0.2s, transform 0.2s;" onmouseover="this.style.borderColor='rgba(242,202,80,0.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'" data-client-id="${client.id}">
+        <summary style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:16px 20px;transition:background 0.12s;list-style:none;" class="select-none [&::-webkit-details-marker]:hidden" onmouseover="this.style.background='rgba(242,202,80,0.04)'" onmouseout="this.style.background=''">
           <div style="display:flex;align-items:center;gap:12px;">
             <div style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Rubik',sans-serif;font-weight:700;font-size:1rem;flex-shrink:0;${avatarStyle(client.name)}">
               ${initial}
             </div>
             <div>
-              <h3 style="font-family:'Rubik',sans-serif;font-weight:700;font-size:0.95rem;color:#111827;letter-spacing:-0.01em;">${escHtml(client.name)}</h3>
-              <p style="font-size:0.75rem;color:#9CA3AF;margin-top:1px;">${activeCases} תיקים</p>
+              <h3 style="font-family:'Rubik',sans-serif;font-weight:700;font-size:0.95rem;color:#e7e5e0;letter-spacing:-0.01em;">${escHtml(client.name)}</h3>
+              <p style="font-size:0.75rem;color:#9ca3af;margin-top:1px;">${activeCases} תיקים</p>
             </div>
           </div>
-          <span class="material-symbols-outlined group-open:rotate-180 transition-transform duration-200" style="font-size:18px;color:#9CA3AF;">expand_more</span>
+          <span class="material-symbols-outlined group-open:rotate-180 transition-transform duration-200" style="font-size:18px;color:#9ca3af;">expand_more</span>
         </summary>
-        <div style="border-top:1px solid #F3F4F6;background:#FAFAFA;padding:16px 20px;">
+        <div style="border-top:1px solid rgba(255,255,255,0.05);background:rgba(255,255,255,0.03);padding:16px 20px;">
           ${casesHTML}
         </div>
       </details>`;
   }
 
   function buildCaseRow(c) {
-    return `<tr data-case-id="${c.id}" style="border-bottom:1px solid #F3F4F6;" onmouseover="this.style.background='#FAFAFA'" onmouseout="this.style.background=''">
-      <td style="padding:10px 14px;font-family:'Inter',monospace;font-size:0.8rem;color:#374151;font-weight:600;">${escHtml(c.caseNumber)}</td>
-      <td style="padding:10px 14px;font-size:0.82rem;color:#6B7280;">${escHtml(c.description)}</td>
+    return `<tr data-case-id="${c.id}" style="border-bottom:1px solid rgba(255,255,255,0.05);" onmouseover="this.style.background='rgba(242,202,80,0.04)'" onmouseout="this.style.background=''">
+      <td style="padding:10px 14px;font-family:'Inter',monospace;font-size:0.8rem;color:#d1d5db;font-weight:600;">${escHtml(c.caseNumber)}</td>
+      <td style="padding:10px 14px;font-size:0.82rem;color:#9ca3af;">${escHtml(c.description)}</td>
       <td style="padding:10px 14px;">${caseTypeBadge(c.caseType)}</td>
-      <td style="padding:10px 14px;font-family:'Inter',sans-serif;font-size:0.82rem;color:#374151;">${UI.formatPct(c.commissionRate)}</td>
-      <td style="padding:10px 14px;font-size:0.82rem;color:#9CA3AF;">${escHtml(c.arrangementType)}</td>
-      <td style="padding:10px 14px;font-family:'Inter',sans-serif;font-size:0.78rem;color:#9CA3AF;">${c.openDate || '—'}</td>
+      <td style="padding:10px 14px;font-family:'Inter',sans-serif;font-size:0.82rem;color:#d1d5db;">${UI.formatPct(c.commissionRate)}</td>
+      <td style="padding:10px 14px;font-size:0.82rem;color:#9ca3af;">${escHtml(c.arrangementType)}</td>
+      <td style="padding:10px 14px;font-family:'Inter',sans-serif;font-size:0.78rem;color:#9ca3af;">${c.openDate || '—'}</td>
       <td style="padding:10px 14px;text-align:left;">
         <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">
           <button onclick="Clients.openCaseModal(${c.clientId}, ${c.id})" title="ערוך תיק"
-            style="color:#9CA3AF;background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;transition:color 0.12s,background 0.12s;" onmouseover="this.style.color='#1D4ED8';this.style.background='rgba(29,78,216,0.06)'" onmouseout="this.style.color='#9CA3AF';this.style.background='none'">
+            style="color:#9ca3af;background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;transition:color 0.12s,background 0.12s;" onmouseover="this.style.color='#86dfff';this.style.background='rgba(134,223,255,0.08)'" onmouseout="this.style.color='#9ca3af';this.style.background='none'">
             <span class="material-symbols-outlined" style="font-size:17px;">edit</span>
           </button>
           <button onclick="Clients.deleteCase(${c.id}, '${escHtml(c.caseNumber)}')" title="מחק תיק"
-            style="color:#9CA3AF;background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;transition:color 0.12s,background 0.12s;" onmouseover="this.style.color='#DC2626';this.style.background='rgba(220,38,38,0.06)'" onmouseout="this.style.color='#9CA3AF';this.style.background='none'">
+            style="color:#9ca3af;background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;transition:color 0.12s,background 0.12s;" onmouseover="this.style.color='#f87171';this.style.background='rgba(248,113,113,0.10)'" onmouseout="this.style.color='#9ca3af';this.style.background='none'">
             <span class="material-symbols-outlined" style="font-size:17px;">delete</span>
           </button>
         </div>
