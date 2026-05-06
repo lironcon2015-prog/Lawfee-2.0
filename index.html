@@ -62,7 +62,7 @@
   </style>
 </head>
 <body class="bg-background text-gray-200 font-sans antialiased flex h-screen overflow-hidden selection:bg-primary/20 selection:text-primary">
-<script>window._BUNDLE_VERSION = '3.0.4';</script>
+<script>window._BUNDLE_VERSION = '3.0.5';</script>
 
 <!-- AMBIENT BACKGROUND GLOWS -->
 <div class="fixed inset-0 z-0 pointer-events-none">
@@ -610,15 +610,32 @@
 <script>
     if ('serviceWorker' in navigator) {
       let _refreshing = false;
+      // semver-ish compare: returns true iff a > b
+      function _versionGt(a, b) {
+        const pa = String(a || '0').split('.').map(n => parseInt(n, 10) || 0);
+        const pb = String(b || '0').split('.').map(n => parseInt(n, 10) || 0);
+        for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+          const x = pa[i] || 0, y = pb[i] || 0;
+          if (x > y) return true;
+          if (x < y) return false;
+        }
+        return false;
+      }
       function _doReload() {
         if (_refreshing) return;
+        // hard guard against tight reload loops (iOS PWA / stale CDN)
+        const last = parseInt(sessionStorage.getItem('_swReloadAt') || '0', 10);
+        if (Date.now() - last < 60000) return;       // never reload more than once per 60s
+        sessionStorage.setItem('_swReloadAt', String(Date.now()));
         _refreshing = true;
         window.location.reload();
       }
       async function _checkAndUpdate() {
         try {
           const d = await fetch('./version.json?_=' + Date.now()).then(r => r.json());
-          if (!window._BUNDLE_VERSION || d.version === window._BUNDLE_VERSION) return;
+          // only reload when remote is STRICTLY NEWER than the running bundle.
+          // (a stale-cached older version.json would otherwise loop us forever)
+          if (!window._BUNDLE_VERSION || !_versionGt(d.version, window._BUNDLE_VERSION)) return;
           const reg = await navigator.serviceWorker.getRegistration('./');
           if (!reg) { _doReload(); return; }
           if (reg.waiting) {
