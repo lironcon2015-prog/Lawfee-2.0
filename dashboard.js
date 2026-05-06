@@ -296,7 +296,7 @@ const Dashboard = (() => {
         <td class="num" style="color:#e7e5e0;font-weight:300;">${inv.amount  > 0 ? UI.formatNumber(inv.amount)     : '<span style="color:#4d4635;">—</span>'}</td>
         <td class="num" style="color:#f2ca50;font-weight:400;">${inv.commission > 0 ? UI.formatNumber(inv.commission) : '<span style="color:#4d4635;">—</span>'}</td>
         <td class="num" style="color:#34d399;font-weight:300;">${pay > 0 ? UI.formatNumber(pay) : '<span style="color:#4d4635;">—</span>'}</td>
-        <td class="num" style="color:${runningBalance >= 0 ? '#111114' : '#7F1D1D'};font-weight:500;">${UI.formatNumber(runningBalance)}</td>
+        <td class="num" style="color:${runningBalance >= 0 ? '#e7e5e0' : '#f87171'};font-weight:500;">${UI.formatNumber(runningBalance)}</td>
       </tr>`;
     }
 
@@ -508,7 +508,7 @@ const Dashboard = (() => {
       for (let m = 1; m <= maxMonth; m++) {
         const val = (months[m] || {})[metric] || 0;
         total += val;
-        html += `<td class="num" style="color:${val > 0 ? '#111114' : '#D1D5DB'};font-weight:${val > 0 ? '300' : '300'};">${val > 0 ? UI.formatNumber(val) : '—'}</td>`;
+        html += `<td class="num" style="color:${val > 0 ? '#e7e5e0' : '#4d4635'};font-weight:${val > 0 ? '300' : '300'};">${val > 0 ? UI.formatNumber(val) : '—'}</td>`;
       }
       return { html, total };
     };
@@ -529,7 +529,7 @@ const Dashboard = (() => {
           </span>
         </td>
         ${clientCells}
-        <td class="num" style="font-weight:400;color:${metric === 'commission' ? '#C5A880' : '#111114'};">${UI.formatNumber(clientTotal)}</td>
+        <td class="num" style="font-weight:400;color:${metric === 'commission' ? '#f2ca50' : '#e7e5e0'};">${UI.formatNumber(clientTotal)}</td>
       </tr>`;
 
       const sortedCaseIds = Object.keys(data.cases).sort((a, b) =>
@@ -557,7 +557,7 @@ const Dashboard = (() => {
     rows += `<tr class="summary-row">
       <td style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;">סה"כ חודשי</td>
       ${totalCells}
-      <td class="num" style="color:${_clientMonthlyMetric === 'commission' ? '#C5A880' : '#111114'};">${UI.formatNumber(grandTotal)}</td>
+      <td class="num" style="color:${_clientMonthlyMetric === 'commission' ? '#f2ca50' : '#e7e5e0'};">${UI.formatNumber(grandTotal)}</td>
     </tr>`;
 
     tbody.innerHTML = rows;
