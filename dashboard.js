@@ -6,7 +6,7 @@
 const Dashboard = (() => {
 
   let _year = new Date().getFullYear();
-  let _donutMetric = 'commission';
+  let _donutMetric = 'amount';
 
   // ── Init ───────────────────────────────────────────────
   async function init() {
@@ -439,7 +439,7 @@ const Dashboard = (() => {
   }
 
   // ── Per-Client Monthly Breakdown ───────────────────────
-  let _clientMonthlyMetric = 'commission';
+  let _clientMonthlyMetric = 'amount';
 
   async function renderClientMonthlyTable() {
     const thead = document.getElementById('client-monthly-thead');
