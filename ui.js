@@ -332,10 +332,10 @@ const UI = (() => {
   function formField({ id, label, type = 'text', value = '', required = false, opts = {} }) {
     const baseInput = `
       block w-full rounded-xl
-      px-3 py-2.5 text-sm
+      px-4 py-3 text-sm font-medium
       focus:outline-none transition-colors
     `.replace(/\s+/g, ' ').trim();
-    const baseStyle = `border:1px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.04);color:#e7e5e0;font-family:'Assistant',sans-serif;`;
+    const baseStyle = `border:1px solid rgba(255,255,255,0.14);background:rgba(0,0,0,0.35);color:#fff;font-family:'Assistant',sans-serif;`;
 
     let input;
     if (type === 'select') {
@@ -354,12 +354,12 @@ const UI = (() => {
     }
 
     const hint = opts.hint
-      ? `<p style="margin-top:5px;font-size:0.73rem;color:#6b7280;line-height:1.4;">${opts.hint}</p>`
+      ? `<p style="margin-top:6px;font-size:0.75rem;color:#9ca3af;line-height:1.4;">${opts.hint}</p>`
       : '';
 
     return `
       <div class="form-group">
-        <label for="${id}" style="font-size:0.72rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em;">
+        <label for="${id}" style="font-size:0.74rem;font-weight:700;color:#c9c5be;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">
           ${label}${required ? ' <span style="color:#f87171;">*</span>' : ''}
         </label>
         ${input}
