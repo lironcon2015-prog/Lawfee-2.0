@@ -350,9 +350,9 @@ select { appearance: none; -webkit-appearance: none; }
 .label-sm { font-size: 0.74rem; color: var(--text-secondary); font-weight: 600; }
 
 .form-input, .select-sm {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.10);
-  color: #e4e2e4;
+  background: #1b1b1d !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  color: #e4e2e4 !important;
   border-radius: var(--radius-md);
   padding: 11px 14px;
   font-size: 0.9rem;
@@ -361,12 +361,12 @@ select { appearance: none; -webkit-appearance: none; }
   width: 100%;
   font-family: var(--font-ui);
 }
-.form-input::placeholder { color: rgba(255,255,255,0.40); }
+.form-input::placeholder, .select-sm::placeholder { color: #6b7280 !important; }
 .form-input:focus, .select-sm:focus {
   outline: none;
   border-color: #f2ca50;
   box-shadow: 0 0 0 3px rgba(242,202,80,0.20);
-  background: rgba(255,255,255,0.08);
+  background: #222224 !important;
 }
 .select-sm {
   padding-left: 30px;

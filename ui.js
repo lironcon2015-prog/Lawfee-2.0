@@ -335,7 +335,7 @@ const UI = (() => {
       px-4 py-3 text-sm font-medium
       focus:outline-none transition-colors
     `.replace(/\s+/g, ' ').trim();
-    const baseStyle = `border:1px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.05);color:#e4e2e4;font-family:'Assistant',sans-serif;`;
+    const baseStyle = `border:1px solid rgba(255,255,255,0.10);background:#1b1b1d;color:#e4e2e4;font-family:'Assistant',sans-serif;`;
 
     let input;
     if (type === 'select') {
