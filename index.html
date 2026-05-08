@@ -62,7 +62,7 @@
   </style>
 </head>
 <body class="bg-background text-gray-200 font-sans antialiased flex h-screen overflow-hidden selection:bg-primary/20 selection:text-primary">
-<script>window._BUNDLE_VERSION = '3.0.8';</script>
+<script>window._BUNDLE_VERSION = '3.0.9';</script>
 
 <!-- AMBIENT BACKGROUND GLOWS -->
 <div class="fixed inset-0 z-0 pointer-events-none">
@@ -640,8 +640,12 @@
           if (!reg) { _doReload(); return; }
           if (reg.waiting) {
             reg.waiting.postMessage('skipWaiting');
-          } else if (!reg.installing) {
-            _doReload();
+          } else {
+            // Force Safari/iOS to re-fetch sw.js from network (bypasses HTTP cache)
+            reg.update().then(() => {
+              if (reg.waiting) reg.waiting.postMessage('skipWaiting');
+              else if (!reg.installing) _doReload();
+            });
           }
         } catch(e) {}
       }
@@ -650,12 +654,12 @@
         if (!e.persisted) return;
         const reg = await navigator.serviceWorker.getRegistration('./');
         if (reg && reg.waiting) reg.waiting.postMessage('skipWaiting');
-        else _checkAndUpdate();
+        else { if (reg) reg.update(); _checkAndUpdate(); }
       });
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') _checkAndUpdate();
       });
-      navigator.serviceWorker.register('./sw.js').then(reg => {
+      navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => {
         if (reg.waiting) reg.waiting.postMessage('skipWaiting');
         window.addEventListener('load', () => setTimeout(_checkAndUpdate, 2000));
       });
