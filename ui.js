@@ -154,17 +154,19 @@ const UI = (() => {
 
     container.appendChild(el);
 
-    // Animate in
+    // Animate in (must use inline style — cssText above sets opacity:0 inline,
+    // class-based opacity-100 can't override inline specificity)
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        el.classList.remove('translate-y-2', 'opacity-0');
-        el.classList.add('translate-y-0', 'opacity-100');
+        el.style.opacity = '1';
+        el.style.transform = 'translateX(0)';
       });
     });
 
     // Auto-dismiss
     setTimeout(() => {
-      el.classList.add('opacity-0', 'translate-y-1');
+      el.style.opacity = '0';
+      el.style.transform = 'translateX(-12px)';
       el.addEventListener('transitionend', () => el.remove(), { once: true });
     }, duration);
   }
