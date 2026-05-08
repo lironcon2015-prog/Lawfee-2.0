@@ -121,7 +121,7 @@ const Drive = (() => {
       } else {
         await _uploadNew(token, json);
       }
-      UI.toast('גיבוי נשמר ב-Google Drive ✓', 'success');
+      UI.toast('הגיבוי נשמר בהצלחה ב-Google Drive', 'success');
     } catch (err) {
       if (err.message === 'popup_closed_by_user') return;
       _clearToken();
