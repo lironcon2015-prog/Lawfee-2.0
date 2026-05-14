@@ -75,9 +75,9 @@ const Invoices = (() => {
         <td style="font-family:'Inter',monospace;font-size:0.72rem;color:#9ca3af;font-weight:300;">${c ? escHtml(c.caseNumber) : '—'}</td>
         <td style="font-size:0.8rem;color:#9ca3af;">${UI.monthName(inv.month)}</td>
         <td style="font-family:'Inter',sans-serif;font-size:0.78rem;color:#9ca3af;font-weight:300;">${inv.year}</td>
-        <td class="num" style="color:#e7e5e0;font-weight:300;">${UI.formatNumber(inv.amount)}</td>
+        <td class="num" style="color:${inv.amount < 0 ? '#f87171' : '#e7e5e0'};font-weight:300;">${UI.formatNumber(inv.amount)}</td>
         <td class="num" style="color:#9ca3af;font-weight:300;">${UI.formatPct(inv.commissionRate)}</td>
-        <td class="num" style="color:#f2ca50;font-weight:400;">${UI.formatNumber(inv.commission)}</td>
+        <td class="num" style="color:${inv.commission < 0 ? '#f87171' : '#f2ca50'};font-weight:400;">${UI.formatNumber(inv.commission)}</td>
         <td>${UI.sourceBadge(inv.source)}</td>
         <td style="text-align:left;">
           <button style="color:#4d4635;background:none;border:none;cursor:pointer;padding:4px;border-radius:4px;transition:all 0.2s;" onmouseover="this.style.color='#f2ca50'" onmouseout="this.style.color='#4d4635'" onclick="Invoices.openInvoiceModal(${inv.id})" title="ערוך"><span class="material-symbols-outlined" style="font-size:16px;">edit</span></button>
@@ -143,7 +143,8 @@ const Invoices = (() => {
       </div>
       <div class="form-group">
         <label class="form-label" for="f-inv-amount">סכום חשבונית (₪) *</label>
-        <input type="number" id="f-inv-amount" class="form-input" value="${inv ? inv.amount : ''}" step="0.01" min="0" oninput="Invoices._onAmountChange()" />
+        <input type="number" id="f-inv-amount" class="form-input" value="${inv ? inv.amount : ''}" step="0.01" oninput="Invoices._onAmountChange()" />
+        <small style="color:var(--text-muted);font-size:0.75rem;margin-top:4px">לחשבונית זיכוי הזן סכום שלילי (למשל -1500)</small>
       </div>
       <div class="form-group">
         <label class="form-label" for="f-inv-rate">שיעור עמלה (%)</label>
@@ -173,7 +174,7 @@ const Invoices = (() => {
 
         if (!caseId)       throw new Error('יש לבחור תיק');
         if (!month||!year) throw new Error('יש לבחור חודש ושנה');
-        if (!amount||amount<=0) throw new Error('יש להזין סכום תקין');
+        if (!amount || isNaN(amount)) throw new Error('יש להזין סכום תקין (אפשר שלילי לזיכוי)');
         if (isNaN(rate))   throw new Error('יש להזין שיעור עמלה');
 
         if (invoiceId) {
@@ -230,7 +231,7 @@ const Invoices = (() => {
     const amount = parseFloat(document.getElementById('f-inv-amount')?.value) || 0;
     const rate   = parseFloat(document.getElementById('f-inv-rate')?.value)   || 0;
     const prev   = document.getElementById('f-inv-commission-preview');
-    if (prev) prev.textContent = amount > 0 ? UI.formatCurrency(+(amount*rate/100).toFixed(2)) : '—';
+    if (prev) prev.textContent = amount !== 0 && !isNaN(amount) ? UI.formatCurrency(+(amount*rate/100).toFixed(2)) : '—';
   }
 
   // ── Delete Invoice ─────────────────────────────────────
