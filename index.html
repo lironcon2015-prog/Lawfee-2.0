@@ -5,47 +5,20 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta name="theme-color" content="#131315"/>
 <title>LexLedger — ניהול שכר טרחה</title>
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Rubik:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@300..700,0..1&display=swap" rel="stylesheet"/>
+<!-- Fonts (local) -->
+<link rel="stylesheet" href="vendor/lib/fonts.css"/>
+<!-- Tailwind (local, pre-built) -->
+<link rel="stylesheet" href="vendor/lib/tailwind.css"/>
 <!-- App styles -->
 <link rel="stylesheet" href="style.css" />
-<!-- Tailwind -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            primary: "#f2ca50",
-            background: "#131315",
-            "surface-container-high": "#2a2a2c",
-            "surface-container-low": "#1b1b1d",
-            "surface-bright": "#39393b",
-            "surface-container": "#1f1f21",
-            "on-surface-variant": "#d0c5af",
-            surface: "#131315",
-            "outline-variant": "#4d4635",
-          },
-          fontFamily: {
-            sans: ["Assistant", "sans-serif"],
-            num: ["Inter", "sans-serif"],
-          },
-        },
-      },
-    };
-  </script>
-<!-- External Libraries (CDN) -->
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<!-- Google Identity Services (remote — required for Drive OAuth; auto-skips on file://) -->
+<script src="https://accounts.google.com/gsi/client" async defer onerror="window.__gisFailed=true"></script>
+<!-- External Libraries (local) -->
+<script src="vendor/lib/xlsx.full.min.js"></script>
+<script src="vendor/lib/pdf.min.js"></script>
 <script>
     if (typeof pdfjsLib !== 'undefined') {
-      pdfjsLib.GlobalWorkerOptions.workerSrc =
-        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'vendor/lib/pdf.worker.min.js';
     }
   </script>
 <style>
@@ -62,7 +35,7 @@
   </style>
 </head>
 <body class="bg-background text-gray-200 font-sans antialiased flex h-screen overflow-hidden selection:bg-primary/20 selection:text-primary">
-<script>window._BUNDLE_VERSION = '3.1.1';</script>
+<script>window._BUNDLE_VERSION = '3.2.0';</script>
 
 <!-- AMBIENT BACKGROUND GLOWS -->
 <div class="fixed inset-0 z-0 pointer-events-none">
