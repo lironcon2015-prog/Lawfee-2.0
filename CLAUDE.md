@@ -33,28 +33,56 @@ settings.js      — Settings: opening balance, commission, version check
 design/          — פרוטוטייפ React בלבד — לא נטען ב-production
   LexLedger Redesign.html, components.jsx, screens.jsx, screens-2.jsx,
   design-canvas.jsx, tokens.css, data.js
+
+vendor/          — תלויות מקומיות (כל ה-CDN-ים מוטמעים, ראה למטה)
+  lib/tailwind.css, lib/fonts.css, lib/xlsx.full.min.js,
+  lib/pdf.min.js, lib/pdf.worker.min.js
+  fonts/*.woff2  — כל הגופנים מקומית
+
+build/           — קבצי build עבור Tailwind (לא נטענים ב-runtime)
+  tailwind.config.js, tailwind-input.css, rebuild-tailwind.sh
 ```
 
 ---
 
-## תלויות CDN (index.html)
+## תלויות (מקומיות — כל ה-CDN-ים מוטמעים ב-`vendor/`)
 
-| ספרייה | גרסה | שימוש |
-|--------|------|-------|
-| Google Fonts — Assistant, Rubik, IBM Plex Mono | latest | גופנים |
-| Material Symbols Outlined | latest | אייקונים (`material-symbols-outlined`) |
-| Tailwind CSS | CDN + plugins: forms, container-queries | layout/shell |
-| style.css | local | כיתות JS-generated |
-| SheetJS | xlsx-0.20.2 | ייבוא Excel |
-| PDF.js | 3.11.174 | ייבוא PDF |
+| ספרייה | גרסה | מיקום | שימוש |
+|--------|------|-------|-------|
+| Google Fonts — Assistant, Rubik, IBM Plex Mono, Inter | latest | `vendor/fonts/*.woff2` + `vendor/lib/fonts.css` | גופנים |
+| Material Symbols Outlined | latest | `vendor/fonts/materialsymbolsoutlined-*.woff2` | אייקונים |
+| Tailwind CSS | 3.4.19 + forms + container-queries | `vendor/lib/tailwind.css` (**pre-built**) | layout/shell |
+| style.css | local | `style.css` | כיתות JS-generated |
+| SheetJS | xlsx 0.18.5 | `vendor/lib/xlsx.full.min.js` | ייבוא Excel |
+| PDF.js | 3.11.174 | `vendor/lib/pdf.min.js` + worker | ייבוא PDF |
+| Google Identity Services | latest | **remote** (`accounts.google.com/gsi/client`) | Drive OAuth — חייב remote |
 
-**Tailwind config (בתוך index.html):**
-- `midnight-{50..950}` — סיידבר כהה (950=bg, 600/700=active/hover)
-- `neutral-{50..950}` — תוכן, טקסט, גבולות
-- `gold-{50..950}` — לוגו, highlights זהב (500=עיקרי)
-- `accent-{50..950}` — כחול, כפתורים ראשיים
-- `shadow-card`, `shadow-card-hover`, `shadow-btn`
-- `font-sans` (Assistant), `font-heading` (Rubik), `font-mono` (IBM Plex Mono)
+### ⚠️ Tailwind: pre-built — חובה לרענן בכל הוספת קלאסים חדשים
+
+ה-CSS של Tailwind נבנה מראש מהמחלקות שקיימות ב-HTML/JS **באותו רגע** של הבנייה.
+**אם הוספת מחלקת Tailwind חדשה שלא הייתה בקוד קודם — היא לא תחול עד שאריץ את ה-build מחדש.**
+
+**מתי לרענן:** בכל commit שמוסיף קלאסים חדשים של Tailwind (`bg-*`, `text-*`, `hover:*`, וכו') שלא היו בקוד.
+
+**איך לרענן (חובה כחלק מאותו commit):**
+```bash
+cd build && bash rebuild-tailwind.sh
+```
+זה ירוץ דרך `npx` (ללא התקנה קבועה) ויעדכן את `vendor/lib/tailwind.css`.
+לאחר הריצה — קומיט יחיד שכולל גם את שינויי ה-HTML/JS וגם את `vendor/lib/tailwind.css` המעודכן.
+
+### Drive UI ב-`file://`
+
+`drive.js` מסתיר אוטומטית את כפתורי Drive כאשר `location.protocol === 'file:'`
+(OAuth של Google דורש HTTPS/localhost). בסביבה המקומית במשרד — רק גיבוי/טעינה לקובץ זמינים.
+
+**Tailwind config (בתוך `build/tailwind.config.js`):**
+- `primary` `#f2ca50` — זהב, צבע המותג
+- `background` `#131315` — רקע ראשי
+- `surface` / `surface-container` / `surface-container-low` / `surface-container-high` / `surface-bright` — היררכיית רקעים
+- `on-surface-variant` `#d0c5af` — טקסט משני
+- `outline-variant` `#4d4635` — גבולות
+- `font-sans` (Assistant) — טקסט, `font-num` (Inter) — מספרים
 
 ---
 
