@@ -7,7 +7,7 @@
  */
 
 const CACHE_PREFIX  = 'lexledger-v';
-const CACHE_VERSION = '3.1.1';           // ← עדכן בכל deploy
+const CACHE_VERSION = '3.2.0';           // ← עדכן בכל deploy
 const CACHE_NAME    = CACHE_PREFIX + CACHE_VERSION;
 
 const ASSETS = [
@@ -25,6 +25,12 @@ const ASSETS = [
   './settings.js',
   './drive.js',
   './version.json',
+  // vendored dependencies
+  './vendor/lib/tailwind.css',
+  './vendor/lib/fonts.css',
+  './vendor/lib/xlsx.full.min.js',
+  './vendor/lib/pdf.min.js',
+  './vendor/lib/pdf.worker.min.js',
 ];
 
 // ── Install ────────────────────────────────────────────
@@ -57,6 +63,23 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(event.request.url + '?_=' + Date.now())
         .catch(() => caches.match('./version.json'))
+    );
+    return;
+  }
+
+  // קבצי גופנים (vendor/fonts/) — cache-first עם הוספה ל-cache ברענון ראשון
+  if (event.request.url.includes('/vendor/fonts/')) {
+    event.respondWith(
+      caches.match(event.request).then(cached => {
+        if (cached) return cached;
+        return fetch(event.request).then(resp => {
+          if (resp.ok) {
+            const respClone = resp.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, respClone));
+          }
+          return resp;
+        });
+      })
     );
     return;
   }

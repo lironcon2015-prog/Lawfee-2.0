@@ -167,13 +167,37 @@ const Drive = (() => {
     UI.toast('התנתקת מ-Google Drive', 'info');
   }
 
+  function _isSupported() {
+    // OAuth requires HTTPS/localhost — file:// won't work
+    return location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  }
+
+  function _hideAllDriveUI() {
+    const selectors = [
+      '#btn-drive-backup', '#btn-drive-restore',
+      '#btn-drive-backup-mobile', '#btn-drive-restore-mobile',
+      '#drive-status-sidebar', '#drive-status-mobile',
+      '#drive-disconnect-sidebar', '#drive-disconnect-mobile',
+    ];
+    selectors.forEach(sel => {
+      const el = document.querySelector(sel);
+      if (el) el.classList.add('hidden');
+    });
+    // Hide containing "Drive" section labels too
+    document.querySelectorAll('[data-drive-section]').forEach(el => el.classList.add('hidden'));
+  }
+
   function init() {
+    if (!_isSupported()) {
+      _hideAllDriveUI();
+      return;
+    }
     _renderStatus();
     ['drive-disconnect-sidebar', 'drive-disconnect-mobile'].forEach(id => {
       document.getElementById(id)?.addEventListener('click', disconnect);
     });
   }
 
-  return { saveBackup, restoreBackup, disconnect, init };
+  return { saveBackup, restoreBackup, disconnect, init, isSupported: _isSupported };
 })();
 window.Drive = Drive;
