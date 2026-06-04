@@ -83,6 +83,9 @@ const Settings = (() => {
       const res = await fetch(VERSION_URL);
       return await res.json();
     } catch (_) {}
+    // Offline single-file (file://): fetch is blocked — fall back to the
+    // version baked into the bundle at build time.
+    if (window._BUNDLE_VERSION) return { version: window._BUNDLE_VERSION, date: null };
     return { version: '—', date: null };
   }
 
