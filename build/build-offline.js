@@ -41,24 +41,28 @@ function build() {
   const tailwind   = read('vendor/lib/tailwind.css');
   const styleCss   = read('style.css');
 
-  // החלפת תגי <link> ב-<style> מוטמעים
+  // החלפת תגי <link> ב-<style> מוטמעים.
+  // חשוב: מעבירים פונקציה (לא מחרוזת) ל-replace כדי שרצפי $ בתוכן
+  // (למשל $&, $', $`) לא יפורשו כתבניות החלפה ויהרסו את הקוד.
+  const sub = (s) => () => s;   // replacement function — מחזיר את התוכן כמות שהוא
+
   html = html.replace(
     /<link rel="stylesheet" href="vendor\/lib\/fonts\.css"\/>/,
-    `<style>\n${fontsCss}\n</style>`
+    sub(`<style>\n${fontsCss}\n</style>`)
   );
   html = html.replace(
     /<link rel="stylesheet" href="vendor\/lib\/tailwind\.css"\/>/,
-    `<style>\n${tailwind}\n</style>`
+    sub(`<style>\n${tailwind}\n</style>`)
   );
   html = html.replace(
     /<link rel="stylesheet" href="style\.css" \/>/,
-    `<style>\n${styleCss}\n</style>`
+    sub(`<style>\n${styleCss}\n</style>`)
   );
 
   // הסרת Google Identity Services (remote) — לא נדרש באופליין; drive מוסתר ב-file://
   html = html.replace(
     /<script src="https:\/\/accounts\.google\.com\/gsi\/client"[^>]*><\/script>\n?/,
-    ''
+    sub('')
   );
 
   // ספריות vendor — הטמעה inline
@@ -66,24 +70,24 @@ function build() {
   const pdfLib = safeJs(read('vendor/lib/pdf.min.js'));
   html = html.replace(
     /<script src="vendor\/lib\/xlsx\.full\.min\.js"><\/script>/,
-    `<script>\n${xlsx}\n</script>`
+    sub(`<script>\n${xlsx}\n</script>`)
   );
   html = html.replace(
     /<script src="vendor\/lib\/pdf\.min\.js"><\/script>/,
-    `<script>\n${pdfLib}\n</script>`
+    sub(`<script>\n${pdfLib}\n</script>`)
   );
 
   // PDF.js worker — הטמעה כ-base64 וטעינה דרך Blob URL (אין קובץ נפרד באופליין)
   const workerB64 = readB64('vendor/lib/pdf.worker.min.js');
   html = html.replace(
     /pdfjsLib\.GlobalWorkerOptions\.workerSrc = 'vendor\/lib\/pdf\.worker\.min\.js';/,
-    `try {
+    sub(`try {
         const __b = atob("${workerB64}");
         const __u = new Uint8Array(__b.length);
         for (let i = 0; i < __b.length; i++) __u[i] = __b.charCodeAt(i);
         const __blob = new Blob([__u], { type: 'application/javascript' });
         pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(__blob);
-      } catch (e) { console.warn('PDF worker init failed', e); }`
+      } catch (e) { console.warn('PDF worker init failed', e); }`)
   );
 
   // מודולי האפליקציה — הטמעה inline לפי סדר הטעינה
@@ -93,13 +97,13 @@ function build() {
   ];
   for (const m of appModules) {
     const re = new RegExp(`<script src="${m.replace('.', '\\.')}"><\\/script>`);
-    html = html.replace(re, `<script>\n${safeJs(read(m))}\n</script>`);
+    html = html.replace(re, sub(`<script>\n${safeJs(read(m))}\n</script>`));
   }
 
   // נטרול רישום Service Worker — אינו נתמך ב-file:// ואין בו צורך באופליין
   html = html.replace(
     /if \('serviceWorker' in navigator\) \{/,
-    `if (location.protocol !== 'file:' && 'serviceWorker' in navigator) {`
+    sub(`if (location.protocol !== 'file:' && 'serviceWorker' in navigator) {`)
   );
 
   const out = r('LexLedger-Offline.html');
