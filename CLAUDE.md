@@ -39,8 +39,11 @@ vendor/          — תלויות מקומיות (כל ה-CDN-ים מוטמעי�
   lib/pdf.min.js, lib/pdf.worker.min.js
   fonts/*.woff2  — כל הגופנים מקומית
 
-build/           — קבצי build עבור Tailwind (לא נטענים ב-runtime)
+build/           — קבצי build (לא נטענים ב-runtime)
   tailwind.config.js, tailwind-input.css, rebuild-tailwind.sh
+  build-offline.js, rebuild-offline.sh  — מייצרים קובץ אופליין יחיד
+
+LexLedger-Offline.html  — קובץ HTML יחיד עצמאי לאופליין (נוצר ב-build, לא לערוך ידנית)
 ```
 
 ---
@@ -70,6 +73,20 @@ cd build && bash rebuild-tailwind.sh
 ```
 זה ירוץ דרך `npx` (ללא התקנה קבועה) ויעדכן את `vendor/lib/tailwind.css`.
 לאחר הריצה — קומיט יחיד שכולל גם את שינויי ה-HTML/JS וגם את `vendor/lib/tailwind.css` המעודכן.
+
+### 📦 קובץ אופליין יחיד — `LexLedger-Offline.html` (חובה לרענן בכל bump)
+
+קובץ HTML **יחיד עצמאי לחלוטין** לעבודה ללא אינטרנט: מורידים אותו לדסקטופ,
+פותחים ב-Chrome (`file://`) — והמערכת עובדת. הוא מכיל בתוכו את כל ה-CSS, ה-JS,
+הגופנים (base64) ו-worker של PDF.js. (Drive מוסתר אוטומטית ב-`file://`; SW מנוטרל בקובץ.)
+
+**הקובץ נבנה מ-`index.html` הקיים** ולכן משקף אוטומטית כל שינוי במערכת.
+**חובה לרענן אותו בכל commit שמשנה קוד (HTML/CSS/JS) — כחלק מאותו commit:**
+```bash
+bash build/rebuild-offline.sh        # (מריץ node build/build-offline.js)
+```
+מייצר את `LexLedger-Offline.html` בשורש. את הקובץ הזה המשתמש מחליף במחשב האופליין
+בכל עדכון. **אין לערוך אותו ידנית** — הוא תוצר build בלבד.
 
 ### Drive UI ב-`file://`
 
@@ -403,6 +420,7 @@ nav a[data-view="dashboard|clients|invoices|payments|import|settings"]
    - `index.html` — שנה את `window._BUNDLE_VERSION` (שורה ראשונה אחרי `<body>`) לאותה גרסה
    - שיטת bump: patch (1.5.1→1.5.2) לתיקוני UI/באגים קטנים; minor (1.5→1.6) לפיצ'ר חדש; major לשינוי שובר תאימות
    - שלושת הקבצים חייבים להיות תמיד באותה הגרסה
+   - ולאחר מכן `bash build/rebuild-offline.sh` כדי לרענן את `LexLedger-Offline.html` (כלול באותו commit)
 4. **RTL תמיד** — Tailwind: `ml-*` הוא visual-left (= physical-left, בעברית = כיוון ה"התחלה")
 5. **HTML ב-index.html** — views קיימים מראש; JS ממלא `innerHTML` בלבד
 6. **אל תוסף framework** — Vanilla JS בלבד
@@ -440,6 +458,7 @@ nav a[data-view="dashboard|clients|invoices|payments|import|settings"]
 1. ודא שאתה על `main` ומסונכרן (`git checkout main && git pull origin main`)
 2. בצע את השינוי בקוד
 3. Bump ל-`sw.js` (CACHE_VERSION) **ו**-`version.json` (version + date) **ו**-`index.html` (`_BUNDLE_VERSION`) — תמיד שלושתם ביחד
-4. Commit יחיד שכולל: שינויי הקוד + sw.js + version.json
-5. `git push origin main` — חובה, אחרת המשימה לא הושלמה
-6. **אם עבדת על בראנץ' אחר** — מזג ל-`main` (`git checkout main && git merge <branch>`) ודחוף (`git push origin main`) לפני סיום. לא מחכים לבקשה.
+4. רענן את קובץ האופליין: `bash build/rebuild-offline.sh` (מעדכן את `LexLedger-Offline.html`)
+5. Commit יחיד שכולל: שינויי הקוד + sw.js + version.json + LexLedger-Offline.html
+6. `git push origin main` — חובה, אחרת המשימה לא הושלמה
+7. **אם עבדת על בראנץ' אחר** — מזג ל-`main` (`git checkout main && git merge <branch>`) ודחוף (`git push origin main`) לפני סיום. לא מחכים לבקשה.
