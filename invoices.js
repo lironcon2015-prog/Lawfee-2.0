@@ -112,22 +112,46 @@ const Invoices = (() => {
     const clientOptions = [
       { value: '', label: 'בחר לקוח…' },
       ...clients.map(c => ({ value: c.id, label: c.name })),
+      { value: '__new__', label: '➕ לקוח חדש…' },
     ];
+
+    const caseTypeOpts = ['שוטף', 'ליטיגציה', 'עסקה']
+      .map(t => `<option value="${t}">${t}</option>`).join('');
 
     // Build client + case selects in the form
     // We'll do a custom bodyHTML here for the cascading select
     const bodyHTML = `
       <div class="form-group">
         <label class="form-label" for="f-inv-client">לקוח *</label>
-        <select id="f-inv-client" class="form-input">
+        <select id="f-inv-client" class="form-input" onchange="Invoices._onClientChange()">
           ${clientOptions.map(o => `<option value="${o.value}" ${inv && caseRec && caseRec.clientId == o.value ? 'selected' : ''}>${o.label}</option>`).join('')}
         </select>
       </div>
-      <div class="form-group">
+      <div class="form-group" id="f-inv-new-client-wrap" style="display:none">
+        <label class="form-label" for="f-inv-nc-name">שם לקוח חדש *</label>
+        <input type="text" id="f-inv-nc-name" class="form-input" placeholder="לדוגמה: ישראל ישראלי" />
+      </div>
+      <div class="form-group" id="f-inv-case-wrap">
         <label class="form-label" for="f-inv-case">תיק *</label>
         <select id="f-inv-case" class="form-input" onchange="Invoices._onCaseChange()">
           <option value="">בחר תיק…</option>
         </select>
+      </div>
+      <div id="f-inv-new-case-wrap" style="display:none">
+        <div class="form-group">
+          <label class="form-label" for="f-inv-ncse-number">מספר תיק *</label>
+          <input type="text" id="f-inv-ncse-number" class="form-input" />
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group">
+            <label class="form-label" for="f-inv-ncse-desc">תיאור</label>
+            <input type="text" id="f-inv-ncse-desc" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="f-inv-ncse-type">סוג תיק</label>
+            <select id="f-inv-ncse-type" class="form-input">${caseTypeOpts}</select>
+          </div>
+        </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="form-group">
@@ -149,7 +173,7 @@ const Invoices = (() => {
       <div class="form-group">
         <label class="form-label" for="f-inv-rate">שיעור עמלה (%)</label>
         <input type="number" id="f-inv-rate" class="form-input" value="${inv ? inv.commissionRate : ''}" step="0.5" min="0" max="100" oninput="Invoices._onAmountChange()" />
-        <small style="color:var(--text-muted);font-size:0.75rem;margin-top:4px">ממולא אוטומטית מהתיק; ניתן לשינוי ידני</small>
+        <small style="color:var(--text-muted);font-size:0.75rem;margin-top:4px">ממולא אוטומטית מהתיק; עבור לקוח/תיק חדש הזן את אחוז העמלה כאן</small>
       </div>
       <div class="commission-preview">
         <span class="commission-label">עמלה מחושבת</span>
@@ -165,17 +189,46 @@ const Invoices = (() => {
       bodyHTML,
       confirmLabel: invoiceId ? 'שמור שינויים' : 'שמור חשבונית',
       onConfirm: async () => {
-        const caseId = parseInt(document.getElementById('f-inv-case').value);
+        const clientVal = document.getElementById('f-inv-client').value;
+        let   caseId = parseInt(document.getElementById('f-inv-case').value);
         const month  = parseInt(document.getElementById('f-inv-month').value);
         const year   = parseInt(document.getElementById('f-inv-year').value);
         const amount = parseFloat(document.getElementById('f-inv-amount').value);
         const rate   = parseFloat(document.getElementById('f-inv-rate').value);
         const notes  = document.getElementById('f-inv-notes').value.trim();
 
-        if (!caseId)       throw new Error('יש לבחור תיק');
         if (!month||!year) throw new Error('יש לבחור חודש ושנה');
         if (!amount || isNaN(amount)) throw new Error('יש להזין סכום תקין (אפשר שלילי לזיכוי)');
         if (isNaN(rate))   throw new Error('יש להזין שיעור עמלה');
+
+        // Create a new client + case, or a new case for an existing client
+        const newCaseVal = document.getElementById('f-inv-case')?.value === '__new__';
+        if (clientVal === '__new__' || newCaseVal) {
+          const caseNumber = document.getElementById('f-inv-ncse-number').value.trim();
+          const caseDesc   = document.getElementById('f-inv-ncse-desc').value.trim();
+          const caseType   = document.getElementById('f-inv-ncse-type').value;
+          if (!caseNumber) throw new Error('יש להזין מספר תיק לתיק החדש');
+          if (await DB.cases.findByCaseNumber(caseNumber)) {
+            throw new Error(`מספר התיק "${caseNumber}" כבר קיים. בחר אותו מהרשימה.`);
+          }
+
+          let clientId;
+          if (clientVal === '__new__') {
+            const newName = document.getElementById('f-inv-nc-name').value.trim();
+            if (!newName) throw new Error('יש להזין שם ללקוח החדש');
+            clientId = await DB.clients.add(newName);
+          } else {
+            clientId = parseInt(clientVal);
+            if (!clientId) throw new Error('יש לבחור לקוח');
+          }
+
+          caseId = await DB.cases.add({
+            clientId, caseNumber, description: caseDesc, caseType,
+            commissionRate: rate, arrangementType: '', openDate: null,
+          });
+        }
+
+        if (!caseId) throw new Error('יש לבחור תיק');
 
         if (invoiceId) {
           const commission = +(amount * rate / 100).toFixed(2);
@@ -192,6 +245,8 @@ const Invoices = (() => {
           UI.toast('חשבונית נשמרה', 'success');
         }
         UI.closeModal();
+        await UI.populateClientSelect('invoice-filter-client', true);
+        document.getElementById('invoice-filter-client').value = _filterClient;
         await render();
       },
     });
@@ -203,25 +258,58 @@ const Invoices = (() => {
 
       // Populate cases for initial client
       const populate = async (clientId) => {
+        if (clientId === '__new__') return;
         const caseList = clientId
           ? allCases.filter(c => c.clientId == clientId)
           : allCases;
         const sel = document.getElementById('f-inv-case');
         if (!sel) return;
         sel.innerHTML = '<option value="">בחר תיק…</option>' +
-          caseList.map(c => `<option value="${c.id}" data-rate="${c.commissionRate}" ${inv && inv.caseId==c.id?'selected':''}>${c.caseNumber} — ${c.description}</option>`).join('');
+          caseList.map(c => `<option value="${c.id}" data-rate="${c.commissionRate}" ${inv && inv.caseId==c.id?'selected':''}>${c.caseNumber} — ${c.description}</option>`).join('') +
+          (clientId ? '<option value="__new__">➕ תיק חדש…</option>' : '');
         _onAmountChange();
       };
 
+      Invoices._populateCases = populate;
       await populate(clientSel.value);
-      clientSel.addEventListener('change', (e) => populate(e.target.value));
+      _onClientChange();
     }, 80);
+  }
+
+  // ── Show/hide new-client + new-case fields ─────────────
+  function _onClientChange() {
+    const clientVal  = document.getElementById('f-inv-client')?.value;
+    const ncWrap     = document.getElementById('f-inv-new-client-wrap');
+    const caseWrap   = document.getElementById('f-inv-case-wrap');
+    const isNew      = clientVal === '__new__';
+
+    if (ncWrap)   ncWrap.style.display   = isNew ? '' : 'none';
+    if (caseWrap) caseWrap.style.display = isNew ? 'none' : '';
+
+    if (isNew) {
+      // New client always implies a new case
+      const nccWrap = document.getElementById('f-inv-new-case-wrap');
+      if (nccWrap) nccWrap.style.display = '';
+    } else {
+      if (Invoices._populateCases) Invoices._populateCases(clientVal);
+      _onCaseChange();
+    }
   }
 
   function _onCaseChange() {
     const caseEl = document.getElementById('f-inv-case');
     const rateEl = document.getElementById('f-inv-rate');
     if (!caseEl || !rateEl) return;
+
+    const nccWrap = document.getElementById('f-inv-new-case-wrap');
+    if (caseEl.value === '__new__') {
+      if (nccWrap) nccWrap.style.display = '';
+      rateEl.value = '';
+      _onAmountChange();
+      return;
+    }
+    if (nccWrap) nccWrap.style.display = 'none';
+
     const rate = parseFloat(caseEl.selectedOptions[0]?.dataset?.rate);
     if (!isNaN(rate)) rateEl.value = rate;
     _onAmountChange();
@@ -246,7 +334,7 @@ const Invoices = (() => {
 
   function escHtml(str) { return UI.esc(str); }
 
-  return { init, render, openInvoiceModal, deleteInvoice, _onCaseChange, _onAmountChange };
+  return { init, render, openInvoiceModal, deleteInvoice, _onClientChange, _onCaseChange, _onAmountChange };
 })();
 
 window.Invoices = Invoices;
